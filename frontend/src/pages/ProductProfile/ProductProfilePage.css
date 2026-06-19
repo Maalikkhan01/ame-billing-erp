@@ -1,0 +1,140 @@
+.page-title {
+  margin-bottom: 20px;
+}
+
+/* CARD */
+
+.product-profile-card {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+/* VIEW MODE */
+
+.product-name {
+  color: #1e293b;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.product-info {
+  margin-bottom: 12px;
+  color: #475569;
+  font-size: 15px;
+}
+
+.product-info strong {
+  color: #0f172a;
+}
+
+/* BUTTONS */
+
+.profile-actions {
+  margin-top: 25px;
+  display: flex;
+  gap: 12px;
+}
+
+.edit-btn,
+.save-btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.delete-btn {
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.cancel-btn {
+  background: #64748b;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.edit-btn:hover,
+.save-btn:hover {
+  background: #1d4ed8;
+}
+
+.delete-btn:hover {
+  background: #b91c1c;
+}
+
+.cancel-btn:hover {
+  background: #475569;
+}
+
+/* FORM */
+
+.product-edit-form {
+  display: grid;
+  gap: 15px;
+}
+
+.product-edit-form input,
+.product-edit-form textarea,
+.product-edit-form select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #dbe2ea;
+  border-radius: 8px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.product-edit-form textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.product-edit-form input:focus,
+.product-edit-form textarea:focus,
+.product-edit-form select:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+.profile-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile-checkbox input {
+  width: auto;
+}
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+  .profile-actions {
+    flex-direction: column;
+  }
+}
+
+.back-btn {
+  background: transparent;
+  border: none;
+  color: #2563eb;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 15px;
+}

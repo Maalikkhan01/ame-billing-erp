@@ -1,0 +1,42 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Inter, Arial, sans-serif;
+  background: #f8fafc;
+}
+
+a {
+  text-decoration: none;
+}
+
+@media print {
+  button {
+    display: none !important;
+  }
+
+  nav {
+    display: none !important;
+  }
+
+  aside {
+    display: none !important;
+  }
+
+  header {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}

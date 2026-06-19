@@ -1,0 +1,164 @@
+.customers-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.customer-count-card,
+.customer-form-card,
+.customer-search-card,
+.customer-table-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.customer-count-card h2 {
+  font-size: 32px;
+  color: #2563eb;
+}
+
+.customer-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr) auto;
+  gap: 15px;
+}
+
+.customer-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #dbe2ea;
+  border-radius: 8px;
+}
+
+.add-btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.customer-search-input {
+  width: 100%;
+  max-width: 400px;
+  padding: 12px;
+  border: 1px solid #dbe2ea;
+  border-radius: 8px;
+}
+
+.customer-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.customer-table th {
+  background: #f8fafc;
+  padding: 14px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.customer-table td {
+  padding: 14px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.customer-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.customer-table-wrapper {
+  overflow-x: auto;
+}
+
+.profile-btn,
+.edit-btn,
+.delete-btn {
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: white;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.profile-btn {
+  background: #2563eb;
+}
+
+.edit-btn {
+  background: #10b981;
+}
+
+.delete-btn {
+  background: #ef4444;
+}
+
+.action-group {
+  display: flex;
+  gap: 8px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+}
+
+.page-btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.page-btn:disabled {
+  opacity: 0.5;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-card {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  width: 400px;
+}
+
+.modal-input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+  border: 1px solid #dbe2ea;
+  border-radius: 8px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+}
+
+@media (max-width: 768px) {
+  .customer-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .customer-table {
+    min-width: 800px;
+  }
+}

@@ -1,0 +1,172 @@
+/* =========================
+   SCREEN VIEW
+========================= */
+.invoice-container {
+  width: 100%;
+  max-width: 148mm; /* A5 width equivalent for preview */
+  margin: 0 auto;
+}
+
+.invoice-page {
+  background: #fff;
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+.invoice-header {
+  border-bottom: 2px solid #000;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+.invoice-header h2 {
+  font-size: 22px;
+  margin: 0 0 4px 0;
+}
+
+.invoice-header p {
+  margin: 2px 0;
+  font-size: 13px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 12px;
+}
+
+@media print {
+
+  tbody tr {
+    height: 8mm;
+  }
+
+  th {
+    border: 1px solid #000;
+    background-color: #f5f5f5;
+    padding: 6px;
+    font-weight: bold;
+  }
+
+}
+
+td {
+  border-left: 1px solid #000;
+  border-right: 1px solid #000;
+  border-top: none;
+  border-bottom: none;
+  padding: 6px;
+}
+
+.invoice-total-box {
+  margin-top: 10px;
+  border: 2px solid #000;
+  padding: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.grand-total {
+  font-size: 18px;
+}
+
+.page-footer {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 11px;
+  color: #555;
+}
+
+/* =========================
+   PRINT STYLES
+========================= */
+@page {
+  size: A5 portrait;
+  margin: 5mm;
+}
+
+@media print {
+  .no-print,
+  button {
+    display: none !important;
+  }
+
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+  }
+
+  .invoice-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .invoice-page {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 2mm !important;
+    margin: 0 !important;
+    page-break-after: always;
+    break-after: page;
+  }
+
+  .invoice-page:last-child {
+    page-break-after: auto;
+    break-after: auto;
+  }
+
+  .invoice-table-wrapper {
+    width: 100%;
+  }
+
+  table {
+    font-size: 11px;
+    border-collapse: collapse;
+  }
+
+  th, td {
+    border: 1px solid #000 !important;
+    padding: 4px !important;
+  }
+
+  th {
+    background-color: transparent !important;
+    border: 1px solid #000;
+  }
+
+  td {
+  border-left: 1px solid #000;
+  border-right: 1px solid #000;
+  border-top: none;
+  border-bottom: none;
+}
+  
+  .invoice-total-box {
+    border: 2px solid #000 !important;
+  }
+}
+
+.empty-row td {
+  border-top: none !important;
+  border-bottom: none !important;
+}
+
+@media print {
+
+  td {
+    border-left: 1px solid #000 !important;
+    border-right: 1px solid #000 !important;
+    border-top: none !important;
+    border-bottom: none !important;
+  }
+
+}

@@ -1,0 +1,17 @@
+.daily-report-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.daily-report-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .daily-report-grid {
+    grid-template-columns: 1fr;
+  }
+}
