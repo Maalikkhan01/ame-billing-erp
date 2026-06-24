@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
-import MainLayout from "../../components/Layout/MainLayout";
+import MainLayout from "../../components/layout/MainLayout";
 
 import "./BillingPage.css";
 
