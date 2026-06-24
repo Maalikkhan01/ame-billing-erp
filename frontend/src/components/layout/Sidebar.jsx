@@ -1,12 +1,13 @@
 import { NavLink } from "react-router-dom";
 
-function Sidebar() {
+function Sidebar({ mobileOpen, closeSidebar }) {
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${mobileOpen ? "mobile-open" : ""}`}>
       <div className="sidebar-header">AME ERP</div>
 
       <nav className="sidebar-menu">
         <NavLink
+          onClick={closeSidebar}
           to="/dashboard"
           className={({ isActive }) =>
             isActive ? "sidebar-link active" : "sidebar-link"
@@ -16,6 +17,7 @@ function Sidebar() {
         </NavLink>
 
         <NavLink
+          onClick={closeSidebar}
           to="/billing"
           className={({ isActive }) =>
             isActive ? "sidebar-link active" : "sidebar-link"
@@ -25,6 +27,7 @@ function Sidebar() {
         </NavLink>
 
         <NavLink
+          onClick={closeSidebar}
           to="/hold-bills"
           className={({ isActive }) =>
             isActive ? "sidebar-link active" : "sidebar-link"
@@ -34,6 +37,7 @@ function Sidebar() {
         </NavLink>
 
         <NavLink
+          onClick={closeSidebar}
           to="/bills"
           className={({ isActive }) =>
             isActive ? "sidebar-link active" : "sidebar-link"
@@ -43,6 +47,7 @@ function Sidebar() {
         </NavLink>
 
         <NavLink
+          onClick={closeSidebar}
           to="/customers"
           className={({ isActive }) =>
             isActive ? "sidebar-link active" : "sidebar-link"
@@ -52,6 +57,7 @@ function Sidebar() {
         </NavLink>
 
         <NavLink
+          onClick={closeSidebar}
           to="/products"
           className={({ isActive }) =>
             isActive ? "sidebar-link active" : "sidebar-link"
@@ -61,6 +67,7 @@ function Sidebar() {
         </NavLink>
 
         <NavLink
+          onClick={closeSidebar}
           to="/due-report"
           className={({ isActive }) =>
             isActive ? "sidebar-link active" : "sidebar-link"
@@ -72,6 +79,7 @@ function Sidebar() {
         <div className="sidebar-section">Reports</div>
 
         <NavLink
+          onClick={closeSidebar}
           to="/daily-report"
           className={({ isActive }) =>
             isActive ? "sidebar-link active" : "sidebar-link"
@@ -81,12 +89,31 @@ function Sidebar() {
         </NavLink>
 
         <NavLink
+          onClick={closeSidebar}
           to="/range-report"
           className={({ isActive }) =>
             isActive ? "sidebar-link active" : "sidebar-link"
           }
         >
           Range Report
+        </NavLink>
+        <NavLink
+          to="/settings"
+          className={({ isActive }) =>
+            isActive ? "sidebar-link active" : "sidebar-link"
+          }
+        >
+          Settings
+        </NavLink>
+
+        <NavLink
+          to="/security"
+          onClick={closeSidebar}
+          className={({ isActive }) =>
+            isActive ? "sidebar-link active" : "sidebar-link"
+          }
+        >
+          Security Center
         </NavLink>
       </nav>
     </aside>

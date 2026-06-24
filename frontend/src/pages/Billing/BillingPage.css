@@ -222,13 +222,6 @@
   background: #3c75f0;
 }
 
-.rate-input {
-  width: 90px;
-  padding: 6px;
-  border: 1px solid #dbe2ea;
-  border-radius: 6px;
-}
-
 .rate-input:focus {
   outline: none;
   border-color: #2563eb;
@@ -236,8 +229,67 @@
 
 .qty-input,
 .rate-input {
-  width: 80px;
+  width: 65px;
   padding: 4px 6px;
   border: 1px solid #cbd5e1;
   border-radius: 6px;
+}
+@media (max-width: 768px) {
+  .billing-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .billing-table {
+    min-width: 650px;
+  }
+
+  .billing-table th,
+  .billing-table td {
+    padding: 8px;
+    font-size: 13px;
+  }
+}
+
+.bill-summary-card {
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .bill-summary-card {
+    position: sticky;
+    top: 80px;
+    z-index: 40;
+  }
+}
+
+.bill-action-card {
+  background: sticky;
+  bottom: 60px;
+}
+
+@media (max-width: 768px) {
+  .bill-action-card {
+    position: sticky;
+    bottom: 60px;
+
+    z-index: 60;
+
+    margin-top: 10px;
+
+    border-top: 2px solid #e5e7eb;
+  }
+
+  .action-buttons {
+    flex-direction: row;
+    width: 100%;
+  }
+
+  .hold-btn,
+  .create-btn {
+    flex: 1;
+    min-width: 0;
+    padding: 12px 8px;
+    font-size: 13px;
+  }
 }

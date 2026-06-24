@@ -15,6 +15,8 @@ import DailyReportPage from "../pages/Reports/DailyReportPage";
 import ProtectedRoute from "./ProtectedRoute";
 import MonthlyReportPage from "../pages/Reports/MonthlyReportPage";
 import RangeReportPage from "../pages/Reports/RangeReportPage";
+import SettingsPage from "../pages/Settings/SettingsPage";
+import SecurityPage from "../pages/Security/SecurityPage";
 
 function AppRoutes() {
   return (
@@ -126,6 +128,24 @@ function AppRoutes() {
           element={
             <ProtectedRoute>
               <RangeReportPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <SettingsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/security"
+          element={
+            <ProtectedRoute>
+              <SecurityPage />
             </ProtectedRoute>
           }
         />

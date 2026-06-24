@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
-import MainLayout from "../../components/layout/MainLayout";
+import MainLayout from "../../components/Layout/MainLayout";
 
 import "./BillingPage.css";
 
@@ -416,7 +416,7 @@ function BillingPage() {
 
         {/* Summary Card */}
 
-        <div className="summary-card">
+        <div className="summary-card bill-summary-card">
           <h3>Bill Summary</h3>
 
           <p>Total Items</p>
@@ -651,7 +651,7 @@ function BillingPage() {
         </div>
       </div>
 
-      <div className="summary-card">
+      <div className="summary-card bill-action-card">
         <h3>Bill Actions</h3>
 
         <div className="action-buttons">

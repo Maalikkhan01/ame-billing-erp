@@ -73,9 +73,34 @@
 }
 
 @media (max-width: 768px) {
-  .dashboard-table {
-    display: block;
+  .dashboard-table-wrapper {
     overflow-x: auto;
-    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .dashboard-table {
+    min-width: 700px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-title {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  .dashboard-stats {
+    grid-template-columns: repeat(1, 1fr);
+    gap: 10px;
+  }
+  
+
+  .dashboard-card {
+    padding: 14px;
+    margin-top: 16px;
+  }
+
+  .dashboard-card h2 {
+    font-size: 18px;
   }
 }

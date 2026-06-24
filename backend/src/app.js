@@ -18,6 +18,9 @@ const paymentRoutes = require("./routes/paymentRoutes");
 const ledgerRoutes = require("./routes/ledgerRoutes");
 const reportRoutes = require("./routes/reportRoutes");
 const statementRoutes = require("./routes/statementRoutes");
+const userRoutes = require("./routes/userRoutes");
+const activityRoutes = require("./routes/activityRoutes");
+const securityRoutes = require("./routes/securityRoutes");
 
 const app = express();
 
@@ -51,6 +54,9 @@ app.use("/api/payments", paymentRoutes);
 app.use("/api/ledger", ledgerRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/statements", statementRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/admin", activityRoutes);
+app.use("/api/security", securityRoutes);
 
 // Error Middlewares (Always Last)
 app.use(notFound);

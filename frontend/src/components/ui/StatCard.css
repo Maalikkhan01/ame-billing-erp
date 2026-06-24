@@ -26,3 +26,20 @@
 .due-card {
   border-left: 5px solid #ef4444;
 }
+
+@media (max-width: 768px) {
+  .stat-card {
+    padding: 14px;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .stat-title {
+    font-size: 12px;
+  }
+
+  .stat-value {
+    font-size: 18px;
+    word-break: break-word;
+  }
+}

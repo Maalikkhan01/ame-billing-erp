@@ -85,4 +85,12 @@ const billSchema = new mongoose.Schema(
   },
 );
 
+billSchema.index({
+  createdAt: -1,
+});
+
+billSchema.index({
+  customerId: 1,
+});
+
 module.exports = mongoose.model("Bill", billSchema);

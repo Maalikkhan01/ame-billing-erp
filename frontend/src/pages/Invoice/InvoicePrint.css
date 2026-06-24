@@ -10,9 +10,9 @@
 .invoice-page {
   background: #fff;
   padding: 15px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   border: 1px solid #ccc;
-  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .invoice-header {
@@ -39,18 +39,9 @@ table {
 }
 
 @media print {
-
   tbody tr {
     height: 8mm;
   }
-
-  th {
-    border: 1px solid #000;
-    background-color: #f5f5f5;
-    padding: 6px;
-    font-weight: bold;
-  }
-
 }
 
 td {
@@ -58,7 +49,7 @@ td {
   border-right: 1px solid #000;
   border-top: none;
   border-bottom: none;
-  padding: 6px;
+  padding: 4px;
 }
 
 .invoice-total-box {
@@ -97,7 +88,8 @@ td {
     display: none !important;
   }
 
-  html, body {
+  html,
+  body {
     margin: 0 !important;
     padding: 0 !important;
     background: white !important;
@@ -133,7 +125,8 @@ td {
     border-collapse: collapse;
   }
 
-  th, td {
+  th,
+  td {
     border: 1px solid #000 !important;
     padding: 4px !important;
   }
@@ -144,29 +137,32 @@ td {
   }
 
   td {
-  border-left: 1px solid #000;
-  border-right: 1px solid #000;
-  border-top: none;
-  border-bottom: none;
-}
-  
-  .invoice-total-box {
-    border: 2px solid #000 !important;
-  }
-}
-
-.empty-row td {
-  border-top: none !important;
-  border-bottom: none !important;
-}
-
-@media print {
-
-  td {
     border-left: 1px solid #000 !important;
     border-right: 1px solid #000 !important;
     border-top: none !important;
     border-bottom: none !important;
   }
 
+  .invoice-total-box {
+    border: 2px solid #000 !important;
+  }
+}
+
+.empty-row td {
+  border-top: none;
+  border-bottom: none;
+}
+
+@media print {
+  .layout-content {
+    margin-left: 0 !important;
+  }
+
+  .page-content {
+    padding: 0 !important;
+  }
+
+  .sidebar {
+    display: none !important;
+  }
 }

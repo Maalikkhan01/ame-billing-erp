@@ -32,10 +32,20 @@ const customerSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
-module.exports = mongoose.model(
-  "Customer",
-  customerSchema
-);
+customerSchema.index({
+  isActive: 1,
+  createdAt: -1,
+});
+
+customerSchema.index({
+  currentDue: -1,
+});
+
+customerSchema.index({
+  name: "text",
+});
+
+module.exports = mongoose.model("Customer", customerSchema);

@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 
 const generateToken = require("../utils/generateToken");
+const LoginHistory = require("../models/LoginHistory");
 
 // Register Owner
 
@@ -92,6 +93,12 @@ const loginUser = async (req, res) => {
     });
 
     if (!user) {
+      await LoginHistory.create({
+        mobile,
+        status: "FAILED",
+        ipAddress: req.ip,
+        userAgent: req.headers["user-agent"] || "",
+      });
       return res.status(400).json({
         success: false,
         message: "Invalid Credentials",
@@ -108,11 +115,27 @@ const loginUser = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
+      await LoginHistory.create({
+        mobile,
+        userId: user._id,
+        status: "FAILED",
+        ipAddress: req.ip,
+        userAgent: req.headers["user-agent"] || "",
+      });
+
       return res.status(400).json({
         success: false,
         message: "Invalid Credentials",
       });
     }
+
+    await LoginHistory.create({
+      mobile,
+      userId: user._id,
+      status: "SUCCESS",
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"] || "",
+    });
 
     res.json({
       success: true,

@@ -40,12 +40,23 @@ const dashboardSummary = async (req, res) => {
     const productCount = await Product.countDocuments({
       active: true,
     });
-    const outstandingDueCustomers = await Customer.find({ isActive: true });
+    const outstandingDueResult = await Customer.aggregate([
+      {
+        $match: {
+          isActive: true,
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalDue: {
+            $sum: "$currentDue",
+          },
+        },
+      },
+    ]);
 
-    const outstandingDue = outstandingDueCustomers.reduce(
-      (sum, customer) => sum + customer.currentDue,
-      0,
-    );
+    const outstandingDue = outstandingDueResult[0]?.totalDue || 0;
     const recentBills = await Bill.find()
       .sort({
         createdAt: -1,
