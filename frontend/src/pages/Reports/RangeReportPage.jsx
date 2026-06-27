@@ -5,6 +5,11 @@ import MainLayout from "../../components/layout/MainLayout";
 import StatCard from "../../components/ui/StatCard";
 
 import useRangeReport from "../../hooks/useRangeReport";
+import PageHeader from "../../components/ui/PageHeader";
+import Card from "../../components/ui/Card";
+import TableWrapper from "../../components/ui/TableWrapper";
+import Button from "../../components/ui/Button";
+import FormField from "../../components/ui/FormField";
 
 import "./RangeReportPage.css";
 function RangeReportPage() {
@@ -25,34 +30,27 @@ function RangeReportPage() {
   return (
     <MainLayout>
       <div className="range-page">
-        <h1>Date Range Report</h1>
-
-        <br />
-        <div className="range-filter-card">
+        <PageHeader
+          title="Date Range Report"
+          subtitle="Generate custom date reports"
+        />
+        <Card title="Filters">
           <div className="range-filter-grid">
-            <input
+            <FormField
               type="date"
               value={fromDate}
               onChange={(e) => setFromDate(e.target.value)}
-              className="range-input"
             />
 
-            <input
+            <FormField
               type="date"
               value={toDate}
               onChange={(e) => setToDate(e.target.value)}
-              className="range-input"
             />
 
-            <button onClick={handleSearch} className="search-btn">
-              Search
-            </button>
+            <Button onClick={handleSearch}>Search</Button>
           </div>
-        </div>
-
-        <br />
-        <br />
-
+        </Card>
         {loading && <h3>Loading...</h3>}
 
         {report && (
@@ -82,11 +80,9 @@ function RangeReportPage() {
           </div>
         )}
         {report && (
-          <div className="range-table-card">
-            <h2>Bills</h2>
-
-            <div className="range-table-wrapper">
-              <table className="range-table">
+          <Card title="Bills">
+            <TableWrapper>
+              <table className="app-table">
                 <thead>
                   <tr>
                     <th>Bill No</th>
@@ -106,8 +102,8 @@ function RangeReportPage() {
                   ))}
                 </tbody>
               </table>
-            </div>
-          </div>
+            </TableWrapper>
+          </Card>
         )}
       </div>
     </MainLayout>

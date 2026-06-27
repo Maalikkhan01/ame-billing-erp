@@ -6,6 +6,12 @@ import {
 } from "../../services/securityService";
 
 import MainLayout from "../../components/layout/MainLayout";
+import PageHeader from "../../components/ui/PageHeader";
+import Card from "../../components/ui/Card";
+import TableWrapper from "../../components/ui/TableWrapper";
+import EmptyState from "../../components/ui/EmptyState";
+
+import "./SecurityPage.css";
 
 function SecurityPage() {
   const [logs, setLogs] = useState([]);
@@ -31,62 +37,69 @@ function SecurityPage() {
 
   return (
     <MainLayout>
-      <h1>Security Center</h1>
+      <PageHeader
+        title="Security Center"
+        subtitle="Activity logs and login history"
+      />
+      <div className="security-page">
+        <Card title="Activity Logs">
+          {logs.length === 0 ? (
+            <EmptyState text="No Activity Logs Found" />
+          ) : (
+            <TableWrapper>
+              <table className="app-table">
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
 
-      <br />
+                <tbody>
+                  {logs.map((log) => (
+                    <tr key={log._id}>
+                      <td>{log.userId?.name}</td>
 
-      <div className="dashboard-card">
-        <h2>Activity Logs</h2>
+                      <td>{log.action}</td>
 
-        <table className="dashboard-table">
-          <thead>
-            <tr>
-              <th>User</th>
-              <th>Action</th>
-              <th>Date</th>
-            </tr>
-          </thead>
+                      <td>{new Date(log.createdAt).toLocaleString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </TableWrapper>
+          )}
+        </Card>
+        <Card title="Login History">
+          {history.length === 0 ? (
+            <EmptyState text="No Login History Found" />
+          ) : (
+            <TableWrapper>
+              <table className="app-table">
+                <thead>
+                  <tr>
+                    <th>Mobile</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
 
-          <tbody>
-            {logs.map((log) => (
-              <tr key={log._id}>
-                <td>{log.userId?.name}</td>
+                <tbody>
+                  {history.map((item) => (
+                    <tr key={item._id}>
+                      <td>{item.mobile}</td>
 
-                <td>{log.action}</td>
+                      <td>{item.status}</td>
 
-                <td>{new Date(log.createdAt).toLocaleString()}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <br />
-
-      <div className="dashboard-card">
-        <h2>Login History</h2>
-
-        <table className="dashboard-table">
-          <thead>
-            <tr>
-              <th>Mobile</th>
-              <th>Status</th>
-              <th>Date</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {history.map((item) => (
-              <tr key={item._id}>
-                <td>{item.mobile}</td>
-
-                <td>{item.status}</td>
-
-                <td>{new Date(item.createdAt).toLocaleString()}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                      <td>{new Date(item.createdAt).toLocaleString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </TableWrapper>
+          )}
+        </Card>
       </div>
     </MainLayout>
   );

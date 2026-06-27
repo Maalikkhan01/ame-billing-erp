@@ -1,10 +1,15 @@
 import { Link } from "react-router-dom";
 import MainLayout from "../../components/layout/MainLayout";
 import StatCard from "../../components/ui/StatCard";
+import useDashboard from "../../hooks/useDashboard";
 
 import "./DashboardPage.css";
 
-import useDashboard from "../../hooks/useDashboard";
+import PageHeader from "../../components/ui/PageHeader";
+import EmptyState from "../../components/ui/EmptyState";
+import TableWrapper from "../../components/ui/TableWrapper";
+import Card from "../../components/ui/Card";
+import Button from "../../components/ui/Button";
 
 function DashboardPage() {
   const { loading, dashboard, error } = useDashboard();
@@ -27,7 +32,7 @@ function DashboardPage() {
 
   return (
     <MainLayout>
-      <h1 className="dashboard-title">Dashboard</h1>
+      <PageHeader title="Dashboard" subtitle="Today's business overview" />
 
       <div className="dashboard-stats">
         <StatCard
@@ -55,14 +60,12 @@ function DashboardPage() {
           value={`₹${dashboard.summary.outstandingDue.toLocaleString("en-IN")}`}
         />
       </div>
-      <div className="dashboard-card">
-        <h2>Recent Bills</h2>
-
+      <Card title="Recent Bills">
         {dashboard.recentBills?.length === 0 ? (
-          <h3>No Recent Bills</h3>
+          <EmptyState text="No Recent Bills" />
         ) : (
-          <div className="dashboard-table-wrapper">
-            <table className="dashboard-table">
+          <TableWrapper>
+            <table className="app-table">
               <thead>
                 <tr>
                   <th>Bill No</th>
@@ -91,26 +94,24 @@ function DashboardPage() {
                     <td>{new Date(bill.createdAt).toLocaleString("en-IN")}</td>
 
                     <td>
-                      <Link className="invoice-btn" to={`/invoice/${bill._id}`}>
-                        View Invoice
-                      </Link>
+                      <Button as={Link} to={`/invoice/${bill._id}`} size="sm">
+                        View
+                      </Button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </div>
+          </TableWrapper>
         )}
-      </div>
+      </Card>
 
-      <div className="dashboard-card">
-        <h2>Top Due Customers</h2>
-
+      <Card title="Top Due Customers">
         {dashboard.topDueCustomers?.length === 0 ? (
-          <h3>No Due Customers</h3>
+          <EmptyState text="No Due Customers" />
         ) : (
-          <div className="dashboard-table-wrapper">
-            <table className="dashboard-table">
+          <TableWrapper>
+            <table className="app-table">
               <thead>
                 <tr>
                   <th>Name</th>
@@ -133,9 +134,9 @@ function DashboardPage() {
                 ))}
               </tbody>
             </table>
-          </div>
+          </TableWrapper>
         )}
-      </div>
+      </Card>
     </MainLayout>
   );
 }

@@ -1,0 +1,11 @@
+.empty-state-component {
+  min-height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 15px;
+  font-weight: 500;
+  padding: 24px;
+}

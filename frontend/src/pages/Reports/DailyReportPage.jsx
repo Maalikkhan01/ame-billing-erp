@@ -2,7 +2,7 @@ import MainLayout from "../../components/layout/MainLayout";
 import StatCard from "../../components/ui/StatCard";
 
 import useDashboard from "../../hooks/useDashboard";
-
+import PageHeader from "../../components/ui/PageHeader";
 import "./DailyReportPage.css";
 
 function DailyReportPage() {
@@ -21,7 +21,7 @@ function DailyReportPage() {
   return (
     <MainLayout>
       <div className="daily-report-page">
-        <h1>Daily Report</h1>
+        <PageHeader title="Daily Report" subtitle="Today's sales summary" />
 
         <div className="daily-report-grid">
           <StatCard

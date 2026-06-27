@@ -1,0 +1,45 @@
+.app-field {
+  width: 100%;
+
+  min-height: 44px;
+
+  padding: 0 14px;
+
+  border: 1px solid var(--border-color);
+
+  border-radius: var(--radius-md);
+
+  background: rgb(228, 233, 251);
+
+  font-size: 14px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+
+  box-sizing: border-box;
+}
+
+.app-field:focus {
+  outline: none;
+
+  border-color: var(--primary);
+
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.app-field::placeholder {
+  color: var(--text-muted);
+}
+
+.app-field.textarea {
+  min-height: 90px;
+
+  padding: 12px 14px;
+
+  resize: vertical;
+}
+
+.app-field.select {
+  cursor: pointer;
+}

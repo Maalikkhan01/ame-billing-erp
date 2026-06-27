@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import MainLayout from "../../components/layout/MainLayout";
 import useInvoice from "../../hooks/useInvoice";
+import Button from "../../components/ui/Button";
 import "./InvoicePrint.css";
 
 const formatCurrency = (amount) =>
@@ -35,13 +36,41 @@ function InvoicePage() {
   }
 
   const invoiceDate = new Date(invoice.createdAt).toLocaleDateString("en-IN");
-  const ITEMS_PER_PAGE = 17;
+  const ITEMS_PER_PAGE = 30;
 
   // Unit Sorting
-  const unitOrder = { PIECE: 1, BOX: 2, BAG: 3 };
+  const unitOrder = {
+  PIECE: 1,
+  PACKET: 2,
+  OUTER: 3,
+  BOX: 4,
+  BAG: 5,
+};
   const sortedItems = [...invoice.items].sort((a, b) => {
     return (unitOrder[a.unitType] || 999) - (unitOrder[b.unitType] || 999);
   });
+
+  const formatUnit = (unit) => {
+    switch (unit) {
+      case "PIECE":
+        return "Pcs";
+
+      case "PACKET":
+        return "Pkt";
+
+      case "OUTER":
+        return "Outer";
+
+      case "BOX":
+        return "Box";
+
+      case "BAG":
+        return "Bag";
+
+      default:
+        return unit;
+    }
+  };
 
   // Chunking pages
   const pages = [];
@@ -68,30 +97,11 @@ function InvoicePage() {
   return (
     <MainLayout>
       <div className="invoice-container">
-        <div
-          className="no-print"
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "20px",
-          }}
-        >
+        <div className="no-print invoice-toolbar">
           <h1>Invoice Details</h1>
-          <button
-            onClick={handlePrint}
-            style={{
-              padding: "10px 20px",
-              border: "none",
-              borderRadius: "8px",
-              cursor: "pointer",
-              fontWeight: "bold",
-              background: "#000",
-              color: "#fff",
-            }}
-          >
+          <Button variant="secondary" onClick={handlePrint}>
             Print Invoice
-          </button>
+          </Button>
         </div>
 
         {pages.map((pageItems, pageIndex) => {
@@ -108,13 +118,13 @@ function InvoicePage() {
                     <h2>A M</h2>
                     <p>Pandhurna</p>
                     <p>Mobile: 9074001099</p>
-                    <p style={{ marginTop: "5px" }}>
+                    <p className="invoice-meta">
                       <strong>Date:</strong> {invoiceDate}
                     </p>
                   </div>
 
-                  <div style={{ textAlign: "right" }}>
-                    <p style={{ marginTop: "5px" }}>
+                  <div className="invoice-customer-info">
+                    <p className="invoice-meta">
                       <strong>Invoice No:</strong> {invoice.billNumber}
                     </p>
                     <p>
@@ -137,14 +147,13 @@ function InvoicePage() {
                         </p>
                       </>
                     )}
-                    
                   </div>
                 </div>
               </div>
 
               {/* Product Table */}
               <div className="invoice-table-wrapper">
-                <table>
+                <table className="invoice-table">
                   <thead>
                     <tr>
                       <th style={{ width: "8%" }}>S.No</th>
@@ -166,13 +175,15 @@ function InvoicePage() {
                             ? pageIndex * ITEMS_PER_PAGE + index + 1
                             : ""}
                         </td>
-                        <td className="product-name">{item.productName}</td>
+                        <td className="invoice-product-name">
+                          {item.productName}
+                        </td>
 
                         <td style={{ textAlign: "center" }}>
                           {item.productName ? item.qty : ""}
                         </td>
                         <td style={{ textAlign: "center" }}>
-                          {item.productName ? item.unitType : ""}
+                          {item.productName ? formatUnit(item.unitType) : ""}
                         </td>
                         <td style={{ textAlign: "center" }}>
                           {item.productName ? item.rate : ""}
@@ -196,7 +207,7 @@ function InvoicePage() {
                 </div>
               ) : (
                 /* Empty spacer to maintain layout height on previous pages */
-                <div style={{ height: "5px" }}></div>
+                <div className="invoice-page-spacer" />
               )}
 
               <div className="page-footer">

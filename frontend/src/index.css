@@ -6,7 +6,8 @@
 
 body {
   font-family: Inter, Arial, sans-serif;
-  background: #f8fafc;
+  background: var(--bg-page);
+  color: var(--text-main);
   font-size: clamp(14px, 1vw, 16px);
 }
 

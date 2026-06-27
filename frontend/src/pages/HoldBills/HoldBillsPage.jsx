@@ -1,16 +1,22 @@
+import { useState } from "react";
 import MainLayout from "../../components/layout/MainLayout";
 import "./HoldBillsPage.css";
 import useHoldBills from "../../hooks/useHoldBills";
 import { useNavigate } from "react-router-dom";
+import PageHeader from "../../components/ui/PageHeader";
+import Card from "../../components/ui/Card";
+import EmptyState from "../../components/ui/EmptyState";
+import TableWrapper from "../../components/ui/TableWrapper";
+import Button from "../../components/ui/Button";
+import ConfirmModal from "../../components/ui/ConfirmModal";
 
 function HoldBillsPage() {
+  const [deleteBillId, setDeleteBillId] = useState(null);
   const { loading, holdBills, error, removeHoldBill } = useHoldBills();
   const navigate = useNavigate();
-  const handleResume = (bill) => {
+  const handleResume = (holdBill) => {
     navigate("/billing", {
-      state: {
-        holdBill: bill,
-      },
+      state: { holdBill },
     });
   };
 
@@ -32,13 +38,16 @@ function HoldBillsPage() {
 
   return (
     <MainLayout>
-      <h1 className="hold-title">Hold Bills</h1>
+      <PageHeader
+        title="Hold Bills"
+        subtitle={`${holdBills.length} Bills On Hold`}
+      />
 
-      <div className="hold-card">
+      <Card title="Hold Bills">
         {holdBills.length === 0 ? (
-          <h3>No Hold Bills Found</h3>
+          <EmptyState text="No Hold Bills Found" />
         ) : (
-          <div className="hold-table-wrapper">
+          <TableWrapper>
             <table className="hold-table">
               <thead>
                 <tr>
@@ -65,34 +74,44 @@ function HoldBillsPage() {
                     <td>{new Date(bill.createdAt).toLocaleString("en-IN")}</td>
 
                     <td>
-                      <button
-                        className="resume-btn"
-                        onClick={() => handleResume(bill)}
-                      >
-                        Resume
-                      </button>{" "}
-                      <button
-                        className="delete-btn"
-                        onClick={() => {
-                          const confirmDelete = window.confirm(
-                            "Delete this hold bill?",
-                          );
+                      <div className="action-group">
+                        <Button
+                          variant="success"
+                          size="sm"
+                          onClick={() => handleResume(bill)}
+                        >
+                          Resume
+                        </Button>
 
-                          if (confirmDelete) {
-                            removeHoldBill(bill._id);
-                          }
-                        }}
-                      >
-                        Delete
-                      </button>
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          onClick={() => setDeleteBillId(bill._id)}
+                        >
+                          Delete
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </div>
+          </TableWrapper>
         )}
-      </div>
+      </Card>
+      <ConfirmModal
+        open={!!deleteBillId}
+        title="Delete Hold Bill"
+        message="Are you sure you want to delete this hold bill?"
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={async () => {
+          await removeHoldBill(deleteBillId);
+
+          setDeleteBillId(null);
+        }}
+        onCancel={() => setDeleteBillId(null)}
+      />
     </MainLayout>
   );
 }

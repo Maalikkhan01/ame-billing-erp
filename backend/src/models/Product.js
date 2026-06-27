@@ -14,32 +14,25 @@ const productSchema = new mongoose.Schema(
       trim: true,
     },
 
-    piecePrice: {
-      type: Number,
-      required: true,
-      min: 1,
-    },
+    units: [
+      {
+        type: {
+          type: String,
 
-    hasPacking: {
-      type: Boolean,
-      default: false,
-    },
+          enum: ["PIECE", "PACKET", "OUTER", "BOX", "BAG"],
 
-    packingType: {
-      type: String,
-      enum: ["BOX", "BAG", ""],
-      default: "",
-    },
+          required: true,
+        },
 
-    packingQty: {
-      type: Number,
-      default: 0,
-    },
+        price: {
+          type: Number,
 
-    packingPrice: {
-      type: Number,
-      default: 0,
-    },
+          required: true,
+
+          min: 1,
+        },
+      },
+    ],
 
     active: {
       type: Boolean,

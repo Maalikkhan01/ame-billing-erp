@@ -5,6 +5,12 @@ import "./DueReportPage.css";
 
 import MainLayout from "../../components/layout/MainLayout";
 import useDueReport from "../../hooks/useDueReport";
+import PageHeader from "../../components/ui/PageHeader";
+import Card from "../../components/ui/Card";
+import SearchInput from "../../components/ui/SearchInput";
+import EmptyState from "../../components/ui/EmptyState";
+import TableWrapper from "../../components/ui/TableWrapper";
+import Button from "../../components/ui/Button";
 
 function DueReportPage() {
   const navigate = useNavigate();
@@ -36,36 +42,35 @@ function DueReportPage() {
   return (
     <MainLayout>
       <div className="due-page">
-        <h1>Due Report</h1>
+        <PageHeader
+          title="Due Report"
+          subtitle={`${filteredCustomers.length} Customers With Due`}
+        />
 
         {/* Outstanding Due Card */}
-        <div className="due-summary-card">
+        <Card className="due-summary-card">
           <div className="due-summary-title">Outstanding Due</div>
 
           <div className="due-summary-amount">
             ₹{Number(data.totalDue).toLocaleString("en-IN")}
           </div>
-        </div>
+        </Card>
 
         {/* Search */}
-        <div className="search-card">
-          <input
-            type="text"
-            placeholder="Search customer..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="search-input"
-          />
-        </div>
+        <SearchInput
+          value={search}
+          placeholder="Search customer..."
+          onChange={setSearch}
+        />
 
         {/* Empty State */}
         {filteredCustomers.length === 0 ? (
-          <div className="due-table-card">
-            <div className="empty-state">No Due Customers Found</div>
-          </div>
+          <Card title="Due Customers">
+            <EmptyState text="No Due Customers Found" />
+          </Card>
         ) : (
-          <div className="due-table-card">
-            <div className="due-table-wrapper">
+          <Card title="Due Customers">
+            <TableWrapper>
               <table className="due-table">
                 <thead>
                   <tr>
@@ -89,19 +94,20 @@ function DueReportPage() {
                       <td>₹{customer.currentDue.toLocaleString("en-IN")}</td>
 
                       <td>
-                        <button
-                          className="receive-btn"
+                        <Button
+                          variant="success"
+                          size="sm"
                           onClick={() => navigate(`/customers/${customer._id}`)}
                         >
                           Receive Payment
-                        </button>
+                        </Button>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-            </div>
-          </div>
+            </TableWrapper>
+          </Card>
         )}
       </div>
     </MainLayout>

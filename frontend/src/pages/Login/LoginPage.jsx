@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { loginUser } from "../../services/authService";
+import Button from "../../components/ui/Button";
+import FormField from "../../components/ui/FormField";
 
 import "./LoginPage.css";
 
@@ -37,44 +39,38 @@ function LoginPage() {
     <div className="login-page">
       <div className="login-card">
         <div className="login-logo">
-          <h1>AME ERP</h1>
+          <h1>A M</h1>
         </div>
-
-        <p className="login-subtitle">
-          Inventory, Billing & Customer Management System
-        </p>
 
         <form onSubmit={handleLogin}>
           <div className="login-group">
             <label className="login-label">Mobile Number</label>
 
-            <input
+            <FormField
               type="text"
               placeholder="Enter mobile number"
               value={mobile}
               onChange={(e) => setMobile(e.target.value)}
-              className="login-input"
             />
           </div>
 
           <div className="login-group">
             <label className="login-label">Password</label>
 
-            <input
+            <FormField
               type="password"
               placeholder="Enter password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="login-input"
             />
           </div>
 
-          <button type="submit" className="login-btn" disabled={loading}>
+          <Button type="submit" disabled={loading} className="login-submit-btn">
             {loading ? "Logging In..." : "Login"}
-          </button>
+          </Button>
         </form>
 
-        <div className="login-footer">© 2026 A M Enterprises</div>
+        <div className="login-footer">© 2026 A M </div>
       </div>
     </div>
   );

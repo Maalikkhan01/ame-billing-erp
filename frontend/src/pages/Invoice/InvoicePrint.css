@@ -1,82 +1,137 @@
 /* =========================
    SCREEN VIEW
 ========================= */
+
 .invoice-container {
-  width: 100%;
-  max-width: 148mm; /* A5 width equivalent for preview */
+  max-width: 170mm;
   margin: 0 auto;
 }
 
 .invoice-page {
   background: #fff;
-  padding: 15px;
+  padding: 0 2mm !important;
   margin-bottom: 10px;
-  border: 1px solid #ccc;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  border: 1px solid #000;
+  box-shadow: none;
 }
 
 .invoice-header {
-  border-bottom: 2px solid #000;
-  padding-bottom: 8px;
-  margin-bottom: 12px;
+  padding-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 .invoice-header h2 {
-  font-size: 22px;
-  margin: 0 0 4px 0;
+  font-size: 20px;
+  margin: 0 0 2px;
 }
 
 .invoice-header p {
-  margin: 2px 0;
-  font-size: 13px;
+  margin: 1px 0;
+  font-size: 11px;
 }
 
-table {
+.invoice-meta {
+  margin-top: 5px;
+}
+
+.invoice-customer-info {
+  text-align: right;
+}
+
+/* =========================
+   TABLE
+========================= */
+
+.invoice-table {
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
+  font-size: 11px;
+}
+
+.invoice-table th {
+  border: 1px solid #000;
+  text-align: center!important;
+  background: transparent;
+  padding: 1px 3px;
+  font-size: 10px;
+  line-height: 1;
+}
+
+.invoice-table td {
+  padding: 1px 3px;
   font-size: 12px;
-}
+  line-height: 1;
 
-@media print {
-  tbody tr {
-    height: 8mm;
-  }
-}
+  height: 20px;
 
-td {
   border-left: 1px solid #000;
   border-right: 1px solid #000;
   border-top: none;
   border-bottom: none;
-  padding: 4px;
+
+  vertical-align: middle;
 }
 
-.invoice-total-box {
-  margin-top: 10px;
-  border: 2px solid #000;
-  padding: 8px;
+.invoice-product-name {
+  margin: 0 !important;
+  padding: 0 4px !important;
+
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
+
+  text-align: left !important;
+}
+
+/* =========================
+   TOOLBAR
+========================= */
+
+.invoice-toolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 20px;
+}
+
+.invoice-total-box {
+  margin-top: 4px;
+  border: 1px solid #000;
+  padding: 2px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
   font-weight: bold;
-  font-size: 14px;
+  font-size: 12px;
+}
+
+.invoice-page-spacer {
+  height: 10px;
 }
 
 .grand-total {
-  font-size: 18px;
+  font-size: 12px;
 }
 
 .page-footer {
   text-align: center;
-  margin-top: 10px;
+  margin-top: 4px;
   font-size: 11px;
   color: #555;
 }
 
+.empty-row td {
+  border-top: none;
+  border-bottom: none;
+}
+
 /* =========================
-   PRINT STYLES
+   PRINT SETTINGS
 ========================= */
+
 @page {
   size: A5 portrait;
   margin: 5mm;
@@ -84,7 +139,11 @@ td {
 
 @media print {
   .no-print,
-  button {
+  button,
+  .sidebar,
+  .header,
+  .mobile-bottom-nav,
+  .sidebar-overlay {
     display: none !important;
   }
 
@@ -95,9 +154,24 @@ td {
     background: white !important;
   }
 
+  .main-layout {
+    display: block !important;
+    background: white !important;
+  }
+
+  .layout-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+
+  .page-content {
+    padding: 0 !important;
+  }
+
   .invoice-container {
     width: 100% !important;
     max-width: 100% !important;
+
     margin: 0 !important;
     padding: 0 !important;
   }
@@ -105,8 +179,10 @@ td {
   .invoice-page {
     border: none !important;
     box-shadow: none !important;
+
     padding: 0 2mm !important;
     margin: 0 !important;
+
     page-break-after: always;
     break-after: page;
   }
@@ -120,49 +196,36 @@ td {
     width: 100%;
   }
 
-  table {
-    font-size: 11px;
+  .invoice-table {
+    width: 100%;
     border-collapse: collapse;
+    font-size: 12px;
   }
 
-  th,
-  td {
+  .invoice-table th {
     border: 1px solid #000 !important;
-    padding: 4px !important;
+    background: transparent !important;
+
+    padding: 2px 4px !important;
+
+    line-height: 1.1;
   }
 
-  th {
-    background-color: transparent !important;
-    border: 1px solid #000;
-  }
-
-  td {
+  .invoice-table td {
     border-left: 1px solid #000 !important;
     border-right: 1px solid #000 !important;
+
     border-top: none !important;
     border-bottom: none !important;
+
+    padding: 2px 4px !important;
+
+    line-height: 1.1;
+
+    height: 5mm !important;
   }
 
   .invoice-total-box {
-    border: 2px solid #000 !important;
-  }
-}
-
-.empty-row td {
-  border-top: none;
-  border-bottom: none;
-}
-
-@media print {
-  .layout-content {
-    margin-left: 0 !important;
-  }
-
-  .page-content {
-    padding: 0 !important;
-  }
-
-  .sidebar {
-    display: none !important;
+    border: 1px solid #000 !important;
   }
 }

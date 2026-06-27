@@ -1,7 +1,9 @@
 import MainLayout from "../../components/layout/MainLayout";
 
 import useMonthlyReport from "../../hooks/useMonthlyReport";
-
+import PageHeader from "../../components/ui/PageHeader";
+import StatCard from "../../components/ui/StatCard";
+import "./MonthlyReportPage.css";
 function MonthlyReportPage() {
   const { loading, data, error } = useMonthlyReport();
 
@@ -25,63 +27,25 @@ function MonthlyReportPage() {
 
   return (
     <MainLayout>
-      <h1>Monthly Report</h1>
+      <PageHeader title="Monthly Report" subtitle="Current month overview" />
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4,1fr)",
-          gap: "20px",
-          marginTop: "20px",
-        }}
-      >
-        <div
-          style={{
-            background: "#fff",
-            padding: "20px",
-            borderRadius: "10px",
-          }}
-        >
-          <h3>Sales</h3>
+      <div className="monthly-report-grid">
+        <StatCard
+          title="Sales"
+          value={`₹${Number(summary.totalSales).toLocaleString("en-IN")}`}
+        />
 
-          <h2>₹{summary.totalSales}</h2>
-        </div>
+        <StatCard
+          title="Collection"
+          value={`₹${Number(summary.totalCollection).toLocaleString("en-IN")}`}
+        />
 
-        <div
-          style={{
-            background: "#fff",
-            padding: "20px",
-            borderRadius: "10px",
-          }}
-        >
-          <h3>Collection</h3>
+        <StatCard
+          title="Due Sale"
+          value={`₹${Number(summary.totalDue).toLocaleString("en-IN")}`}
+        />
 
-          <h2>₹{summary.totalCollection}</h2>
-        </div>
-
-        <div
-          style={{
-            background: "#fff",
-            padding: "20px",
-            borderRadius: "10px",
-          }}
-        >
-          <h3>Due Sale</h3>
-
-          <h2>₹{summary.totalDue}</h2>
-        </div>
-
-        <div
-          style={{
-            background: "#fff",
-            padding: "20px",
-            borderRadius: "10px",
-          }}
-        >
-          <h3>Total Bills</h3>
-
-          <h2>{summary.totalBills}</h2>
-        </div>
+        <StatCard title="Total Bills" value={summary.totalBills} />
       </div>
     </MainLayout>
   );

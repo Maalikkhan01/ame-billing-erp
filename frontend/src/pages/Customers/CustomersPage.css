@@ -4,153 +4,46 @@
   gap: 20px;
 }
 
-.customer-count-card,
-.customer-form-card,
-.customer-search-card,
-.customer-table-card {
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-}
-
-.customer-count-card h2 {
-  font-size: 32px;
-  color: #2563eb;
-}
-
 .customer-form-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr) auto;
-  gap: 15px;
-}
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
 
-.customer-input {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #dbe2ea;
-  border-radius: 8px;
-}
+  gap: 24px;
+  margin-top: 20px;
 
-.add-btn {
-  background: #2563eb;
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.customer-search-input {
-  width: 100%;
-  max-width: 400px;
-  padding: 12px;
-  border: 1px solid #dbe2ea;
-  border-radius: 8px;
-}
-
-.customer-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.customer-table th {
-  background: #f8fafc;
-  padding: 14px;
-  text-align: left;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.customer-table td {
-  padding: 14px;
-  border-bottom: 1px solid #f1f5f9;
-}
-
-.customer-table tbody tr:hover {
-  background: #f8fafc;
-}
-
-.customer-table-wrapper {
-  overflow-x: auto;
-}
-
-.profile-btn,
-.edit-btn,
-.delete-btn {
-  border: none;
-  padding: 8px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  color: white;
-  text-decoration: none;
-  display: inline-block;
-}
-
-.profile-btn {
-  background: #2563eb;
-}
-
-.edit-btn {
-  background: #10b981;
-}
-
-.delete-btn {
-  background: #ef4444;
+  align-items: end;
 }
 
 .action-group {
   display: flex;
+  align-items: center;
   gap: 8px;
+  flex-wrap: nowrap;
 }
 
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 15px;
-}
-
-.page-btn {
-  background: #2563eb;
-  color: white;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.page-btn:disabled {
-  opacity: 0.5;
-}
-
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-card {
-  background: white;
-  padding: 25px;
-  border-radius: 12px;
-  width: 400px;
-}
-
-.modal-input {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 12px;
-  border: 1px solid #dbe2ea;
-  border-radius: 8px;
+.add-customer-btn {
+  min-width: 150px;
 }
 
 .modal-actions {
   display: flex;
-  gap: 10px;
+  gap: 12px;
+
+  margin-top: 24px;
+}
+
+.modal-input {
+  margin-bottom: 16px;
+}
+
+.modal-input:last-of-type {
+  margin-bottom: 0;
+}
+
+.customer-table td:last-child,
+.customer-table th:last-child {
+  width: 1%;
+  white-space: nowrap;
 }
 
 @media (max-width: 768px) {
@@ -158,7 +51,7 @@
     grid-template-columns: 1fr;
   }
 
-  .customer-table {
-    min-width: 800px;
+  .modal-actions {
+    flex-direction: column;
   }
 }

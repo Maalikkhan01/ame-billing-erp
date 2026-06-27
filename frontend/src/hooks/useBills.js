@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { getBills } from "../services/billService";
 
 function useBills() {
@@ -6,19 +6,13 @@ function useBills() {
   const [bills, setBills] = useState([]);
   const [error, setError] = useState("");
   const [page, setPage] = useState(1);
-
   const [totalPages, setTotalPages] = useState(1);
-  useEffect(() => {
-    loadBills(1, "");
-  }, []);
 
-  const loadBills = async (pageNo = 1, keyword = "") => {
+  const loadBills = useCallback(async (pageNo = 1, keyword = "") => {
     try {
       setError("");
 
       const data = await getBills(pageNo, keyword);
-
-      console.log("Bills API Response:", data);
 
       setBills(data.bills || []);
 
@@ -34,7 +28,11 @@ function useBills() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadBills(1, "");
+  }, [loadBills]);
 
   return {
     loading,

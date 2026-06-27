@@ -1,6 +1,7 @@
 .mobile-nav {
   display: none;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 @media (max-width: 768px) {

@@ -1,0 +1,44 @@
+:root {
+
+  /* COLORS */
+
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+
+  --success: #10b981;
+  --success-hover: #059669;
+
+  --danger: #ef4444;
+  --danger-hover: #dc2626;
+
+  --warning: #f59e0b;
+
+  --bg-page: #f1f5f9;
+  --bg-card: #ffffff;
+
+  --text-main: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+
+  --border: #e2e8f0;
+
+  /* RADIUS */
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+
+  /* SHADOW */
+
+  --shadow-card:
+    0 2px 10px rgba(0,0,0,.08);
+
+  /* SPACING */
+
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+
+}

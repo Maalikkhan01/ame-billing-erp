@@ -4,15 +4,7 @@ const Product = require("../models/Product");
 
 const createProduct = async (req, res) => {
   try {
-    const {
-      name,
-      description,
-      piecePrice,
-      hasPacking,
-      packingType,
-      packingQty,
-      packingPrice,
-    } = req.body;
+    const { name, description, units } = req.body;
 
     if (!name?.trim()) {
       return res.status(400).json({
@@ -21,32 +13,25 @@ const createProduct = async (req, res) => {
       });
     }
 
-    if (!piecePrice || piecePrice <= 0) {
+    if (!Array.isArray(units) || units.length === 0) {
       return res.status(400).json({
         success: false,
-        message: "Invalid piece price",
+        message: "At least one unit is required",
       });
     }
 
-    if (hasPacking) {
-      if (!packingType) {
+    for (const unit of units) {
+      if (!unit.type) {
         return res.status(400).json({
           success: false,
-          message: "Packing type required",
+          message: "Unit type required",
         });
       }
 
-      if (!packingQty || packingQty <= 0) {
+      if (!unit.price || unit.price <= 0) {
         return res.status(400).json({
           success: false,
-          message: "Packing quantity required",
-        });
-      }
-
-      if (!packingPrice || packingPrice <= 0) {
-        return res.status(400).json({
-          success: false,
-          message: "Packing price required",
+          message: `Invalid price for ${unit.type}`,
         });
       }
     }
@@ -69,11 +54,7 @@ const createProduct = async (req, res) => {
     const product = await Product.create({
       name: name.trim(),
       description,
-      piecePrice,
-      hasPacking,
-      packingType,
-      packingQty,
-      packingPrice,
+      units,
       createdBy: req.user._id,
     });
 
@@ -116,6 +97,7 @@ const getProducts = async (req, res) => {
       success: true,
       products,
       page,
+      totalProducts: total,
       totalPages: Math.ceil(total / limit),
     });
   } catch (error) {
@@ -207,33 +189,28 @@ const updateProduct = async (req, res) => {
         });
       }
     }
-    if (req.body.piecePrice !== undefined && req.body.piecePrice <= 0) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid piece price",
-      });
-    }
-
-    if (req.body.hasPacking === true) {
-      if (!req.body.packingType) {
+    if (req.body.units) {
+      if (!Array.isArray(req.body.units) || req.body.units.length === 0) {
         return res.status(400).json({
           success: false,
-          message: "Packing type required",
+          message: "At least one unit is required",
         });
       }
 
-      if (!req.body.packingQty || req.body.packingQty <= 0) {
-        return res.status(400).json({
-          success: false,
-          message: "Invalid packing quantity",
-        });
-      }
+      for (const unit of req.body.units) {
+        if (!unit.type) {
+          return res.status(400).json({
+            success: false,
+            message: "Unit type required",
+          });
+        }
 
-      if (!req.body.packingPrice || req.body.packingPrice <= 0) {
-        return res.status(400).json({
-          success: false,
-          message: "Invalid packing price",
-        });
+        if (!unit.price || unit.price <= 0) {
+          return res.status(400).json({
+            success: false,
+            message: `Invalid price for ${unit.type}`,
+          });
+        }
       }
     }
 
@@ -243,19 +220,9 @@ const updateProduct = async (req, res) => {
 
     product.description = req.body.description ?? product.description;
 
-    if (req.body.piecePrice !== undefined) {
-      product.piecePrice = req.body.piecePrice;
+    if (req.body.units) {
+      product.units = req.body.units;
     }
-
-    if (req.body.hasPacking !== undefined) {
-      product.hasPacking = req.body.hasPacking;
-    }
-
-    product.packingType = req.body.packingType ?? product.packingType;
-
-    product.packingQty = req.body.packingQty ?? product.packingQty;
-
-    product.packingPrice = req.body.packingPrice ?? product.packingPrice;
 
     await product.save();
 

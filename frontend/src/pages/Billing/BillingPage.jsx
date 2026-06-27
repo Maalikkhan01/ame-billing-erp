@@ -3,11 +3,20 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 import MainLayout from "../../components/layout/MainLayout";
 
+import CustomerSelector from "../../components/billing/CustomerSelector";
+import BillSummaryCard from "../../components/billing/BillSummaryCard";
+import ProductSelector from "../../components/billing/ProductSelector";
+
+import BillingItemsTable from "../../components/billing/BillingItemsTable";
+
+import BillActions from "../../components/billing/BillActions";
+
 import "./BillingPage.css";
 
 import { searchCustomers } from "../../services/customerService";
 
 import { searchProducts } from "../../services/productService";
+import PageHeader from "../../components/ui/PageHeader";
 
 import {
   createHoldBill,
@@ -56,6 +65,7 @@ function BillingPage() {
         ? resumeData.customerId._id
         : resumeData.customerId;
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCustomerId(customerIdValue);
     setCustomerSearch(resumeData.customerName || "");
     setItems(resumeData.items || []);
@@ -149,13 +159,14 @@ function BillingPage() {
 
     if (!product) return;
 
-    let rate = 0;
+    const selectedUnit = product.units?.find((unit) => unit.type === unitType);
 
-    if (unitType === "PIECE") {
-      rate = product.piecePrice;
-    } else {
-      rate = product.packingPrice;
+    if (!selectedUnit) {
+      alert("Selected unit not found");
+      return;
     }
+
+    const rate = selectedUnit.price;
 
     const existingItem = items.find(
       (item) => item.productId === product._id && item.unitType === unitType,
@@ -198,7 +209,7 @@ function BillingPage() {
 
     setQty(1);
 
-    setUnitType("PIECE");
+    setUnitType("");
 
     setProductId("");
     setProductSearch("");
@@ -209,7 +220,7 @@ function BillingPage() {
   };
 
   // Hold Bill Create / Update
-  const handleHoldBill = async () => {
+  async function handleHoldBill() {
     if (holdingBill) return;
 
     if (!customerId) {
@@ -260,7 +271,7 @@ function BillingPage() {
     } finally {
       setHoldingBill(false);
     }
-  };
+  }
 
   const removeItem = (productId, unitType) => {
     setItems(
@@ -272,7 +283,7 @@ function BillingPage() {
 
   const grandTotal = items.reduce((sum, item) => sum + item.amount, 0);
   // Create New Hold Bill OR Update Existing Hold Bill
-  const handleSave = async () => {
+  async function handleSave() {
     if (savingBill) return;
 
     if (!customerId) {
@@ -322,356 +333,68 @@ function BillingPage() {
     } finally {
       setSavingBill(false);
     }
-  };
+  }
 
   return (
     <MainLayout>
-      <h1>Billing</h1>
+      <PageHeader
+        title="Billing"
+        subtitle="Create invoices and manage customer billing"
+      />
       <div className="billing-top-section">
         {/* Customer Card */}
 
-        <div className="billing-card">
-          <h3>Customer</h3>
-
-          <input
-            ref={customerSearchRef}
-            type="text"
-            className="billing-input"
-            placeholder="Search customer..."
-            value={customerSearch}
-            onChange={(e) => {
-              setCustomerSearch(e.target.value);
-              setCustomerId("");
-              setSelectedCustomer(null);
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "ArrowDown") {
-                e.preventDefault();
-
-                setSelectedCustomerIndex((prev) =>
-                  Math.min(prev + 1, customerResults.length - 1),
-                );
-              }
-
-              if (e.key === "ArrowUp") {
-                e.preventDefault();
-
-                setSelectedCustomerIndex((prev) => Math.max(prev - 1, 0));
-              }
-
-              if (e.key === "Enter") {
-                const customer = customerResults[selectedCustomerIndex];
-
-                if (customer) {
-                  setCustomerId(customer._id);
-                  setSelectedCustomer(customer);
-                  setCustomerSearch(customer.name);
-                  setCustomerResults([]);
-
-                  productSearchRef.current?.focus();
-                }
-              }
-              if (e.key === "Escape") {
-                setCustomerResults([]);
-              }
-            }}
-          />
-
-          {customerSearch && customerId === "" && (
-            <div className="customer-dropdown">
-              {customerResults.map((customer, index) => (
-                <div
-                  key={customer._id}
-                  className={`dropdown-item ${
-                    index === selectedCustomerIndex ? "dropdown-active" : ""
-                  }`}
-                  onClick={() => {
-                    setCustomerId(customer._id);
-                    setSelectedCustomer(customer);
-                    setCustomerSearch(customer.name);
-                    setCustomerResults([]);
-                  }}
-                >
-                  {customer.name}
-                </div>
-              ))}
-            </div>
-          )}
-
-          {selectedCustomer && (
-            <div className="customer-details">
-              <span>Name: {selectedCustomer.name}</span>
-
-              <span>Mobile: {selectedCustomer.mobile}</span>
-
-              <span>
-                Due: ₹
-                {Number(selectedCustomer.currentDue || 0).toLocaleString(
-                  "en-IN",
-                )}
-              </span>
-            </div>
-          )}
-        </div>
+        <CustomerSelector
+          customerSearchRef={customerSearchRef}
+          productSearchRef={productSearchRef}
+          customerSearch={customerSearch}
+          setCustomerSearch={setCustomerSearch}
+          customerResults={customerResults}
+          customerId={customerId}
+          setCustomerId={setCustomerId}
+          selectedCustomer={selectedCustomer}
+          setSelectedCustomer={setSelectedCustomer}
+          selectedCustomerIndex={selectedCustomerIndex}
+          setSelectedCustomerIndex={setSelectedCustomerIndex}
+        />
 
         {/* Summary Card */}
 
-        <div className="summary-card bill-summary-card">
-          <h3>Bill Summary</h3>
-
-          <p>Total Items</p>
-
-          <h2>{items.length}</h2>
-
-          <br />
-
-          <p>Grand Total</p>
-
-          <h1 className="summary-total">
-            ₹{Number(grandTotal).toLocaleString("en-IN")}
-          </h1>
-        </div>
+        <BillSummaryCard totalItems={items.length} grandTotal={grandTotal} />
       </div>
-      <br />
-      <div className="billing-card">
-        <h3>Add Product</h3>
+      <ProductSelector
+        productSearchRef={productSearchRef}
+        qtyRef={qtyRef}
+        unitRef={unitRef}
+        productSearch={productSearch}
+        setProductSearch={setProductSearch}
+        productResults={productResults}
+        productId={productId}
+        setProductId={setProductId}
+        selectedProduct={selectedProduct}
+        setSelectedProduct={setSelectedProduct}
+        selectedProductIndex={selectedProductIndex}
+        setSelectedProductIndex={setSelectedProductIndex}
+        unitType={unitType}
+        setUnitType={setUnitType}
+        qty={qty}
+        setQty={setQty}
+        addItem={addItem}
+      />
 
-        <input
-          ref={productSearchRef}
-          type="text"
-          className="billing-input"
-          placeholder="Type product name..."
-          value={productSearch}
-          onChange={(e) => {
-            setProductSearch(e.target.value);
-            setProductId("");
-            setSelectedProduct(null);
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "ArrowDown") {
-              e.preventDefault();
+      <BillingItemsTable
+        items={items}
+        setItems={setItems}
+        removeItem={removeItem}
+      />
 
-              setSelectedProductIndex((prev) =>
-                Math.min(prev + 1, productResults.length - 1),
-              );
-            }
-
-            if (e.key === "ArrowUp") {
-              e.preventDefault();
-
-              setSelectedProductIndex((prev) => Math.max(prev - 1, 0));
-            }
-
-            if (e.key === "Enter") {
-              const product = productResults[selectedProductIndex];
-
-              if (product) {
-                setProductId(product._id);
-                setSelectedProduct(product);
-                setProductSearch(product.name);
-                setProductResults([]);
-
-                unitRef.current?.focus();
-              }
-            }
-            if (e.key === "Escape") {
-              setProductResults([]);
-            }
-          }}
-        />
-
-        {productSearch && productId === "" && (
-          <div className="product-dropdown">
-            {productResults.map((product, index) => (
-              <div
-                key={product._id}
-                className={`dropdown-item ${
-                  index === selectedProductIndex ? "dropdown-active" : ""
-                }`}
-                onClick={() => {
-                  setProductId(product._id);
-                  setSelectedProduct(product);
-                  setProductSearch(product.name);
-                  setProductResults([]);
-                }}
-              >
-                {product.name}
-              </div>
-            ))}
-          </div>
-        )}
-
-        <br />
-
-        <div className="billing-grid">
-          <div>
-            <label>Unit Type</label>
-
-            <select
-              ref={unitRef}
-              className="billing-select"
-              value={unitType}
-              onChange={(e) => setUnitType(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-
-                  qtyRef.current?.focus();
-                }
-              }}
-            >
-              <option value="PIECE">PIECE</option>
-
-              {selectedProduct?.hasPacking && (
-                <option value={selectedProduct.packingType}>
-                  {selectedProduct.packingType}
-                </option>
-              )}
-            </select>
-          </div>
-
-          <div>
-            <label>Quantity</label>
-
-            <input
-              ref={qtyRef}
-              type="number"
-              min=""
-              className="billing-input"
-              value={qty}
-              onChange={(e) => setQty(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  addItem();
-                }
-              }}
-            />
-          </div>
-        </div>
-
-        <br />
-
-        <button className="add-item-btn" onClick={addItem}>
-          Add Item
-        </button>
-      </div>
-      <br />
-      <br />
-
-      <div className="billing-card">
-        <h3>Billing Items</h3>
-
-        <div className="billing-table-wrapper">
-          <table className="billing-table">
-            <thead>
-              <tr>
-                <th>Product</th>
-
-                <th>Unit</th>
-
-                <th>Qty</th>
-
-                <th>Rate</th>
-
-                <th>Amount</th>
-
-                <th>Action</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {items.map((item, index) => (
-                <tr key={index}>
-                  <td>{item.productName}</td>
-
-                  <td>{item.unitType}</td>
-
-                  <td>
-                    <input
-                      type="number"
-                      min="1"
-                      className="qty-input"
-                      value={item.qty}
-                      onChange={(e) => {
-                        const newQty = Number(e.target.value);
-
-                        setItems((prev) =>
-                          prev.map((row, rowIndex) =>
-                            rowIndex === index
-                              ? {
-                                  ...row,
-                                  qty: newQty,
-                                  amount: row.rate * newQty,
-                                }
-                              : row,
-                          ),
-                        );
-                      }}
-                    />
-                  </td>
-
-                  <td>
-                    <input
-                      type="number"
-                      min="0"
-                      className="rate-input"
-                      value={item.rate}
-                      onChange={(e) => {
-                        const newRate = Number(e.target.value);
-
-                        setItems((prev) =>
-                          prev.map((row, rowIndex) =>
-                            rowIndex === index
-                              ? {
-                                  ...row,
-                                  rate: newRate,
-                                  amount: newRate * row.qty,
-                                }
-                              : row,
-                          ),
-                        );
-                      }}
-                    />
-                  </td>
-
-                  <td>₹{Number(item.amount).toLocaleString("en-IN")}</td>
-
-                  <td>
-                    <button
-                      className="remove-btn"
-                      onClick={() => removeItem(item.productId, item.unitType)}
-                    >
-                      Remove
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div className="summary-card bill-action-card">
-        <h3>Bill Actions</h3>
-
-        <div className="action-buttons">
-          <button
-            disabled={items.length === 0 || holdingBill}
-            onClick={handleHoldBill}
-            className="hold-btn"
-          >
-            {holdingBill ? "Holding..." : "Hold Bill"}
-          </button>
-
-          <button
-            disabled={items.length === 0 || savingBill}
-            onClick={handleSave}
-            className="create-btn"
-          >
-            {savingBill ? "Creating..." : "Create Bill"}
-          </button>
-        </div>
-      </div>
+      <BillActions
+        items={items}
+        holdingBill={holdingBill}
+        savingBill={savingBill}
+        handleHoldBill={handleHoldBill}
+        handleSave={handleSave}
+      />
     </MainLayout>
   );
 }

@@ -8,6 +8,10 @@ import useProductProfile from "../../hooks/useProductProfile";
 
 import { updateProduct, deleteProduct } from "../../services/productService";
 import { useNavigate } from "react-router-dom";
+import PageHeader from "../../components/ui/PageHeader";
+import Card from "../../components/ui/Card";
+import Button from "../../components/ui/Button";
+import FormField from "../../components/ui/FormField";
 
 function ProductProfilePage() {
   const { id } = useParams();
@@ -21,11 +25,7 @@ function ProductProfilePage() {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    piecePrice: "",
-    hasPacking: false,
-    packingType: "BOX",
-    packingQty: "",
-    packingPrice: "",
+    units: [],
   });
 
   if (loading) {
@@ -41,15 +41,11 @@ function ProductProfilePage() {
       name: product.name,
       description: product.description || "",
 
-      piecePrice: product.piecePrice || "",
-
-      hasPacking: product.hasPacking || false,
-
-      packingType: product.packingType || "BOX",
-
-      packingQty: product.packingQty || "",
-
-      packingPrice: product.packingPrice || "",
+      units:
+        product.units?.map((unit) => ({
+          type: unit.type,
+          price: unit.price,
+        })) || [],
     });
 
     setIsEditing(true);
@@ -60,11 +56,10 @@ function ProductProfilePage() {
       await updateProduct(id, {
         ...formData,
 
-        piecePrice: Number(formData.piecePrice),
-
-        packingQty: formData.hasPacking ? Number(formData.packingQty) : 0,
-
-        packingPrice: formData.hasPacking ? Number(formData.packingPrice) : 0,
+        units: formData.units.map((unit) => ({
+          type: unit.type,
+          price: Number(unit.price),
+        })),
       });
 
       await refreshProduct();
@@ -100,169 +95,107 @@ function ProductProfilePage() {
 
   return (
     <MainLayout>
-      <button className="back-btn" onClick={() => navigate("/products")}>
-        ← Back to Products
-      </button>
+      <PageHeader
+        title="Product Profile"
+        right={
+          <Button variant="secondary" onClick={() => navigate("/products")}>
+            Back
+          </Button>
+        }
+      />
+      <Card>
+        <h2 className="product-name">{product.name}</h2>
 
-      <h1 className="page-title">Product Profile</h1>
-
-      <div className="product-profile-card">
         {!isEditing ? (
           <>
-            <h2 className="product-name">{product.name}</h2>
-            <p className="product-info">
-              <strong>Description:</strong> {product.description || "-"}
-            </p>
-            <p className="product-info">
-              <strong>Piece Price:</strong> ₹{product.piecePrice}
-            </p>
+            <div className="product-section">
+              <h3>General Information</h3>
 
-            <p className="product-info">
-              <strong>Packing:</strong> {product.hasPacking ? "YES" : "NO"}
-            </p>
-            {product.hasPacking && (
-              <>
-                <p className="product-info">
-                  <strong>Type:</strong> {product.packingType}
+              <p className="product-info">
+                <strong>Description:</strong>
+                {product.description || "-"}
+              </p>
+            </div>
+
+            <div className="product-section">
+              <h3>Available Units</h3>
+
+              {product.units?.map((unit) => (
+                <p key={unit.type} className="product-info">
+                  <strong>{unit.type}:</strong> ₹{unit.price}
                 </p>
+              ))}
+            </div>
 
-                <p>Quantity : {product.packingQty}</p>
-
-                <p>Packing Price : ₹{product.packingPrice}</p>
-              </>
-            )}
-            <br />
             <div className="profile-actions">
-              <button className="edit-btn" onClick={startEdit}>
-                Edit Product
-              </button>
+              <Button onClick={startEdit}>Edit Product</Button>
 
-              <button className="delete-btn" onClick={handleDelete}>
+              <Button variant="danger" onClick={handleDelete}>
                 Delete Product
-              </button>
+              </Button>
             </div>
           </>
         ) : (
-          <>
-            <div className="product-edit-form">
-              <input
-                placeholder="Product Name"
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    name: e.target.value,
-                  })
-                }
-              />
-              <br />
-              <br />
-              <textarea
-                placeholder="Description"
-                value={formData.description}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    description: e.target.value,
-                  })
-                }
-              />
-            </div>
-
-            <br />
-            <br />
-            <input
-              type="number"
-              placeholder="Piece Price"
-              value={formData.piecePrice}
+          <div className="product-edit-form">
+            <FormField
+              placeholder="Product Name"
+              value={formData.name}
               onChange={(e) =>
                 setFormData({
                   ...formData,
-                  piecePrice: e.target.value,
+                  name: e.target.value,
                 })
               }
             />
-            <br />
-            <br />
-            <label className="profile-checkbox">
-              <input
-                type="checkbox"
-                checked={formData.hasPacking}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    hasPacking: e.target.checked,
-                  })
-                }
-              />{" "}
-              Has Packing
-            </label>
-            <br />
-            <br />
-            {formData.hasPacking && (
-              <>
-                <select
-                  value={formData.packingType}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      packingType: e.target.value,
-                    })
-                  }
-                >
-                  <option value="BOX">BOX</option>
 
-                  <option value="BAG">BAG</option>
-                </select>
+            <textarea
+              placeholder="Description"
+              value={formData.description}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  description: e.target.value,
+                })
+              }
+            />
 
-                <br />
-                <br />
+            <div className="units-editor">
+              <h3>Units</h3>
 
-                <input
-                  type="number"
-                  placeholder="Packing Quantity"
-                  value={formData.packingQty}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      packingQty: e.target.value,
-                    })
-                  }
-                />
+              {formData.units.map((unit, index) => (
+                <div key={unit.type} className="unit-edit-row">
+                  <span>{unit.type}</span>
 
-                <br />
-                <br />
+                  <FormField
+                    type="number"
+                    value={unit.price}
+                    onChange={(e) => {
+                      const updated = [...formData.units];
 
-                <input
-                  type="number"
-                  placeholder="Packing Price"
-                  value={formData.packingPrice}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      packingPrice: e.target.value,
-                    })
-                  }
-                />
-              </>
-            )}
-            <br />
-            <br />
-            <div className="profile-actions">
-              <button className="save-btn" onClick={handleSave}>
-                Save
-              </button>
+                      updated[index].price = e.target.value;
 
-              <button
-                className="cancel-btn"
-                onClick={() => setIsEditing(false)}
-              >
-                Cancel
-              </button>
+                      setFormData({
+                        ...formData,
+                        units: updated,
+                      });
+                    }}
+                  />
+                </div>
+              ))}
             </div>
-          </>
+
+            <div className="profile-actions">
+              <Button variant="success" onClick={handleSave}>
+                Save
+              </Button>
+
+              <Button variant="secondary" onClick={() => setIsEditing(false)}>
+                Cancel
+              </Button>
+            </div>
+          </div>
         )}
-      </div>
+      </Card>
     </MainLayout>
   );
 }

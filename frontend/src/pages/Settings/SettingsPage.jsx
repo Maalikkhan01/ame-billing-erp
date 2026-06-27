@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 
 import MainLayout from "../../components/layout/MainLayout";
+import PageHeader from "../../components/ui/PageHeader";
+import Card from "../../components/ui/Card";
+import FormField from "../../components/ui/FormField";
+import Button from "../../components/ui/Button";
 
 import {
   getProfile,
@@ -67,84 +71,83 @@ function SettingsPage() {
 
   return (
     <MainLayout>
-      <h1>Settings</h1>
+      <PageHeader
+        title="Settings"
+        subtitle="Manage profile and account security"
+      />
 
-      <div className="settings-card">
-        <h2>Profile</h2>
+      <div className="settings-page">
+        <Card title="Profile">
+          <form className="settings-form" onSubmit={handleProfileUpdate}>
+            <FormField
+              value={profile.name}
+              onChange={(e) =>
+                setProfile({
+                  ...profile,
+                  name: e.target.value,
+                })
+              }
+              placeholder="Name"
+            />
 
-        <form onSubmit={handleProfileUpdate}>
-          <input
-            type="text"
-            value={profile.name}
-            onChange={(e) =>
-              setProfile({
-                ...profile,
-                name: e.target.value,
-              })
-            }
-            placeholder="Name"
-          />
+            <FormField
+              value={profile.mobile}
+              onChange={(e) =>
+                setProfile({
+                  ...profile,
+                  mobile: e.target.value,
+                })
+              }
+              placeholder="Mobile"
+            />
 
-          <input
-            type="text"
-            value={profile.mobile}
-            onChange={(e) =>
-              setProfile({
-                ...profile,
-                mobile: e.target.value,
-              })
-            }
-            placeholder="Mobile"
-          />
+            <FormField value={profile.role} disabled />
 
-          <input type="text" value={profile.role} disabled />
+            <Button type="submit">Update Profile</Button>
+          </form>
+        </Card>
 
-          <button type="submit">Update Profile</button>
-        </form>
-      </div>
+        <Card title="Change Password">
+          <form className="settings-form" onSubmit={handlePasswordChange}>
+            <FormField
+              type="password"
+              placeholder="Current Password"
+              value={passwordData.currentPassword}
+              onChange={(e) =>
+                setPasswordData({
+                  ...passwordData,
+                  currentPassword: e.target.value,
+                })
+              }
+            />
 
-      <div className="settings-card">
-        <h2>Change Password</h2>
+            <FormField
+              type="password"
+              placeholder="New Password"
+              value={passwordData.newPassword}
+              onChange={(e) =>
+                setPasswordData({
+                  ...passwordData,
+                  newPassword: e.target.value,
+                })
+              }
+            />
 
-        <form onSubmit={handlePasswordChange}>
-          <input
-            type="password"
-            placeholder="Current Password"
-            value={passwordData.currentPassword}
-            onChange={(e) =>
-              setPasswordData({
-                ...passwordData,
-                currentPassword: e.target.value,
-              })
-            }
-          />
+            <FormField
+              type="password"
+              placeholder="Confirm Password"
+              value={passwordData.confirmPassword}
+              onChange={(e) =>
+                setPasswordData({
+                  ...passwordData,
+                  confirmPassword: e.target.value,
+                })
+              }
+            />
 
-          <input
-            type="password"
-            placeholder="New Password"
-            value={passwordData.newPassword}
-            onChange={(e) =>
-              setPasswordData({
-                ...passwordData,
-                newPassword: e.target.value,
-              })
-            }
-          />
-
-          <input
-            type="password"
-            placeholder="Confirm Password"
-            value={passwordData.confirmPassword}
-            onChange={(e) =>
-              setPasswordData({
-                ...passwordData,
-                confirmPassword: e.target.value,
-              })
-            }
-          />
-
-          <button type="submit">Change Password</button>
-        </form>
+            <Button type="submit">Change Password</Button>
+          </form>
+        </Card>
       </div>
     </MainLayout>
   );

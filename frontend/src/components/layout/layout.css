@@ -2,6 +2,7 @@
   display: flex;
   min-height: 100vh;
   background: #f1f5f9;
+  overflow-x: hidden;
 }
 
 .sidebar.collapsed {
@@ -97,7 +98,7 @@
 @media (max-width: 768px) {
   .sidebar {
     position: fixed;
-    left: 0;
+    left: -260px;
     top: 0;
 
     width: 260px;
@@ -108,9 +109,9 @@
 
     overflow-y: auto;
 
-    transition: 0.3s;
+    transition: 0.3s ease;
 
-    z-index: 1000;
+    z-index: 1001;
   }
 
   .sidebar.mobile-open {
@@ -132,5 +133,32 @@
   .page-content {
     padding: 16px;
     padding-bottom: 80px;
+  }
+
+  .layout-content {
+    margin-left: 0;
+  }
+}
+
+@media print {
+  .sidebar,
+  .header,
+  .mobile-bottom-nav,
+  .sidebar-overlay {
+    display: none !important;
+  }
+
+  .layout-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+
+  .page-content {
+    padding: 0 !important;
+  }
+
+  .main-layout {
+    display: block !important;
+    background: white !important;
   }
 }

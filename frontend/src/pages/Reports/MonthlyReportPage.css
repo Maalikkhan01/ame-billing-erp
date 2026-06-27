@@ -1,0 +1,11 @@
+.monthly-report-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .monthly-report-grid {
+    grid-template-columns: 1fr;
+  }
+}

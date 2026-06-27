@@ -5,6 +5,13 @@ import "./BillsPage.css";
 
 import MainLayout from "../../components/layout/MainLayout";
 import useBills from "../../hooks/useBills";
+import PageHeader from "../../components/ui/PageHeader";
+import Card from "../../components/ui/Card";
+import SearchInput from "../../components/ui/SearchInput";
+import EmptyState from "../../components/ui/EmptyState";
+import TableWrapper from "../../components/ui/TableWrapper";
+import Pagination from "../../components/ui/Pagination";
+import Button from "../../components/ui/Button";
 
 function BillsPage() {
   const { loading, bills, error, page, totalPages, loadBills } = useBills();
@@ -29,91 +36,70 @@ function BillsPage() {
 
   return (
     <MainLayout>
-      <h1 className="bills-title">Bills History</h1>
+      <PageHeader
+        title="Bills History"
+        subtitle={`${bills.length} Bills Found`}
+      />
 
-      <br />
-
-      <input
-        type="text"
-        className="bills-search"
-        placeholder="Search Customer / Bill No"
+      <SearchInput
         value={search}
-        onChange={(e) => {
-          setSearch(e.target.value);
-          loadBills(1, e.target.value);
+        placeholder="Search customer or bill number..."
+        onChange={(value) => {
+          setSearch(value);
+
+          loadBills(1, value);
         }}
       />
-      <div className="bills-card">
-        <div className="total-bills-card">
-          <span>Total Bills</span>
-
-          <h2>{bills.length}</h2>
-        </div>
-
-        <br />
+      <Card title="Bills">
+        <div className="bill-count">Showing {bills.length} bills</div>
 
         {bills.length === 0 ? (
-          <h3>No Bills Found</h3>
+          <EmptyState text="No Bills Found" />
         ) : (
-          <table className="bills-table">
-            <thead
-              style={{
-                background: "#f8fafc",
-              }}
-            >
-              <tr>
-                <th>Bill No</th>
-                <th>Customer</th>
-                <th>Mobile</th>
-                <th>Amount</th>
-                <th>Date</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {bills.map((bill) => (
-                <tr key={bill._id}>
-                  <td>{bill.billNumber}</td>
-
-                  <td>{bill.customerId?.name}</td>
-
-                  <td>{bill.customerId?.mobile || "-"}</td>
-
-                  <td>₹{Number(bill.totalAmount).toLocaleString("en-IN")}</td>
-
-                  <td>{new Date(bill.createdAt).toLocaleDateString()}</td>
-
-                  <td>
-                    <Link className="view-btn" to={`/invoice/${bill._id}`}>
-                      View Invoice
-                    </Link>
-                  </td>
+          <TableWrapper>
+            <table className="bills-table">
+              <thead>
+                <tr>
+                  <th>Bill No</th>
+                  <th>Customer</th>
+                  <th>Mobile</th>
+                  <th>Amount</th>
+                  <th>Date</th>
+                  <th>Action</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+
+              <tbody>
+                {bills.map((bill) => (
+                  <tr key={bill._id}>
+                    <td>{bill.billNumber}</td>
+
+                    <td>{bill.customerId?.name}</td>
+
+                    <td>{bill.customerId?.mobile || "-"}</td>
+
+                    <td>₹{Number(bill.totalAmount).toLocaleString("en-IN")}</td>
+
+                    <td>{new Date(bill.createdAt).toLocaleDateString()}</td>
+
+                    <td>
+                      <Button as={Link} to={`/invoice/${bill._id}`} size="sm">
+                        View
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </TableWrapper>
         )}
-      </div>
-      <div className="pagination-wrapper">
-        <button
-          disabled={page === 1}
-          onClick={() => loadBills(page - 1, search)}
-        >
-          Previous
-        </button>
-
-        <span>
-          Page {page} of {totalPages}
-        </span>
-
-        <button
-          disabled={page === totalPages}
-          onClick={() => loadBills(page + 1, search)}
-        >
-          Next
-        </button>
-      </div>
+      </Card>
+      <Pagination
+        page={page}
+        totalPages={totalPages}
+        onPrevious={() => loadBills(page - 1, search)}
+        onNext={() => loadBills(page + 1, search)}
+      />
     </MainLayout>
   );
 }

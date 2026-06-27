@@ -5,6 +5,11 @@ import MainLayout from "../../components/layout/MainLayout";
 import "./CustomerProfile.css";
 import useCustomerProfile from "../../hooks/useCustomerProfile";
 import { useReceivePayment } from "../../hooks/useReceivePayment";
+import Card from "../../components/ui/Card";
+import Button from "../../components/ui/Button";
+import TableWrapper from "../../components/ui/TableWrapper";
+
+import FormField from "../../components/ui/FormField";
 
 function CustomerProfilePage() {
   const { id } = useParams();
@@ -116,56 +121,56 @@ function CustomerProfilePage() {
 
   return (
     <MainLayout>
-      <h1>Customer Profile</h1>
+      <h1 className="no-print">Customer Profile</h1>
 
-      <div className="profile-header-card">
+      <Card className="profile-header-card no-print">
         <h2>{customer.name}</h2>
 
         <p>{customer.mobile || "-"}</p>
 
         <p>{customer.address}</p>
-      </div>
+      </Card>
 
       <div className=" summary-grid no-print">
-        <div className="profile-header-card">
+        <Card className="profile-summary-card">
           <h3>Current Due</h3>
 
           <h2 className={summary.currentDue > 0 ? "due-red" : "due-green"}>
             ₹{summary.currentDue.toLocaleString("en-IN")}
           </h2>
-        </div>
+        </Card>
 
-        <div className="profile-header-card">
-          <h3>Total Bills</h3>
+        <Card className="profile-summary-card">
+          <div className="summary-card-title">Total Bills</div>
 
           <h2>{summary.totalBills}</h2>
-        </div>
+        </Card>
 
-        <div className="profile-header-card">
+        <Card className="profile-summary-card">
           <h3>Total Sale</h3>
 
           <h2>₹{summary.totalSale.toLocaleString("en-IN")}</h2>
-        </div>
+        </Card>
 
-        <div className="profile-header-card">
+        <Card className="profile-summary-card">
           <h3>Total Payment</h3>
 
           <h2>₹{totalPayment.toLocaleString("en-IN")}</h2>
-        </div>
+        </Card>
 
-        <div className="profile-header-card">
+        <Card className="profile-summary-card">
           <h3>Highest Bill</h3>
 
           <h2>₹{(summary.highestBill || 0).toLocaleString("en-IN")}</h2>
-        </div>
+        </Card>
 
-        <div className="profile-header-card">
+        <Card className="profile-summary-card">
           <h3>Average Bill</h3>
 
           <h2>₹{(summary.averageBill || 0).toLocaleString("en-IN")}</h2>
-        </div>
+        </Card>
 
-        <div className="profile-header-card">
+        <Card className="profile-summary-card">
           <h3>Last Purchase</h3>
 
           <h2>
@@ -173,20 +178,20 @@ function CustomerProfilePage() {
               ? new Date(summary.lastPurchase).toLocaleDateString()
               : "-"}
           </h2>
-        </div>
+        </Card>
       </div>
 
       {/* RECEIVE PAYMENT */}
-      <div className="payment-card no-print">
+      <Card className="payment-card no-print">
         <div className="payment-header">
           <h2>Receive Payment</h2>
 
-          <button className="no-print" onClick={() => window.print()}>
+          <Button variant="secondary" onClick={() => window.print()}>
             Print Statement
-          </button>
+          </Button>
         </div>
         <div className="payment-form-grid">
-          <input
+          <FormField
             ref={amountRef}
             type="number"
             min="1"
@@ -202,7 +207,7 @@ function CustomerProfilePage() {
             }}
           />
 
-          <input
+          <FormField
             ref={noteRef}
             type="text"
             placeholder="Note"
@@ -215,7 +220,8 @@ function CustomerProfilePage() {
               }
             }}
           />
-          <select
+          <FormField
+            as="select"
             ref={paymentModeRef}
             value={paymentMode}
             onChange={(e) => setPaymentMode(e.target.value)}
@@ -229,21 +235,19 @@ function CustomerProfilePage() {
             <option value="CASH">Cash</option>
             <option value="UPI">UPI</option>
             <option value="BANK">Bank</option>
-          </select>
+          </FormField>
 
-          <button
-            disabled={paymentLoading || !amount || Number(amount) <= 0}
+          <Button
+            variant="success"
+            disabled={paymentLoading}
             onClick={handleReceivePayment}
           >
             {paymentLoading ? "Receiving..." : "Receive Payment"}
-          </button>
+          </Button>
         </div>
-      </div>
-
-      <div className="invoice-header-top no-print">
-        <h2>Invoices</h2>
-
-        <div className="table-wrapper">
+      </Card>
+      <Card title="Invoices" className="no-print">
+        <TableWrapper>
           <table className="invoice-table">
             <thead>
               <tr>
@@ -277,48 +281,74 @@ function CustomerProfilePage() {
                       <Link to={`/invoice/${bill._id}`}>{bill.billNumber}</Link>
                     </td>
 
-                    <td>₹{bill.totalAmount}</td>
+                    <td>₹{bill.totalAmount.toLocaleString("en-IN")}</td>
 
-                    <td>₹{bill.paidAmount}</td>
+                    <td className={bill.paidAmount > 0 ? "invoice-paid" : ""}>
+                      ₹{bill.paidAmount.toLocaleString("en-IN")}
+                    </td>
 
-                    <td>₹{bill.dueAmount}</td>
+                    <td className={bill.dueAmount > 0 ? "invoice-due" : ""}>
+                      ₹{bill.dueAmount.toLocaleString("en-IN")}
+                    </td>
                   </tr>
                 ))
               )}
             </tbody>
           </table>
-        </div>
-      </div>
+        </TableWrapper>
+      </Card>
 
-      <div className="ledger-card">
+      <Card className="ledger-card">
         {/* FILTER BUTTONS */}
         <div className=" ledger-header no-print">
-          <button onClick={() => setLedgerFilter("ALL")}>All</button>
+          <Button
+            variant={ledgerFilter === "ALL" ? "primary" : "secondary"}
+            size="sm"
+            onClick={() => setLedgerFilter("ALL")}
+          >
+            All
+          </Button>
 
-          <button onClick={() => setLedgerFilter("SALE")}>Sales</button>
+          <Button
+            variant={ledgerFilter === "SALE" ? "primary" : "secondary"}
+            size="sm"
+            onClick={() => setLedgerFilter("SALE")}
+          >
+            Sales
+          </Button>
 
-          <button onClick={() => setLedgerFilter("PAYMENT")}>Payments</button>
+          <Button
+            variant={ledgerFilter === "PAYMENT" ? "primary" : "secondary"}
+            size="sm"
+            onClick={() => setLedgerFilter("PAYMENT")}
+          >
+            Payments
+          </Button>
         </div>
 
         {/* DATE FILTER */}
-        <div className="date-filter no-print">
-          <label>From Date</label>
+        <div className="date-filters no-print">
+          <div className="date-filter">
+            <label>From Date</label>
 
-          <input
-            type="date"
-            value={fromDate}
-            onChange={(e) => setFromDate(e.target.value)}
-          />
-        </div>
+            <FormField
+              as="input"
+              type="date"
+              value={fromDate}
+              onChange={(e) => setFromDate(e.target.value)}
+            />
+          </div>
 
-        <div className="date-filter no-print">
-          <label>To Date</label>
+          <div className="date-filter">
+            <label>To Date</label>
 
-          <input
-            type="date"
-            value={toDate}
-            onChange={(e) => setToDate(e.target.value)}
-          />
+            <FormField
+              as="input"
+              type="date"
+              value={toDate}
+              onChange={(e) => setToDate(e.target.value)}
+            />
+          </div>
         </div>
 
         {/* STATEMENT HEADER */}
@@ -336,18 +366,16 @@ function CustomerProfilePage() {
           </p>
         </div>
 
-        <div className="table-wrapper">
+        <TableWrapper>
           <table className="ledger-table">
             <thead>
               <tr>
                 <th>Date</th>
-
                 <th>Particulars</th>
+                <th>Remark</th>
                 <th>Mode</th>
                 <th>Sale</th>
-
                 <th>Payment</th>
-
                 <th>Balance</th>
               </tr>
             </thead>
@@ -355,7 +383,7 @@ function CustomerProfilePage() {
             <tbody>
               {filteredLedger.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="empty-cell">
+                  <td colSpan="7" className="empty-cell">
                     No Ledger Records Found
                   </td>
                 </tr>
@@ -363,7 +391,11 @@ function CustomerProfilePage() {
                 filteredLedger.map((entry) => (
                   <tr key={entry._id}>
                     <td>
-                      {new Date(entry.createdAt).toLocaleDateString("en-IN")}
+                      {new Date(entry.createdAt).toLocaleDateString("en-GB")}{" "}
+                      {new Date(entry.createdAt).toLocaleTimeString("en-IN", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
                     </td>
 
                     <td>
@@ -371,6 +403,7 @@ function CustomerProfilePage() {
                         ? "Invoice Sale"
                         : "Payment Received"}
                     </td>
+                    <td className="remark-cell">{entry.note || "-"}</td>
 
                     <td>{entry.paymentMode || "-"}</td>
 
@@ -386,17 +419,19 @@ function CustomerProfilePage() {
               )}
             </tbody>
           </table>
-        </div>
-
-        <br />
+        </TableWrapper>
         <div className="ledger-summary">
-          <h5>Total Sale : ₹{summary.totalSale.toLocaleString("en-IN")}</h5>
+          <div>Total Sale: ₹{summary.totalSale.toLocaleString("en-IN")}</div>
 
-          <h5>Total Payment : ₹{totalPayment.toLocaleString("en-IN")}</h5>
+          <div>Total Payment: ₹{totalPayment.toLocaleString("en-IN")}</div>
 
-          <h5>Current Due : ₹{summary.currentDue.toLocaleString("en-IN")}</h5>
+          <div>
+            <strong>
+              Current Due: ₹{summary.currentDue.toLocaleString("en-IN")}
+            </strong>
+          </div>
         </div>
-      </div>
+      </Card>
     </MainLayout>
   );
 }

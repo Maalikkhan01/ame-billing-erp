@@ -1,0 +1,47 @@
+.app-page {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 24px;
+
+}
+
+.app-card {
+
+  background: var(--bg-card);
+
+  padding: 24px;
+
+  border-radius: var(--radius-md);
+
+  box-shadow: var(--shadow-card);
+
+}
+
+.page-title {
+
+  font-size: 32px;
+
+  font-weight: 700;
+
+  color: var(--text-main);
+
+}
+
+.page-subtitle {
+
+  color: var(--text-muted);
+
+}
+
+.empty-state {
+
+  text-align: center;
+
+  padding: 50px;
+
+  color: var(--text-muted);
+
+}

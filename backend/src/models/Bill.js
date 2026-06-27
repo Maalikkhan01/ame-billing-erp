@@ -21,7 +21,7 @@ const billItemSchema = new mongoose.Schema(
 
     unitType: {
       type: String,
-      enum: ["PIECE", "BOX", "BAG"],
+      enum: ["PIECE", "PACKET", "OUTER", "BOX", "BAG"],
       required: true,
     },
 
@@ -65,6 +65,11 @@ const billSchema = new mongoose.Schema(
     },
 
     dueAmount: {
+      type: Number,
+      default: 0,
+    },
+
+    previousDue: {
       type: Number,
       default: 0,
     },

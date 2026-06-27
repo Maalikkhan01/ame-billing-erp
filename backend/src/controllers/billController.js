@@ -79,24 +79,19 @@ const createBill = async (req, res) => {
 
       let rate = Number(item.rate);
 
-      if (rate > 0) {
-        // Frontend edited rate use karo
-      } else if (item.unitType === "PIECE") {
-        rate = product.piecePrice;
-      } else if (item.unitType === "BOX" || item.unitType === "BAG") {
-        if (!product.hasPacking) {
+      if (!(rate > 0)) {
+        const selectedUnit = product.units?.find(
+          (unit) => unit.type === item.unitType,
+        );
+
+        if (!selectedUnit) {
           return res.status(400).json({
             success: false,
-            message: `${product.name} has no packing`,
+            message: `${item.unitType} unit not found for ${product.name}`,
           });
         }
 
-        rate = product.packingPrice;
-      } else {
-        return res.status(400).json({
-          success: false,
-          message: "Invalid unit type",
-        });
+        rate = selectedUnit.price;
       }
 
       const amount = item.qty * rate;
@@ -134,7 +129,7 @@ const createBill = async (req, res) => {
         message: "Paid amount cannot exceed bill amount",
       });
     }
-
+    const previousDue = customer.currentDue;
     const billNumber = await generateBillNumber();
     if (totalAmount <= 0) {
       return res.status(400).json({
@@ -150,6 +145,7 @@ const createBill = async (req, res) => {
       totalAmount,
       paidAmount,
       dueAmount,
+      previousDue,
       paymentType,
 
       createdBy: req.user._id,

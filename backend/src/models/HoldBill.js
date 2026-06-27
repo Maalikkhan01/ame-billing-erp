@@ -15,6 +15,7 @@ const holdBillItemSchema = new mongoose.Schema(
 
     unitType: {
       type: String,
+      enum: ["PIECE", "PACKET", "OUTER", "BOX", "BAG"],
       required: true,
     },
 
@@ -54,7 +55,7 @@ const holdBillSchema = new mongoose.Schema(
     grandTotal: {
       type: Number,
       required: true,
-      min:0,
+      min: 0,
     },
   },
   {

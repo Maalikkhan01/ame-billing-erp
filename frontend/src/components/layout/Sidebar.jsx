@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 function Sidebar({ mobileOpen, closeSidebar }) {
   return (
     <aside className={`sidebar ${mobileOpen ? "mobile-open" : ""}`}>
-      <div className="sidebar-header">AME ERP</div>
+      <div className="sidebar-header">A M</div>
 
       <nav className="sidebar-menu">
         <NavLink

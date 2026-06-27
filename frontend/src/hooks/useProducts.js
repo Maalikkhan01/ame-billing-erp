@@ -22,7 +22,7 @@ function useProducts() {
       const data = await getProducts(pageNo);
 
       setProducts(data.products);
-      setTotalProducts(data.totalProducts);
+      setTotalProducts(data.totalProducts ?? 0);
       setTotalPages(data.totalPages || 1);
       setPage(data.page || 1);
     } catch (error) {
@@ -52,6 +52,9 @@ function useProducts() {
       const data = await searchProducts(keyword);
 
       setProducts(data.products || []);
+      setTotalProducts(data.products?.length || 0);
+      setTotalPages(1);
+      setPage(1);
     } catch (error) {
       console.log(error);
     }

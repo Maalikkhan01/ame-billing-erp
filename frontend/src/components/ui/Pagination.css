@@ -1,0 +1,59 @@
+.app-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.app-page-btn {
+  min-width: 100px;
+  height: 40px;
+  border: none;
+  background: var(--primary);
+  color: white;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition:
+    background 0.2s ease,
+    transform 0.15s ease;
+}
+
+.app-page-btn:hover:not(:disabled) {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.app-page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.app-page-info {
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .app-pagination {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .app-page-btn {
+    min-width: 90px;
+    height: 38px;
+    font-size: 13px;
+  }
+
+  .app-page-info {
+    width: 100%;
+    text-align: center;
+    order: -1;
+  }
+}

@@ -3,8 +3,19 @@ import { Link } from "react-router-dom";
 
 import MainLayout from "../../components/layout/MainLayout";
 
-import "./CustomersPage.css";
+import PageHeader from "../../components/ui/PageHeader";
+import Card from "../../components/ui/Card";
+import SearchInput from "../../components/ui/SearchInput";
+import EmptyState from "../../components/ui/EmptyState";
+import TableWrapper from "../../components/ui/TableWrapper";
+import ConfirmModal from "../../components/ui/ConfirmModal";
 import useCustomers from "../../hooks/useCustomers";
+import Pagination from "../../components/ui/Pagination";
+import Modal from "../../components/ui/Modal";
+import Button from "../../components/ui/Button";
+import FormField from "../../components/ui/FormField";
+
+import "./CustomersPage.css";
 
 function CustomersPage() {
   const {
@@ -30,6 +41,9 @@ function CustomersPage() {
   const [search, setSearch] = useState("");
 
   const [editingCustomer, setEditingCustomer] = useState(null);
+  const [deleteCustomerId, setDeleteCustomerId] = useState(null);
+
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   const nameRef = useRef(null);
   const mobileRef = useRef(null);
@@ -52,17 +66,14 @@ function CustomersPage() {
 
   return (
     <MainLayout>
-      <h1>Customers</h1>
+      <PageHeader title="Customers" subtitle="Manage your customers and dues" />
 
       <div className="customers-page">
-        <div className="customer-form-card">
-          <h3>Add Customer</h3>
-
+        <Card title="Add Customer">
           <form onSubmit={handleSubmit}>
             <div className="customer-form-grid">
-              <input
+              <FormField
                 ref={nameRef}
-                className="customer-input"
                 placeholder="Customer Name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -74,9 +85,8 @@ function CustomersPage() {
                 }}
               />
 
-              <input
+              <FormField
                 ref={mobileRef}
-                className="customer-input"
                 placeholder="Mobile"
                 value={mobile}
                 onChange={(e) => setMobile(e.target.value)}
@@ -88,9 +98,8 @@ function CustomersPage() {
                 }}
               />
 
-              <input
+              <FormField
                 ref={addressRef}
-                className="customer-input"
                 placeholder="Address"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
@@ -112,38 +121,34 @@ function CustomersPage() {
                   }
                 }}
               />
-
-              <button type="submit" className="add-btn">
+              <Button type="submit" className="add-customer-btn">
                 Add Customer
-              </button>
+              </Button>
             </div>
           </form>
-        </div>
+        </Card>
 
-        <div className="customer-search-card">
-          <input
-            className="customer-search-input"
-            placeholder="Search Customer..."
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
+        <SearchInput
+          value={search}
+          placeholder="Search customer..."
+          onChange={(value) => {
+            setSearch(value);
 
-              if (e.target.value.trim()) {
-                searchCustomer(e.target.value);
-              } else {
-                loadCustomers(1);
-              }
-            }}
-          />
-        </div>
+            if (value.trim()) {
+              searchCustomer(value);
+            } else {
+              loadCustomers(1);
+            }
+          }}
+        />
 
         {loading ? (
-          <div className="customer-table-card">
-            <h3>Loading Customers...</h3>
-          </div>
+          <Card title="Customer List">
+            <EmptyState text="Loading customers..." />
+          </Card>
         ) : (
-          <div className="customer-table-card">
-            <div className="customer-table-wrapper">
+          <Card title="Customer List">
+            <TableWrapper>
               <table className="customer-table">
                 <thead>
                   <tr>
@@ -165,135 +170,137 @@ function CustomersPage() {
 
                       <td>
                         <div className="action-group">
-                          <Link
-                            className="profile-btn"
+                          <Button
+                            as={Link}
                             to={`/customers/${customer._id}`}
+                            variant="secondary"
+                            size="sm"
                           >
                             Profile
-                          </Link>
+                          </Button>
 
-                          <button
-                            className="edit-btn"
+                          <Button
+                            variant="primary"
+                            size="sm"
                             onClick={() => setEditingCustomer(customer)}
                           >
                             Edit
-                          </button>
+                          </Button>
 
-                          <button
-                            className="delete-btn"
-                            onClick={async () => {
-                              const confirmDelete =
-                                window.confirm("Delete customer?");
-
-                              if (!confirmDelete) return;
-
-                              await removeCustomer(customer._id);
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            onClick={() => {
+                              setDeleteCustomerId(customer._id);
+                              setDeleteModalOpen(true);
                             }}
                           >
                             Delete
-                          </button>
+                          </Button>
                         </div>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-            </div>
-          </div>
+            </TableWrapper>
+          </Card>
         )}
 
-        <div className="pagination">
-          <button
-            className="page-btn"
-            disabled={page === 1}
-            onClick={() => loadCustomers(page - 1)}
-          >
-            Previous
-          </button>
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          onPrevious={() => loadCustomers(page - 1)}
+          onNext={() => loadCustomers(page + 1)}
+        />
 
-          <span>
-            Page {page} of {totalPages}
-          </span>
-
-          <button
-            className="page-btn"
-            disabled={page === totalPages}
-            onClick={() => loadCustomers(page + 1)}
-          >
-            Next
-          </button>
-        </div>
-
-        {editingCustomer && (
-          <div className="modal-overlay">
-            <div
-              style={{
-                background: "#fff",
-
-                padding: "20px",
-
-                borderRadius: "10px",
-              }}
-            >
-              <h2>Edit Customer</h2>
-
-              <input
+        <Modal
+          open={!!editingCustomer}
+          title="Edit Customer"
+          onClose={() => setEditingCustomer(null)}
+        >
+          {editingCustomer && (
+            <>
+              <FormField
+                className="modal-input"
                 value={editingCustomer.name}
                 onChange={(e) =>
                   setEditingCustomer({
                     ...editingCustomer,
-
                     name: e.target.value,
                   })
                 }
               />
 
-              <input
+              <FormField
+                className="modal-input"
                 value={editingCustomer.mobile}
                 onChange={(e) =>
                   setEditingCustomer({
                     ...editingCustomer,
-
                     mobile: e.target.value,
                   })
                 }
               />
 
-              <input
+              <FormField
+                className="modal-input"
                 value={editingCustomer.address}
                 onChange={(e) =>
                   setEditingCustomer({
                     ...editingCustomer,
-
                     address: e.target.value,
                   })
                 }
               />
 
-              <button
-                onClick={async () => {
-                  await editCustomer(
-                    editingCustomer._id,
-
-                    {
+              <div className="modal-actions">
+                <Button
+                  onClick={async () => {
+                    await editCustomer(editingCustomer._id, {
                       name: editingCustomer.name,
-
                       mobile: editingCustomer.mobile,
-
                       address: editingCustomer.address,
-                    },
-                  );
+                    });
 
-                  setEditingCustomer(null);
-                }}
-              >
-                Save
-              </button>
+                    setEditingCustomer(null);
+                  }}
+                >
+                  Save
+                </Button>
 
-              <button onClick={() => setEditingCustomer(null)}>Cancel</button>
-            </div>
-          </div>
-        )}
+                <Button
+                  variant="secondary"
+                  onClick={() => setEditingCustomer(null)}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </>
+          )}
+        </Modal>
+
+        <ConfirmModal
+          open={deleteModalOpen}
+          title="Delete Customer"
+          message="Are you sure you want to delete this customer? Customers with pending dues cannot be deleted."
+          confirmText="Delete"
+          cancelText="Cancel"
+          onConfirm={async () => {
+            if (!deleteCustomerId) return;
+
+            await removeCustomer(deleteCustomerId);
+
+            setDeleteCustomerId(null);
+
+            setDeleteModalOpen(false);
+          }}
+          onCancel={() => {
+            setDeleteCustomerId(null);
+
+            setDeleteModalOpen(false);
+          }}
+        />
       </div>
     </MainLayout>
   );

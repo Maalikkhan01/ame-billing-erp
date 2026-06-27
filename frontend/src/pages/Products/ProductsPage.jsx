@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 import MainLayout from "../../components/layout/MainLayout";
 
@@ -7,6 +7,15 @@ import "./ProductsPage.css";
 import useProducts from "../../hooks/useProducts";
 
 import { Link } from "react-router-dom";
+
+import PageHeader from "../../components/ui/PageHeader";
+import Card from "../../components/ui/Card";
+import SearchInput from "../../components/ui/SearchInput";
+import EmptyState from "../../components/ui/EmptyState";
+import TableWrapper from "../../components/ui/TableWrapper";
+import Pagination from "../../components/ui/Pagination";
+import Button from "../../components/ui/Button";
+import FormField from "../../components/ui/FormField";
 
 function ProductsPage() {
   const {
@@ -25,17 +34,42 @@ function ProductsPage() {
 
   const [description, setDescription] = useState("");
 
-  const [piecePrice, setPiecePrice] = useState("");
+  const [units, setUnits] = useState([
+    {
+      type: "PIECE",
+      enabled: true,
+      price: "",
+    },
 
-  const [hasPacking, setHasPacking] = useState(false);
+    {
+      type: "PACKET",
+      enabled: false,
+      price: "",
+    },
 
-  const [packingType, setPackingType] = useState("BOX");
+    {
+      type: "OUTER",
+      enabled: false,
+      price: "",
+    },
 
-  const [packingQty, setPackingQty] = useState("");
+    {
+      type: "BOX",
+      enabled: false,
+      price: "",
+    },
 
-  const [packingPrice, setPackingPrice] = useState("");
+    {
+      type: "BAG",
+      enabled: false,
+      price: "",
+    },
+  ]);
 
   const [search, setSearch] = useState("");
+
+  const nameRef = useRef(null);
+  const descriptionRef = useRef(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -43,162 +77,202 @@ function ProductsPage() {
     await addProduct({
       name,
       description,
-      piecePrice: Number(piecePrice),
-      hasPacking,
-      packingType,
-      packingQty: Number(packingQty),
-      packingPrice: Number(packingPrice),
+
+      units: units
+        .filter((unit) => unit.enabled)
+        .map((unit) => ({
+          type: unit.type,
+          price: Number(unit.price),
+        })),
     });
 
     setName("");
     setDescription("");
-    setPiecePrice("");
-    setHasPacking(false);
-    setPackingType("BOX");
-    setPackingQty("");
-    setPackingPrice("");
+    setUnits([
+      {
+        type: "PIECE",
+        enabled: true,
+        price: "",
+      },
+
+      {
+        type: "PACKET",
+        enabled: false,
+        price: "",
+      },
+
+      {
+        type: "OUTER",
+        enabled: false,
+        price: "",
+      },
+
+      {
+        type: "BOX",
+        enabled: false,
+        price: "",
+      },
+
+      {
+        type: "BAG",
+        enabled: false,
+        price: "",
+      },
+    ]);
+
+    nameRef.current?.focus();
   };
 
   return (
     <MainLayout>
-      <div className="page-header">
-        <h1>Products</h1>
-        <span>{totalProducts} Items</span>
-      </div>
+      <PageHeader title="Products" subtitle={`${totalProducts} Items`} />
 
-      <div className="product-form-card">
+      <Card title="Add Product">
         <form onSubmit={handleSubmit}>
           <div className="product-form-grid">
-            <input
+            <FormField
+              ref={nameRef}
               placeholder="Product Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  descriptionRef.current?.focus();
+                }
+              }}
             />
 
-            <textarea
+            <FormField
+              as="textarea"
+              ref={descriptionRef}
               placeholder="Description (Optional)"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  e.target.form?.requestSubmit();
+                }
+              }}
             />
 
-            <input
-              type="number"
-              placeholder="Piece Price"
-              value={piecePrice}
-              onChange={(e) => setPiecePrice(e.target.value)}
-            />
+            <div className="units-section">
+              <h4>Available Units</h4>
 
-            <label className="packing-checkbox">
-              <input
-                type="checkbox"
-                checked={hasPacking}
-                onChange={(e) => setHasPacking(e.target.checked)}
-              />
-              Has Box / Bag Packing
-            </label>
+              {units.map((unit, index) => (
+                <div key={unit.type} className="unit-row">
+                  <label className="unit-checkbox">
+                    <input
+                      type="checkbox"
+                      checked={unit.enabled}
+                      onChange={(e) => {
+                        const updated = [...units];
 
-            {hasPacking && (
-              <>
-                <select
-                  value={packingType}
-                  onChange={(e) => setPackingType(e.target.value)}
-                >
-                  <option value="BOX">BOX</option>
+                        updated[index].enabled = e.target.checked;
 
-                  <option value="BAG">BAG</option>
-                </select>
+                        if (!e.target.checked) {
+                          updated[index].price = "";
+                        }
 
-                <input
-                  type="number"
-                  placeholder="Packing Quantity"
-                  value={packingQty}
-                  onChange={(e) => setPackingQty(e.target.value)}
-                />
+                        setUnits(updated);
+                      }}
+                    />
 
-                <input
-                  type="number"
-                  placeholder="Packing Price"
-                  value={packingPrice}
-                  onChange={(e) => setPackingPrice(e.target.value)}
-                />
-              </>
-            )}
+                    {unit.type}
+                  </label>
+
+                  {unit.enabled && (
+                    <FormField
+                      type="number"
+                      placeholder={`${unit.type} Price`}
+                      value={unit.price}
+                      onChange={(e) => {
+                        const updated = [...units];
+
+                        updated[index].price = e.target.value;
+
+                        setUnits(updated);
+                      }}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
 
-          <button className="product-submit-btn" type="submit">
+          <Button variant="success" type="submit" className="add-product-btn">
             Add Product
-          </button>
+          </Button>
         </form>
-      </div>
-
-      <div className="search-card">
-        <input
-          type="text"
-          placeholder="Search Product..."
+      </Card>
+      <div className="products-toolbar">
+        <SearchInput
           value={search}
-          onChange={(e) => {
-            setSearch(e.target.value);
+          placeholder="Search product..."
+          onChange={(value) => {
+            setSearch(value);
 
-            searchProductList(e.target.value);
+            searchProductList(value);
           }}
         />
+        <div className="product-count">Showing {totalProducts} Products</div>
       </div>
-      <div className="product-count">Showing {totalProducts} Products</div>
-
       {loading ? (
-        <h3>Loading Products...</h3>
+        <Card title="Products">
+          <EmptyState text="Loading products..." />
+        </Card>
       ) : products.length === 0 ? (
-        <h3>No Products Found</h3>
+        <Card title="Products">
+          <EmptyState text="No Products Found" />
+        </Card>
       ) : (
-        <div className="product-table-card">
-          <table className="product-table">
-            <thead>
-              <tr>
-                <th>Product</th>
-                <th>Piece Price</th>
-                <th>Packing</th>
-                <th>Qty</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {products.map((product) => (
-                <tr key={product._id}>
-                  <td>{product.name}</td>
-
-                  <td>₹{product.piecePrice}</td>
-
-                  <td>{product.hasPacking ? product.packingType : "-"}</td>
-
-                  <td>{product.hasPacking ? product.packingQty : "-"}</td>
-
-                  <td>
-                    <Link to={`/products/${product._id}`}>View</Link>
-                  </td>
+        <Card title="Products">
+          <TableWrapper>
+            <table className="product-table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Units</th>
+                  <th>Action</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+
+              <tbody>
+                {products.map((product) => (
+                  <tr key={product._id}>
+                    <td>{product.name}</td>
+
+                    <td>
+                      {product.units
+                        ?.map((unit) => `${unit.type} (₹${unit.price})`)
+                        .join(", ")}
+                    </td>
+
+                    <td>
+                      <Button
+                        as={Link}
+                        to={`/products/${product._id}`}
+                        variant="secondary"
+                        size="sm"
+                      >
+                        View
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </TableWrapper>
+        </Card>
       )}
 
-      <div className="pagination">
-        <button disabled={page === 1} onClick={() => loadProducts(page - 1)}>
-          Previous
-        </button>
-
-        <span>
-          Page {page} of {totalPages}
-        </span>
-
-        <button
-          disabled={page === totalPages}
-          onClick={() => loadProducts(page + 1)}
-        >
-          Next
-        </button>
-      </div>
+      <Pagination
+        page={page}
+        totalPages={totalPages}
+        onPrevious={() => loadProducts(page - 1)}
+        onNext={() => loadProducts(page + 1)}
+      />
     </MainLayout>
   );
 }

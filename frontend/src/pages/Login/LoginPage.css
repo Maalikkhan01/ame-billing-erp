@@ -12,13 +12,9 @@
 .login-card {
   width: 100%;
   max-width: 450px;
-
-  background: white;
-
+  background: var(--surface);
   padding: 40px;
-
-  border-radius: 16px;
-
+  border-radius: var(--radius-lg);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
 }
 
@@ -50,15 +46,10 @@
 
 .login-input {
   width: 100%;
-
   padding: 12px;
-
   box-sizing: border-box;
-
   border: 1px solid #dbe2ea;
-
   border-radius: 8px;
-
   font-size: 15px;
 }
 
@@ -67,28 +58,9 @@
   border-color: #2563eb;
 }
 
-.login-btn {
+.login-submit-btn {
   width: 100%;
-
-  background: #2563eb;
-
-  color: white;
-
-  border: none;
-
-  padding: 14px;
-
-  border-radius: 8px;
-
-  font-size: 16px;
-
-  font-weight: 600;
-
-  cursor: pointer;
-}
-
-.login-btn:hover {
-  opacity: 0.95;
+  margin-top: 8px;
 }
 
 .login-footer {
