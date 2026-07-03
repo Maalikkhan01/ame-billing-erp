@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 import { searchCustomers } from "../services/customerService";
 import { searchProducts } from "../services/productService";
@@ -38,6 +38,10 @@ function useBilling({ resumeData, navigate }) {
   const [savingBill, setSavingBill] = useState(false);
   const [holdingBill, setHoldingBill] = useState(false);
 
+  const productAbortRef = useRef(null);
+
+  const SEARCH_DELAY = 800;
+
   useEffect(() => {
     if (!resumeData) return;
 
@@ -74,7 +78,7 @@ function useBilling({ resumeData, navigate }) {
       }
 
       setSelectedCustomerIndex(0);
-    }, 300);
+    }, SEARCH_DELAY);
 
     return () => clearTimeout(timer);
   }, [customerSearch]);
@@ -86,20 +90,36 @@ function useBilling({ resumeData, navigate }) {
         return;
       }
 
+      // Cancel previous request
+      if (productAbortRef.current) {
+        productAbortRef.current.abort();
+      }
+
+      const controller = new AbortController();
+
+      productAbortRef.current = controller;
+
       try {
-        const data = await searchProducts(productSearch);
+        const data = await searchProducts(productSearch, controller.signal);
 
         setProductResults(data.products || []);
       } catch (error) {
-        console.error(error);
-
-        setProductResults([]);
+        if (error.name !== "CanceledError") {
+          console.error(error);
+          setProductResults([]);
+        }
       }
 
       setSelectedProductIndex(0);
-    }, 300);
+    }, SEARCH_DELAY);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+
+      if (productAbortRef.current) {
+        productAbortRef.current.abort();
+      }
+    };
   }, [productSearch]);
 
   const addItem = () => {

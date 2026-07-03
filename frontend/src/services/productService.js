@@ -22,8 +22,10 @@ export const updateProduct = async (id, productData) => {
   return response.data;
 };
 
-export const searchProducts = async (keyword) => {
-  const response = await api.get(`/products/search?keyword=${keyword}`);
+export const searchProducts = async (keyword, signal) => {
+  const response = await api.get(`/products/search?keyword=${keyword}`, {
+    signal,
+  });
 
   return response.data;
 };
