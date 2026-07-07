@@ -19,7 +19,7 @@ function useBilling({ resumeData, navigate }) {
   const [productSearch, setProductSearch] = useState("");
 
   const [qty, setQty] = useState(1);
-
+  const [rate, setRate] = useState("");
   const [unitType, setUnitType] = useState("PIECE");
 
   const [items, setItems] = useState([]);
@@ -139,22 +139,38 @@ function useBilling({ resumeData, navigate }) {
       return;
     }
 
-    const rate = selectedUnit.price;
+    const currentQty = Number(qty);
+
+    if (currentQty <= 0) {
+      alert("Enter valid quantity");
+      return;
+    }
+
+    const currentRate = Number(rate);
+
+    if (currentRate <= 0) {
+      alert("Enter valid rate");
+      return;
+    }
     const existing = items.find(
       (item) => item.productId === product._id && item.unitType === unitType,
     );
 
     if (existing) {
       setItems(
-        items.map((item) =>
-          item.productId === product._id && item.unitType === unitType
-            ? {
-                ...item,
-                qty: item.qty + Number(qty),
-                amount: (item.qty + Number(qty)) * item.rate,
-              }
-            : item,
-        ),
+        items.map((item) => {
+          if (item.productId === product._id && item.unitType === unitType) {
+            const newQty = item.qty + currentQty;
+
+            return {
+              ...item,
+              qty: newQty,
+              amount: newQty * item.rate,
+            };
+          }
+
+          return item;
+        }),
       );
     } else {
       setItems([
@@ -163,18 +179,23 @@ function useBilling({ resumeData, navigate }) {
           productId: product._id,
           productName: product.name,
           unitType,
-          qty: Number(qty),
-          rate,
-          amount: rate * Number(qty),
+          qty: currentQty,
+          rate: currentRate,
+          amount: currentRate * currentQty,
         },
       ]);
     }
 
     setQty(1);
+    setRate("");
+
     setProductId("");
     setProductSearch("");
+
     setSelectedProduct(null);
-    setUnitType("");
+    setProductResults([]);
+    setSelectedProductIndex(0);
+    setUnitType("PIECE");
   };
 
   const removeItem = (productId, unitType) => {
@@ -184,6 +205,7 @@ function useBilling({ resumeData, navigate }) {
       ),
     );
   };
+  const subtotal = Number(rate || 0) * Number(qty || 0);
 
   const grandTotal = items.reduce((sum, item) => sum + item.amount, 0);
 
@@ -269,6 +291,11 @@ function useBilling({ resumeData, navigate }) {
 
     qty,
     setQty,
+
+    rate,
+    setRate,
+
+    subtotal,
 
     unitType,
     setUnitType,

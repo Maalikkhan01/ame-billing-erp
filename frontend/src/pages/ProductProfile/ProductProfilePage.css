@@ -84,3 +84,21 @@
     width: 100%;
   }
 }
+
+.unit-checkbox {
+  width: 120px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  cursor: pointer;
+}
+
+.unit-checkbox input {
+  width: auto !important;
+}

@@ -30,41 +30,22 @@ function ProductsPage() {
     loadProducts,
   } = useProducts();
 
+  const createDefaultUnits = () => [
+    { type: "PIECE", enabled: true, price: "" },
+    { type: "PACKET", enabled: false, price: "" },
+    { type: "GRAM", enabled: false, price: "" },
+    { type: "KG", enabled: false, price: "" },
+    { type: "SET", enabled: false, price: "" },
+    { type: "OUTER", enabled: false, price: "" },
+    { type: "BOX", enabled: false, price: "" },
+    { type: "BAG", enabled: false, price: "" },
+  ];
+
   const [name, setName] = useState("");
 
   const [description, setDescription] = useState("");
 
-  const [units, setUnits] = useState([
-    {
-      type: "PIECE",
-      enabled: true,
-      price: "",
-    },
-
-    {
-      type: "PACKET",
-      enabled: false,
-      price: "",
-    },
-
-    {
-      type: "OUTER",
-      enabled: false,
-      price: "",
-    },
-
-    {
-      type: "BOX",
-      enabled: false,
-      price: "",
-    },
-
-    {
-      type: "BAG",
-      enabled: false,
-      price: "",
-    },
-  ]);
+  const [units, setUnits] = useState(createDefaultUnits());
 
   const [search, setSearch] = useState("");
 
@@ -88,37 +69,7 @@ function ProductsPage() {
 
     setName("");
     setDescription("");
-    setUnits([
-      {
-        type: "PIECE",
-        enabled: true,
-        price: "",
-      },
-
-      {
-        type: "PACKET",
-        enabled: false,
-        price: "",
-      },
-
-      {
-        type: "OUTER",
-        enabled: false,
-        price: "",
-      },
-
-      {
-        type: "BOX",
-        enabled: false,
-        price: "",
-      },
-
-      {
-        type: "BAG",
-        enabled: false,
-        price: "",
-      },
-    ]);
+    setUnits(createDefaultUnits());
 
     nameRef.current?.focus();
   };

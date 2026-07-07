@@ -15,7 +15,7 @@ const holdBillItemSchema = new mongoose.Schema(
 
     unitType: {
       type: String,
-      enum: ["PIECE", "PACKET", "OUTER", "BOX", "BAG"],
+      enum: ["PIECE", "PACKET", "GRAM", "KG", "SET", "OUTER", "BOX", "BAG"],
       required: true,
     },
 

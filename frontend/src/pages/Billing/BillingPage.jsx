@@ -37,6 +37,8 @@ function BillingPage() {
   const [customerSearch, setCustomerSearch] = useState("");
   const [productId, setProductId] = useState("");
   const [productSearch, setProductSearch] = useState("");
+
+  const [rate, setRate] = useState("");
   const [qty, setQty] = useState(1);
   const [items, setItems] = useState([]);
   const [holdBillId, setHoldBillId] = useState(null);
@@ -166,7 +168,12 @@ function BillingPage() {
       return;
     }
 
-    const rate = selectedUnit.price;
+    const currentRate = Number(rate);
+
+    if (currentRate <= 0) {
+      alert("Enter valid rate");
+      return;
+    }
 
     const existingItem = items.find(
       (item) => item.productId === product._id && item.unitType === unitType,
@@ -193,23 +200,18 @@ function BillingPage() {
         ...items,
         {
           productId: product._id,
-
           productName: product.name,
-
           unitType,
-
-          rate,
-
+          rate: currentRate,
           qty: Number(qty),
-
-          amount: rate * Number(qty),
+          amount: currentRate * Number(qty),
         },
       ]);
     }
 
     setQty(1);
-
-    setUnitType("");
+    setRate("");
+    setUnitType("PIECE");
 
     setProductId("");
     setProductSearch("");
@@ -262,6 +264,8 @@ function BillingPage() {
       setQty(1);
       setItems([]);
       setHoldBillId(null);
+      setRate("");
+      setUnitType("PIECE");
 
       navigate("/hold-bills");
     } catch (error) {
@@ -281,6 +285,7 @@ function BillingPage() {
     );
   };
 
+  const subtotal = Number(rate || 0) * Number(qty || 0);
   const grandTotal = items.reduce((sum, item) => sum + item.amount, 0);
   // Create New Hold Bill OR Update Existing Hold Bill
   async function handleSave() {
@@ -323,6 +328,8 @@ function BillingPage() {
       setProductId("");
       setProductSearch("");
       setQty(1);
+      setRate("");
+      setUnitType("PIECE");
       setHoldBillId(null);
 
       navigate(`/invoice/${response.bill._id}`);
@@ -379,6 +386,9 @@ function BillingPage() {
         setUnitType={setUnitType}
         qty={qty}
         setQty={setQty}
+        rate={rate}
+        setRate={setRate}
+        subtotal={subtotal}
         addItem={addItem}
       />
 

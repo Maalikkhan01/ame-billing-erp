@@ -29,9 +29,15 @@ function ProductSelector({
   qty,
   setQty,
 
+  rate,
+  setRate,
+
+  subtotal,
+
   addItem,
 }) {
   const itemRefs = useRef([]);
+  const rateRef = useRef(null);
 
   useEffect(() => {
     itemRefs.current[selectedProductIndex]?.scrollIntoView({
@@ -80,9 +86,11 @@ function ProductSelector({
 
               if (product.units?.length > 0) {
                 setUnitType(product.units[0].type);
+                setRate(product.units[0].price);
               }
 
-              unitRef.current?.focus();
+              rateRef.current?.focus();
+              rateRef.current?.select();
             }
           }
 
@@ -110,9 +118,11 @@ function ProductSelector({
 
                 if (product.units?.length > 0) {
                   setUnitType(product.units[0].type);
+                  setRate(product.units[0].price);
                 }
 
-                unitRef.current?.focus();
+                rateRef.current?.focus();
+                rateRef.current?.select();
               }}
             >
               {product.name}
@@ -129,20 +139,48 @@ function ProductSelector({
             as="select"
             ref={unitRef}
             value={unitType}
-            onChange={(e) => setUnitType(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+
+              setUnitType(value);
+
+              const selectedUnit = selectedProduct?.units?.find(
+                (unit) => unit.type === value,
+              );
+
+              if (selectedUnit) {
+                setRate(selectedUnit.price);
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                rateRef.current?.focus();
+              }
+            }}
+          >
+            {selectedProduct?.units?.map((unit) => (
+              <option key={unit.type} value={unit.type}>
+                {unit.type} (₹{unit.price})
+              </option>
+            ))}
+          </FormField>
+        </div>
+        <div>
+          <label>Rate</label>
+
+          <FormField
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
                 qtyRef.current?.focus();
               }
             }}
-          >
-            {selectedProduct?.units?.map((unit) => (
-              <option key={unit.type} value={unit.type}>
-                {unit.type}
-              </option>
-            ))}
-          </FormField>
+            ref={rateRef}
+            type="number"
+            value={rate}
+            onChange={(e) => setRate(e.target.value)}
+          />
         </div>
 
         <div>
@@ -160,6 +198,11 @@ function ProductSelector({
               }
             }}
           />
+        </div>
+
+        <div className="billing-subtotal">
+          <strong>Subtotal :</strong> ₹
+          {new Intl.NumberFormat("en-IN").format(subtotal)}
         </div>
       </div>
 

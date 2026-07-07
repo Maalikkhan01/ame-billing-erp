@@ -13,6 +13,17 @@ import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
 import FormField from "../../components/ui/FormField";
 
+const ALL_UNITS = [
+  "PIECE",
+  "PACKET",
+  "GRAM",
+  "KG",
+  "SET",
+  "OUTER",
+  "BOX",
+  "BAG",
+];
+
 function ProductProfilePage() {
   const { id } = useParams();
 
@@ -41,11 +52,15 @@ function ProductProfilePage() {
       name: product.name,
       description: product.description || "",
 
-      units:
-        product.units?.map((unit) => ({
-          type: unit.type,
-          price: unit.price,
-        })) || [],
+      units: ALL_UNITS.map((type) => {
+        const existingUnit = product.units?.find((unit) => unit.type === type);
+
+        return {
+          type,
+          enabled: !!existingUnit,
+          price: existingUnit?.price || "",
+        };
+      }),
     });
 
     setIsEditing(true);
@@ -56,10 +71,12 @@ function ProductProfilePage() {
       await updateProduct(id, {
         ...formData,
 
-        units: formData.units.map((unit) => ({
-          type: unit.type,
-          price: Number(unit.price),
-        })),
+        units: formData.units
+          .filter((unit) => unit.enabled)
+          .map((unit) => ({
+            type: unit.type,
+            price: Number(unit.price),
+          })),
       });
 
       await refreshProduct();
@@ -160,26 +177,50 @@ function ProductProfilePage() {
             />
 
             <div className="units-editor">
-              <h3>Units</h3>
+              <h3>Available Units</h3>
 
               {formData.units.map((unit, index) => (
                 <div key={unit.type} className="unit-edit-row">
-                  <span>{unit.type}</span>
+                  <label className="unit-checkbox">
+                    <input
+                      type="checkbox"
+                      checked={unit.enabled}
+                      onChange={(e) => {
+                        const updated = [...formData.units];
 
-                  <FormField
-                    type="number"
-                    value={unit.price}
-                    onChange={(e) => {
-                      const updated = [...formData.units];
+                        updated[index].enabled = e.target.checked;
 
-                      updated[index].price = e.target.value;
+                        if (!e.target.checked) {
+                          updated[index].price = "";
+                        }
 
-                      setFormData({
-                        ...formData,
-                        units: updated,
-                      });
-                    }}
-                  />
+                        setFormData({
+                          ...formData,
+                          units: updated,
+                        });
+                      }}
+                    />
+
+                    {unit.type}
+                  </label>
+
+                  {unit.enabled && (
+                    <FormField
+                      type="number"
+                      placeholder={`${unit.type} Price`}
+                      value={unit.price}
+                      onChange={(e) => {
+                        const updated = [...formData.units];
+
+                        updated[index].price = e.target.value;
+
+                        setFormData({
+                          ...formData,
+                          units: updated,
+                        });
+                      }}
+                    />
+                  )}
                 </div>
               ))}
             </div>

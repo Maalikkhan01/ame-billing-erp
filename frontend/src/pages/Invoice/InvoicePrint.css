@@ -9,25 +9,30 @@
 
 .invoice-page {
   background: #fff;
-  padding: 0 2mm !important;
-  margin-bottom: 10px;
-  border: 1px solid #000;
+  padding: 4mm !important;
   box-shadow: none;
 }
 
 .invoice-header {
-  padding-bottom: 2px;
+  padding-bottom: 4px;
   margin-bottom: 4px;
 }
 
 .invoice-header h2 {
-  font-size: 20px;
-  margin: 0 0 2px;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
 }
 
 .invoice-header p {
-  margin: 1px 0;
-  font-size: 11px;
+  margin: 3px 0;
+  font-size: 12px;
+}
+
+.customer-name {
+  font-size: 14px;
+  font-weight: bold;
 }
 
 .invoice-meta {
@@ -36,6 +41,7 @@
 
 .invoice-customer-info {
   text-align: right;
+  line-height: 1.35;
 }
 
 /* =========================
@@ -51,10 +57,10 @@
 
 .invoice-table th {
   border: 1px solid #000;
-  text-align: center!important;
+  text-align: center !important;
   background: transparent;
   padding: 1px 3px;
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1;
 }
 
@@ -92,20 +98,19 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .invoice-total-box {
-  margin-top: 4px;
+  margin-top: 3px;
   border: 1px solid #000;
-  padding: 2px;
-
+  padding: 1px 3px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 
   font-weight: bold;
-  font-size: 12px;
+  font-size: 16px;
 }
 
 .invoice-page-spacer {
@@ -113,12 +118,13 @@
 }
 
 .grand-total {
-  font-size: 12px;
+  font-size: 16px;
 }
 
 .page-footer {
   text-align: center;
   margin-top: 4px;
+  padding-top: 3px;
   font-size: 11px;
   color: #555;
 }
