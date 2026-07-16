@@ -30,9 +30,34 @@ const billItemSchema = new mongoose.Schema(
       required: true,
     },
 
+    mrp: {
+      type: Number,
+      default: 0,
+    },
+
     amount: {
       type: Number,
       required: true,
+    },
+
+    costPrice: {
+      type: Number,
+      default: 0,
+    },
+
+    profitPerUnit: {
+      type: Number,
+      default: 0,
+    },
+
+    totalProfit: {
+      type: Number,
+      default: 0,
+    },
+
+    returnedQty: {
+      type: Number,
+      default: 0,
     },
   },
   { _id: false },
@@ -57,6 +82,11 @@ const billSchema = new mongoose.Schema(
     totalAmount: {
       type: Number,
       required: true,
+    },
+
+    totalProfit: {
+      type: Number,
+      default: 0,
     },
 
     paidAmount: {
@@ -84,7 +114,24 @@ const billSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+
+    status: {
+      type: String,
+      enum: ["ACTIVE", "CANCELLED", "PARTIAL_RETURN", "FULL_RETURN"],
+      default: "ACTIVE",
+    },
+
+    returnedAmount: {
+      type: Number,
+      default: 0,
+    },
+
+    cancelReason: {
+      type: String,
+      default: "",
+    },
   },
+
   {
     timestamps: true,
   },

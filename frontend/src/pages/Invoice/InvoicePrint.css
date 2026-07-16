@@ -98,7 +98,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 .invoice-total-box {
@@ -123,7 +123,7 @@
 
 .page-footer {
   text-align: center;
-  margin-top: 4px;
+  margin-top: 3px;
   padding-top: 3px;
   font-size: 11px;
   color: #555;

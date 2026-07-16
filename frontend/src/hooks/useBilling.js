@@ -166,6 +166,7 @@ function useBilling({ resumeData, navigate }) {
               ...item,
               qty: newQty,
               amount: newQty * item.rate,
+              totalProfit: item.profitPerUnit * newQty,
             };
           }
 
@@ -177,11 +178,29 @@ function useBilling({ resumeData, navigate }) {
         ...items,
         {
           productId: product._id,
+
           productName: product.name,
+
           unitType,
+
+          mrp: Number(selectedUnit.mrp || 0),
+
+          costPrice: Number(selectedUnit.costPrice || 0),
+
           qty: currentQty,
+
           rate: currentRate,
+
           amount: currentRate * currentQty,
+
+          profitPerUnit: Math.max(
+            currentRate - Number(selectedUnit.costPrice || 0),
+            0,
+          ),
+
+          totalProfit:
+            Math.max(currentRate - Number(selectedUnit.costPrice || 0), 0) *
+            currentQty,
         },
       ]);
     }
@@ -208,6 +227,7 @@ function useBilling({ resumeData, navigate }) {
   const subtotal = Number(rate || 0) * Number(qty || 0);
 
   const grandTotal = items.reduce((sum, item) => sum + item.amount, 0);
+  const totalProfit = items.reduce((sum, item) => sum + item.totalProfit, 0);
 
   const holdBill = async () => {
     if (holdingBill) return;
@@ -220,6 +240,7 @@ function useBilling({ resumeData, navigate }) {
         customerName: selectedCustomer?.name || customerSearch,
         items,
         grandTotal,
+        totalProfit,
       };
 
       if (holdBillId) {
@@ -245,9 +266,20 @@ function useBilling({ resumeData, navigate }) {
 
         items: items.map((item) => ({
           productId: item.productId,
-          qty: item.qty,
-          rate: item.rate,
+
           unitType: item.unitType,
+
+          qty: item.qty,
+
+          rate: item.rate,
+
+          mrp: item.mrp,
+
+          costPrice: item.costPrice,
+
+          profitPerUnit: item.profitPerUnit,
+
+          totalProfit: item.totalProfit,
         })),
       });
 
@@ -304,6 +336,7 @@ function useBilling({ resumeData, navigate }) {
     setItems,
 
     grandTotal,
+    totalProfit,
 
     addItem,
     removeItem,

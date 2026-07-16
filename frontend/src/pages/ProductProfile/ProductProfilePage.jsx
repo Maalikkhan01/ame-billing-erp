@@ -58,6 +58,11 @@ function ProductProfilePage() {
         return {
           type,
           enabled: !!existingUnit,
+
+          mrp: existingUnit?.mrp || "",
+
+          costPrice: existingUnit?.costPrice || "",
+
           price: existingUnit?.price || "",
         };
       }),
@@ -75,6 +80,11 @@ function ProductProfilePage() {
           .filter((unit) => unit.enabled)
           .map((unit) => ({
             type: unit.type,
+
+            mrp: Number(unit.mrp || 0),
+
+            costPrice: Number(unit.costPrice || 0),
+
             price: Number(unit.price),
           })),
       });
@@ -139,7 +149,30 @@ function ProductProfilePage() {
 
               {product.units?.map((unit) => (
                 <p key={unit.type} className="product-info">
-                  <strong>{unit.type}:</strong> ₹{unit.price}
+                  <strong>{unit.type}</strong>
+                  <br />
+                  MRP : ₹{unit.mrp}
+                  <br />
+                  Cost : ₹{unit.costPrice}
+                  <br />
+                  Selling : ₹{unit.price}
+                  <br />
+                  Profit : ₹
+                  {Math.max(
+                    Number(unit.price || 0) - Number(unit.costPrice || 0),
+                    0,
+                  )}
+                  <br />
+                  Margin :{" "}
+                  {Number(unit.price || 0) > 0
+                    ? (
+                        ((Number(unit.price || 0) -
+                          Number(unit.costPrice || 0)) /
+                          Number(unit.price || 0)) *
+                        100
+                      ).toFixed(1)
+                    : 0}
+                  %
                 </p>
               ))}
             </div>
@@ -191,6 +224,10 @@ function ProductProfilePage() {
                         updated[index].enabled = e.target.checked;
 
                         if (!e.target.checked) {
+                          updated[index].mrp = "";
+
+                          updated[index].costPrice = "";
+
                           updated[index].price = "";
                         }
 
@@ -205,21 +242,84 @@ function ProductProfilePage() {
                   </label>
 
                   {unit.enabled && (
-                    <FormField
-                      type="number"
-                      placeholder={`${unit.type} Price`}
-                      value={unit.price}
-                      onChange={(e) => {
-                        const updated = [...formData.units];
+                    <div className="unit-fields">
+                      <FormField
+                        type="number"
+                        placeholder="MRP"
+                        value={unit.mrp}
+                        onChange={(e) => {
+                          const updated = [...formData.units];
 
-                        updated[index].price = e.target.value;
+                          updated[index].mrp = e.target.value;
 
-                        setFormData({
-                          ...formData,
-                          units: updated,
-                        });
-                      }}
-                    />
+                          setFormData({
+                            ...formData,
+                            units: updated,
+                          });
+                        }}
+                      />
+
+                      <FormField
+                        type="number"
+                        placeholder="Cost Price"
+                        value={unit.costPrice}
+                        onChange={(e) => {
+                          const updated = [...formData.units];
+
+                          updated[index].costPrice = e.target.value;
+
+                          setFormData({
+                            ...formData,
+                            units: updated,
+                          });
+                        }}
+                      />
+
+                      <FormField
+                        type="number"
+                        placeholder="Selling Price"
+                        value={unit.price}
+                        onChange={(e) => {
+                          const updated = [...formData.units];
+
+                          updated[index].price = e.target.value;
+
+                          setFormData({
+                            ...formData,
+                            units: updated,
+                          });
+                        }}
+                      />
+
+                      <div className="profit-preview">
+                        <span>
+                          Profit :
+                          <strong>
+                            ₹
+                            {Math.max(
+                              Number(unit.price || 0) -
+                                Number(unit.costPrice || 0),
+                              0,
+                            )}
+                          </strong>
+                        </span>
+
+                        <span>
+                          Margin :
+                          <strong>
+                            {Number(unit.price || 0) > 0
+                              ? (
+                                  ((Number(unit.price || 0) -
+                                    Number(unit.costPrice || 0)) /
+                                    Number(unit.price || 0)) *
+                                  100
+                                ).toFixed(1)
+                              : 0}
+                            %
+                          </strong>
+                        </span>
+                      </div>
+                    </div>
                   )}
                 </div>
               ))}

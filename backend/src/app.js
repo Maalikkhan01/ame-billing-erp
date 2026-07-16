@@ -9,6 +9,8 @@ const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
 // Routes
 const authRoutes = require("./routes/authRoutes");
+const backupRoutes = require("./routes/backupRoutes");
+const restoreRoutes = require("./routes/restoreRoutes");
 const customerRoutes = require("./routes/customerRoutes");
 const customerProfileRoutes = require("./routes/customerProfileRoutes");
 const productRoutes = require("./routes/productRoutes");
@@ -21,6 +23,9 @@ const statementRoutes = require("./routes/statementRoutes");
 const userRoutes = require("./routes/userRoutes");
 const activityRoutes = require("./routes/activityRoutes");
 const securityRoutes = require("./routes/securityRoutes");
+const returnRoutes = require("./routes/returnRoutes");
+const adjustmentRoutes = require("./routes/adjustmentRoutes");
+const cancelBillRoutes = require("./routes/cancelBillRoutes");
 
 const app = express();
 
@@ -45,6 +50,8 @@ app.get("/", (req, res) => {
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/backup", backupRoutes);
+app.use("/api/restore", restoreRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/customer-profile", customerProfileRoutes);
 app.use("/api/products", productRoutes);
@@ -57,6 +64,9 @@ app.use("/api/statements", statementRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/admin", activityRoutes);
 app.use("/api/security", securityRoutes);
+app.use("/api/returns", returnRoutes);
+app.use("/api/adjustments", adjustmentRoutes);
+app.use("/api/cancel-bills", cancelBillRoutes);
 
 // Error Middlewares (Always Last)
 app.use(notFound);

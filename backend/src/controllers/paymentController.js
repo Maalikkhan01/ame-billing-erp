@@ -1,5 +1,6 @@
 const Customer = require("../models/Customer");
-const Ledger = require("../models/Ledger");
+const LedgerService = require("../services/ledgerService");
+const CustomerBalanceService = require("../services/customerBalanceService");
 
 const receivePayment = async (req, res) => {
   try {
@@ -28,27 +29,24 @@ const receivePayment = async (req, res) => {
       });
     }
 
-    customer.currentDue -= amount;
-
-    if (customer.currentDue < 0) {
-      customer.currentDue = 0;
-    }
-
-    await customer.save();
-
-    const entry = await Ledger.create({
+    const entry = await LedgerService.createPaymentEntry({
       customerId,
-      type: "PAYMENT",
       amount,
-      note,
       paymentMode,
-      balanceAfter: customer.currentDue,
+      note,
+      balanceAfter: undefined,
       createdBy: req.user._id,
     });
+
+    await CustomerBalanceService.refreshCustomerBalance(customerId);
+
+    const currentDue =
+      await CustomerBalanceService.getCustomerBalance(customerId);
 
     res.json({
       success: true,
       entry,
+      currentDue,
     });
   } catch (error) {
     res.status(500).json({

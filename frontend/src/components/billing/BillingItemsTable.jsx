@@ -43,8 +43,12 @@ function BillingItemsTable({ items, setItems, removeItem }) {
                             rowIndex === index
                               ? {
                                   ...row,
+
                                   qty: newQty,
+
                                   amount: row.rate * newQty,
+
+                                  totalProfit: row.profitPerUnit * newQty,
                                 }
                               : row,
                           ),
@@ -67,8 +71,19 @@ function BillingItemsTable({ items, setItems, removeItem }) {
                             rowIndex === index
                               ? {
                                   ...row,
+
                                   rate: newRate,
+
                                   amount: newRate * row.qty,
+
+                                  profitPerUnit: Math.max(
+                                    newRate - row.costPrice,
+                                    0,
+                                  ),
+
+                                  totalProfit:
+                                    Math.max(newRate - row.costPrice, 0) *
+                                    row.qty,
                                 }
                               : row,
                           ),

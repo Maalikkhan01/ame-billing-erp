@@ -18,18 +18,44 @@ const productSchema = new mongoose.Schema(
       {
         type: {
           type: String,
-
           enum: ["PIECE", "PACKET", "GRAM", "KG", "SET", "OUTER", "BOX", "BAG"],
-
           required: true,
         },
 
         price: {
           type: Number,
-
           required: true,
-
           min: 1,
+        },
+
+        mrp: {
+          type: Number,
+          default: 0,
+          min: 0,
+        },
+
+        costPrice: {
+          type: Number,
+          default: 0,
+          min: 0,
+        },
+
+        openingStock: {
+          type: Number,
+          default: 0,
+          min: 0,
+        },
+
+        currentStock: {
+          type: Number,
+          default: 0,
+          min: 0,
+        },
+
+        lowStockAlert: {
+          type: Number,
+          default: 5,
+          min: 0,
         },
       },
     ],

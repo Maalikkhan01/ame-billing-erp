@@ -361,3 +361,88 @@
     page-break-inside: avoid;
   }
 }
+
+.ledger-sale {
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.ledger-payment {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.ledger-return {
+  color: #ea580c;
+  font-weight: 600;
+}
+
+.ledger-adjustment {
+  color: #7c3aed;
+  font-weight: 600;
+}
+
+.ledger-cancelled {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.ledger-default {
+  color: #374151;
+}
+
+.mode-cash,
+.mode-upi,
+.mode-bank,
+.mode-default {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.mode-cash {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.mode-upi {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.mode-bank {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+.mode-default {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.ledger-credit {
+  color: #0f766e;
+  font-weight: 600;
+}
+
+.ledger-debit {
+  color: #b45309;
+  font-weight: 600;
+}
+
+.ledger-opening {
+  color: #1d4ed8;
+  font-weight: 600;
+}
+
+.ledger-writeoff {
+  color: #9333ea;
+  font-weight: 600;
+}
+
+.ledger-refund {
+  color: #be123c;
+  font-weight: 600;
+}

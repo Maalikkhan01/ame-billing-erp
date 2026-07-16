@@ -1,0 +1,41 @@
+.backup-card {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.backup-buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.backup-preview {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  background: var(--surface-hover);
+}
+
+.backup-preview h4 {
+  margin-bottom: 12px;
+}
+
+.backup-preview p {
+  margin: 6px 0;
+}
+
+.backup-error {
+  color: var(--danger);
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .backup-buttons {
+    flex-direction: column;
+  }
+
+  .backup-buttons .app-btn {
+    width: 100%;
+  }
+}

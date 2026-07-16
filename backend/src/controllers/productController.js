@@ -20,7 +20,7 @@ const createProduct = async (req, res) => {
       });
     }
 
-    for (const unit of units) {
+    for (const unit of req.body.units) {
       if (!unit.type) {
         return res.status(400).json({
           success: false,
@@ -32,6 +32,34 @@ const createProduct = async (req, res) => {
         return res.status(400).json({
           success: false,
           message: `Invalid price for ${unit.type}`,
+        });
+      }
+
+      if (unit.costPrice < 0) {
+        return res.status(400).json({
+          success: false,
+          message: `Invalid cost price for ${unit.type}`,
+        });
+      }
+
+      if (unit.mrp < 0) {
+        return res.status(400).json({
+          success: false,
+          message: `Invalid MRP for ${unit.type}`,
+        });
+      }
+
+      if (Number(unit.costPrice) > Number(unit.price)) {
+        return res.status(400).json({
+          success: false,
+          message: `${unit.type} cost price cannot be greater than selling price`,
+        });
+      }
+
+      if (unit.mrp && Number(unit.price) > Number(unit.mrp)) {
+        return res.status(400).json({
+          success: false,
+          message: `${unit.type} selling price cannot exceed MRP`,
         });
       }
     }
@@ -53,8 +81,19 @@ const createProduct = async (req, res) => {
 
     const product = await Product.create({
       name: name.trim(),
+
       description,
-      units,
+
+      units: units.map((unit) => ({
+        ...unit,
+
+        openingStock: Number(unit.openingStock || 0),
+
+        currentStock: Number(unit.openingStock || 0),
+
+        lowStockAlert: Number(unit.lowStockAlert || 5),
+      })),
+
       createdBy: req.user._id,
     });
 
@@ -120,7 +159,11 @@ const searchProducts = async (req, res) => {
         $regex: keyword,
         $options: "i",
       },
-    }).limit(50);
+    })
+      .sort({
+        name: 1,
+      })
+      .limit(50);
 
     res.json({
       success: true,
@@ -209,6 +252,33 @@ const updateProduct = async (req, res) => {
           return res.status(400).json({
             success: false,
             message: `Invalid price for ${unit.type}`,
+          });
+        }
+        if (unit.costPrice < 0) {
+          return res.status(400).json({
+            success: false,
+            message: `Invalid cost price for ${unit.type}`,
+          });
+        }
+
+        if (unit.mrp < 0) {
+          return res.status(400).json({
+            success: false,
+            message: `Invalid MRP for ${unit.type}`,
+          });
+        }
+
+        if (Number(unit.costPrice) > Number(unit.price)) {
+          return res.status(400).json({
+            success: false,
+            message: `${unit.type} cost price cannot be greater than selling price`,
+          });
+        }
+
+        if (unit.mrp && Number(unit.price) > Number(unit.mrp)) {
+          return res.status(400).json({
+            success: false,
+            message: `${unit.type} selling price cannot exceed MRP`,
           });
         }
       }

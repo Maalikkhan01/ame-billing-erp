@@ -31,14 +31,62 @@ function ProductsPage() {
   } = useProducts();
 
   const createDefaultUnits = () => [
-    { type: "PIECE", enabled: true, price: "" },
-    { type: "PACKET", enabled: false, price: "" },
-    { type: "GRAM", enabled: false, price: "" },
-    { type: "KG", enabled: false, price: "" },
-    { type: "SET", enabled: false, price: "" },
-    { type: "OUTER", enabled: false, price: "" },
-    { type: "BOX", enabled: false, price: "" },
-    { type: "BAG", enabled: false, price: "" },
+    {
+      type: "PIECE",
+      enabled: true,
+      mrp: "",
+      costPrice: "",
+      price: "",
+    },
+    {
+      type: "PACKET",
+      enabled: false,
+      mrp: "",
+      costPrice: "",
+      price: "",
+    },
+    {
+      type: "GRAM",
+      enabled: false,
+      mrp: "",
+      costPrice: "",
+      price: "",
+    },
+    {
+      type: "KG",
+      enabled: false,
+      mrp: "",
+      costPrice: "",
+      price: "",
+    },
+    {
+      type: "SET",
+      enabled: false,
+      mrp: "",
+      costPrice: "",
+      price: "",
+    },
+    {
+      type: "OUTER",
+      enabled: false,
+      mrp: "",
+      costPrice: "",
+      price: "",
+    },
+    {
+      type: "BOX",
+      enabled: false,
+      mrp: "",
+      costPrice: "",
+      price: "",
+    },
+    {
+      type: "BAG",
+      enabled: false,
+      mrp: "",
+      costPrice: "",
+      price: "",
+    },
   ];
 
   const [name, setName] = useState("");
@@ -55,17 +103,23 @@ function ProductsPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await addProduct({
+    const productData = {
       name,
       description,
-
       units: units
         .filter((unit) => unit.enabled)
         .map((unit) => ({
           type: unit.type,
+          mrp: Number(unit.mrp || 0),
+          costPrice: Number(unit.costPrice || 0),
           price: Number(unit.price),
+
+          openingStock: Number(unit.openingStock || 0),
+          lowStockAlert: Number(unit.lowStockAlert || 5),
         })),
-    });
+    };
+
+    await addProduct(productData);
 
     setName("");
     setDescription("");
@@ -123,6 +177,8 @@ function ProductsPage() {
                         updated[index].enabled = e.target.checked;
 
                         if (!e.target.checked) {
+                          updated[index].mrp = "";
+                          updated[index].costPrice = "";
                           updated[index].price = "";
                         }
 
@@ -134,18 +190,75 @@ function ProductsPage() {
                   </label>
 
                   {unit.enabled && (
-                    <FormField
-                      type="number"
-                      placeholder={`${unit.type} Price`}
-                      value={unit.price}
-                      onChange={(e) => {
-                        const updated = [...units];
+                    <div className="unit-fields">
+                      <FormField
+                        type="number"
+                        placeholder="MRP"
+                        value={unit.mrp}
+                        onChange={(e) => {
+                          const updated = [...units];
 
-                        updated[index].price = e.target.value;
+                          updated[index].mrp = e.target.value;
 
-                        setUnits(updated);
-                      }}
-                    />
+                          setUnits(updated);
+                        }}
+                      />
+
+                      <FormField
+                        type="number"
+                        placeholder="Cost Price"
+                        value={unit.costPrice}
+                        onChange={(e) => {
+                          const updated = [...units];
+
+                          updated[index].costPrice = e.target.value;
+
+                          setUnits(updated);
+                        }}
+                      />
+
+                      <FormField
+                        type="number"
+                        placeholder="Selling Price"
+                        value={unit.price}
+                        onChange={(e) => {
+                          const updated = [...units];
+
+                          updated[index].price = e.target.value;
+
+                          setUnits(updated);
+                        }}
+                      />
+
+                      <div className="profit-preview">
+                        <span>
+                          Profit :
+                          <strong>
+                            ₹
+                            {Math.max(
+                              Number(unit.price || 0) -
+                                Number(unit.costPrice || 0),
+                              0,
+                            )}
+                          </strong>
+                        </span>
+
+                        <span>
+                          Margin :
+                          <strong>
+                            {Number(unit.price || 0) > 0
+                              ? (
+                                  ((Number(unit.price || 0) -
+                                    Number(unit.costPrice || 0)) /
+                                    Number(unit.price || 0)) *
+                                  100
+                                ).toFixed(1)
+                              : 0}
+                            %
+                          </strong>
+                        </span>
+                      </div>
+                    </div>
                   )}
                 </div>
               ))}
@@ -196,7 +309,10 @@ function ProductsPage() {
 
                     <td>
                       {product.units
-                        ?.map((unit) => `${unit.type} (₹${unit.price})`)
+                        ?.map(
+                          (unit) =>
+                            `${unit.type} | Cost ₹${unit.costPrice} | Sell ₹${unit.price}`,
+                        )
                         .join(", ")}
                     </td>
 

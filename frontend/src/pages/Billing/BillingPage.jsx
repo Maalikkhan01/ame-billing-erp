@@ -188,6 +188,7 @@ function BillingPage() {
             ...item,
             qty: newQty,
             amount: newQty * item.rate,
+            totalProfit: item.profitPerUnit * newQty,
           };
         }
 
@@ -287,6 +288,10 @@ function BillingPage() {
 
   const subtotal = Number(rate || 0) * Number(qty || 0);
   const grandTotal = items.reduce((sum, item) => sum + item.amount, 0);
+  const totalProfit = items.reduce(
+    (sum, item) => sum + (item.totalProfit || 0),
+    0,
+  );
   // Create New Hold Bill OR Update Existing Hold Bill
   async function handleSave() {
     if (savingBill) return;
@@ -367,7 +372,11 @@ function BillingPage() {
 
         {/* Summary Card */}
 
-        <BillSummaryCard totalItems={items.length} grandTotal={grandTotal} />
+        <BillSummaryCard
+          totalItems={items.length}
+          grandTotal={grandTotal}
+          totalProfit={totalProfit}
+        />
       </div>
       <ProductSelector
         productSearchRef={productSearchRef}

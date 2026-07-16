@@ -1,0 +1,39 @@
+.bill-details-grid {
+  display: grid;
+
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+
+  gap: 20px;
+}
+
+.bill-details-grid strong {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: var(--text-secondary);
+}
+
+.bill-details-grid p {
+  font-size: 16px;
+
+  font-weight: 600;
+}
+
+.bill-items-table {
+  width: 100%;
+}
+
+.bill-actions {
+  display: flex;
+
+  gap: 12px;
+
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .bill-actions {
+    flex-direction: column;
+  }
+}

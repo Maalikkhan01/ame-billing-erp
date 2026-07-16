@@ -1,40 +1,24 @@
-const Ledger = require("../models/Ledger");
-const Customer = require("../models/Customer");
+const StatementService = require("../services/statementService");
 
-const customerStatement =
-  async (req, res) => {
+const customerStatement = async (req, res) => {
+  try {
+    const result = await StatementService.getCustomerStatement(
+      req.params.customerId,
+    );
 
-    try {
-
-      const customer =
-        await Customer.findById(
-          req.params.customerId
-        );
-
-      const ledger =
-        await Ledger.find({
-          customerId:
-            req.params.customerId,
-        }).sort({
-          createdAt: 1,
-        });
-
-      res.json({
-        success: true,
-        customer,
-        ledger,
-      });
-
-    } catch (error) {
-
-      res.status(500).json({
-        success: false,
-        message:
-          error.message,
-      });
-
-    }
-  };
+    res.json({
+      success: true,
+      customer: result.customer,
+      currentDue: result.currentDue,
+      transactions: result.transactions,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
 module.exports = {
   customerStatement,

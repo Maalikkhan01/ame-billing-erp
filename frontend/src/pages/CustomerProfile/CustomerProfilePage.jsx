@@ -4,11 +4,17 @@ import { Link } from "react-router-dom";
 import MainLayout from "../../components/layout/MainLayout";
 import "./CustomerProfile.css";
 import useCustomerProfile from "../../hooks/useCustomerProfile";
+import useAdjustment from "../../hooks/useAdjustment";
+import AdjustmentModal from "../../components/adjustment/AdjustmentModal";
 import { useReceivePayment } from "../../hooks/useReceivePayment";
+import {
+  getLedgerLabel,
+  getLedgerColor,
+  getPaymentModeClass,
+} from "../../utils/ledgerUtils";
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
 import TableWrapper from "../../components/ui/TableWrapper";
-
 import FormField from "../../components/ui/FormField";
 
 function CustomerProfilePage() {
@@ -17,6 +23,8 @@ function CustomerProfilePage() {
   const { profile, loading, refreshProfile } = useCustomerProfile(id);
 
   const [amount, setAmount] = useState("");
+
+  const [adjustmentOpen, setAdjustmentOpen] = useState(false);
 
   const [note, setNote] = useState("");
 
@@ -33,6 +41,7 @@ function CustomerProfilePage() {
   const paymentModeRef = useRef(null);
 
   const { submitPayment, loading: paymentLoading } = useReceivePayment();
+  const { submitAdjustment, loading: adjustmentLoading } = useAdjustment();
 
   if (loading) {
     return (
@@ -53,10 +62,6 @@ function CustomerProfilePage() {
   }
 
   const { customer, summary, bills, ledger } = profile;
-  const totalPayment = ledger
-
-    .filter((item) => item.type === "PAYMENT")
-    .reduce((sum, item) => sum + item.amount, 0);
 
   const filteredLedger = ledger.filter((entry) => {
     const entryDate = new Date(entry.createdAt);
@@ -155,7 +160,7 @@ function CustomerProfilePage() {
         <Card className="profile-summary-card">
           <h3>Total Payment</h3>
 
-          <h2>₹{totalPayment.toLocaleString("en-IN")}</h2>
+          <h2>₹{(summary.totalPayment || 0).toLocaleString("en-IN")}</h2>
         </Card>
 
         <Card className="profile-summary-card">
@@ -165,9 +170,15 @@ function CustomerProfilePage() {
         </Card>
 
         <Card className="profile-summary-card">
-          <h3>Average Bill</h3>
+          <h3>Total Return</h3>
 
-          <h2>₹{(summary.averageBill || 0).toLocaleString("en-IN")}</h2>
+          <h2>₹{(summary.totalReturn || 0).toLocaleString("en-IN")}</h2>
+        </Card>
+
+        <Card className="profile-summary-card">
+          <h3>Total Adjustment</h3>
+
+          <h2>₹{(summary.totalAdjustment || 0).toLocaleString("en-IN")}</h2>
         </Card>
 
         <Card className="profile-summary-card">
@@ -175,7 +186,7 @@ function CustomerProfilePage() {
 
           <h2>
             {summary.lastPurchase
-              ? new Date(summary.lastPurchase).toLocaleDateString()
+              ? new Date(summary.lastPurchase).toLocaleDateString("en-IN")
               : "-"}
           </h2>
         </Card>
@@ -186,9 +197,25 @@ function CustomerProfilePage() {
         <div className="payment-header">
           <h2>Receive Payment</h2>
 
-          <Button variant="secondary" onClick={() => window.print()}>
-            Print Statement
-          </Button>
+          <div
+            style={{
+              display: "flex",
+              gap: "10px",
+              flexWrap: "wrap",
+            }}
+          >
+            <Button
+              variant="secondary"
+              onClick={() => setAdjustmentOpen(true)}
+              disabled={summary.currentDue <= 0}
+            >
+              Adjustment
+            </Button>
+
+            <Button variant="secondary" onClick={() => window.print()}>
+              Print Statement
+            </Button>
+          </div>
         </div>
         <div className="payment-form-grid">
           <FormField
@@ -324,6 +351,31 @@ function CustomerProfilePage() {
           >
             Payments
           </Button>
+          <Button
+            variant={ledgerFilter === "SALE_RETURN" ? "primary" : "secondary"}
+            size="sm"
+            onClick={() => setLedgerFilter("SALE_RETURN")}
+          >
+            Returns
+          </Button>
+
+          <Button
+            variant={ledgerFilter === "ADJUSTMENT" ? "primary" : "secondary"}
+            size="sm"
+            onClick={() => setLedgerFilter("ADJUSTMENT")}
+          >
+            Adjustments
+          </Button>
+
+          <Button
+            variant={
+              ledgerFilter === "CANCELLED_BILL" ? "primary" : "secondary"
+            }
+            size="sm"
+            onClick={() => setLedgerFilter("CANCELLED_BILL")}
+          >
+            Cancelled
+          </Button>
         </div>
 
         {/* DATE FILTER */}
@@ -375,7 +427,13 @@ function CustomerProfilePage() {
                 <th>Remark</th>
                 <th>Mode</th>
                 <th>Sale</th>
+
                 <th>Payment</th>
+
+                <th>Return</th>
+
+                <th>Adjustment</th>
+
                 <th>Balance</th>
               </tr>
             </thead>
@@ -383,7 +441,7 @@ function CustomerProfilePage() {
             <tbody>
               {filteredLedger.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="empty-cell">
+                  <td colSpan="9" className="empty-cell">
                     No Ledger Records Found
                   </td>
                 </tr>
@@ -399,21 +457,49 @@ function CustomerProfilePage() {
                     </td>
 
                     <td>
-                      {entry.type === "SALE"
-                        ? "Invoice Sale"
-                        : "Payment Received"}
+                      <span className={getLedgerColor(entry.type)}>
+                        {getLedgerLabel(entry.type)}
+                      </span>
                     </td>
-                    <td className="remark-cell">{entry.note || "-"}</td>
-
-                    <td>{entry.paymentMode || "-"}</td>
-
-                    <td>{entry.type === "SALE" ? `₹${entry.amount}` : "-"}</td>
+                    <td className="remark-cell">{entry.note || "No Remark"}</td>
 
                     <td>
-                      {entry.type === "PAYMENT" ? `₹${entry.amount}` : "-"}
+                      {entry.paymentMode ? (
+                        <span
+                          className={getPaymentModeClass(entry.paymentMode)}
+                        >
+                          {entry.paymentMode}
+                        </span>
+                      ) : (
+                        "-"
+                      )}
                     </td>
 
-                    <td>₹{entry.balanceAfter}</td>
+                    <td>
+                      {entry.type === "SALE"
+                        ? `₹${entry.amount.toLocaleString("en-IN")}`
+                        : "-"}
+                    </td>
+
+                    <td>
+                      {entry.type === "PAYMENT"
+                        ? `₹${entry.amount.toLocaleString("en-IN")}`
+                        : "-"}
+                    </td>
+
+                    <td>
+                      {entry.type === "SALE_RETURN"
+                        ? `₹${entry.amount.toLocaleString("en-IN")}`
+                        : "-"}
+                    </td>
+
+                    <td>
+                      {entry.type === "ADJUSTMENT"
+                        ? `₹${entry.amount.toLocaleString("en-IN")}`
+                        : "-"}
+                    </td>
+
+                    <td>₹{entry.balanceAfter.toLocaleString("en-IN")}</td>
                   </tr>
                 ))
               )}
@@ -423,15 +509,46 @@ function CustomerProfilePage() {
         <div className="ledger-summary">
           <div>Total Sale: ₹{summary.totalSale.toLocaleString("en-IN")}</div>
 
-          <div>Total Payment: ₹{totalPayment.toLocaleString("en-IN")}</div>
+          <div>
+            Total Payment: ₹
+            {(summary.totalPayment || 0).toLocaleString("en-IN")}
+          </div>
+
+          <div>
+            Total Return: ₹{(summary.totalReturn || 0).toLocaleString("en-IN")}
+          </div>
+
+          <div>
+            Total Adjustment: ₹
+            {(summary.totalAdjustment || 0).toLocaleString("en-IN")}
+          </div>
 
           <div>
             <strong>
-              Current Due: ₹{summary.currentDue.toLocaleString("en-IN")}
+              Current Due: ₹{(summary.currentDue || 0).toLocaleString("en-IN")}
             </strong>
           </div>
         </div>
       </Card>
+      <AdjustmentModal
+        open={adjustmentOpen}
+        customer={{
+          _id: customer._id,
+          currentDue: summary.currentDue,
+        }}
+        loading={adjustmentLoading}
+        onClose={() => setAdjustmentOpen(false)}
+        onSubmit={async (data) => {
+          await submitAdjustment({
+            customerId: customer._id,
+            ...data,
+          });
+
+          await refreshProfile();
+
+          setAdjustmentOpen(false);
+        }}
+      />
     </MainLayout>
   );
 }

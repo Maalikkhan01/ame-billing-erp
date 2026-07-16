@@ -6,6 +6,8 @@ import Card from "../../components/ui/Card";
 import FormField from "../../components/ui/FormField";
 import Button from "../../components/ui/Button";
 
+import BackupCard from "../../components/backup/BackupCard";
+
 import {
   getProfile,
   updateProfile,
@@ -148,6 +150,8 @@ function SettingsPage() {
             <Button type="submit">Change Password</Button>
           </form>
         </Card>
+
+        <BackupCard />
       </div>
     </MainLayout>
   );

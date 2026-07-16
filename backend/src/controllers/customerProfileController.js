@@ -28,18 +28,23 @@ const getCustomerProfile = async (req, res) => {
     });
 
     const totalSale = bills.reduce((sum, bill) => sum + bill.totalAmount, 0);
+
+    const totalPayment = ledger
+      .filter((entry) => entry.type === "PAYMENT")
+      .reduce((sum, entry) => sum + entry.amount, 0);
+
+    const totalReturn = ledger
+      .filter((entry) => entry.type === "SALE_RETURN")
+      .reduce((sum, entry) => sum + entry.amount, 0);
+
+    const totalAdjustment = ledger
+      .filter((entry) => entry.type === "ADJUSTMENT")
+      .reduce((sum, entry) => sum + entry.amount, 0);
+
     const totalBills = bills.length;
 
     const highestBill =
       bills.length > 0 ? Math.max(...bills.map((bill) => bill.totalAmount)) : 0;
-
-    const averageBill =
-      bills.length > 0
-        ? Math.round(
-            bills.reduce((sum, bill) => sum + bill.totalAmount, 0) /
-              bills.length,
-          )
-        : 0;
 
     const lastPurchase = bills.length > 0 ? bills[0].createdAt : null;
 
@@ -53,11 +58,15 @@ const getCustomerProfile = async (req, res) => {
 
         totalSale,
 
+        totalPayment,
+
+        totalReturn,
+
+        totalAdjustment,
+
         currentDue: customer.currentDue,
 
         highestBill,
-
-        averageBill,
 
         lastPurchase,
       },

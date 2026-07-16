@@ -161,7 +161,7 @@ function ProductSelector({
           >
             {selectedProduct?.units?.map((unit) => (
               <option key={unit.type} value={unit.type}>
-                {unit.type} (₹{unit.price})
+                {unit.type} | Cost ₹{unit.costPrice} | Sell ₹{unit.price}
               </option>
             ))}
           </FormField>

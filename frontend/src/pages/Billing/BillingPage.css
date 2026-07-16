@@ -89,6 +89,12 @@
   color: var(--primary);
 }
 
+.summary-profit {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--success-color);
+}
+
 .customer-details {
   margin-top: 15px;
   display: flex;

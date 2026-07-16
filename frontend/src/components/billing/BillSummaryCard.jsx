@@ -1,6 +1,6 @@
 import Card from "../ui/Card";
 
-function BillSummaryCard({ totalItems, grandTotal }) {
+function BillSummaryCard({ totalItems, grandTotal, totalProfit }) {
   return (
     <Card title="Bill Summary" className="summary-card bill-summary-card">
       <p>Total Items</p>
@@ -9,9 +9,15 @@ function BillSummaryCard({ totalItems, grandTotal }) {
 
       <p>Grand Total</p>
 
-      <h1 className="summary-total">
+      <h2 className="summary-total">
         ₹{Number(grandTotal).toLocaleString("en-IN")}
-      </h1>
+      </h2>
+
+      <p>Total Profit</p>
+
+      <h3 className="summary-profit">
+        ₹{Number(totalProfit).toLocaleString("en-IN")}
+      </h3>
     </Card>
   );
 }

@@ -1,7 +1,8 @@
 const Bill = require("../models/Bill");
 const Product = require("../models/Product");
 const Customer = require("../models/Customer");
-const Ledger = require("../models/Ledger");
+const LedgerService = require("../services/ledgerService");
+const CustomerBalanceService = require("../services/customerBalanceService");
 
 const generateBillNumber = require("../utils/generateBillNumber");
 
@@ -39,6 +40,7 @@ const createBill = async (req, res) => {
     }
 
     let totalAmount = 0;
+    let totalProfit = 0;
 
     const processedItems = [];
     if (items.length > 500) {
@@ -76,27 +78,38 @@ const createBill = async (req, res) => {
           message: "Product not found",
         });
       }
+      const selectedUnit = product.units?.find(
+        (unit) => unit.type === item.unitType,
+      );
+
+      if (!selectedUnit) {
+        return res.status(400).json({
+          success: false,
+          message: `${item.unitType} unit not found for ${product.name}`,
+        });
+      }
+
+      let costPrice = 0;
+      let profitPerUnit = 0;
+      let itemProfit = 0;
 
       let rate = Number(item.rate);
 
       if (!(rate > 0)) {
-        const selectedUnit = product.units?.find(
-          (unit) => unit.type === item.unitType,
-        );
-
-        if (!selectedUnit) {
-          return res.status(400).json({
-            success: false,
-            message: `${item.unitType} unit not found for ${product.name}`,
-          });
-        }
-
         rate = selectedUnit.price;
       }
 
-      const amount = item.qty * rate;
+      costPrice = Number(selectedUnit.costPrice || 0);
+
+      profitPerUnit = Math.max(rate - costPrice, 0);
+
+      itemProfit = Math.max(profitPerUnit * item.qty, 0);
+
+      const amount = Number((item.qty * rate).toFixed(2));
 
       totalAmount += amount;
+
+      totalProfit += itemProfit;
 
       processedItems.push({
         productId: product._id,
@@ -107,9 +120,17 @@ const createBill = async (req, res) => {
 
         qty: item.qty,
 
+        mrp: Number(selectedUnit.mrp || 0),
+
+        costPrice,
+
         rate,
 
         amount,
+
+        profitPerUnit,
+
+        totalProfit: itemProfit,
       });
     }
 
@@ -143,6 +164,7 @@ const createBill = async (req, res) => {
       items: processedItems,
 
       totalAmount,
+      totalProfit,
       paidAmount,
       dueAmount,
       previousDue,
@@ -151,19 +173,15 @@ const createBill = async (req, res) => {
       createdBy: req.user._id,
     });
 
-    customer.currentDue += dueAmount;
-
-    await customer.save();
-
-    await Ledger.create({
-      customerId,
+    await LedgerService.createSaleEntry({
+      customerId: bill.customerId,
       billId: bill._id,
-      type: "SALE",
-      amount: totalAmount,
-      balanceAfter: customer.currentDue,
+      amount: bill.totalAmount,
+      balanceAfter: undefined,
       createdBy: req.user._id,
     });
 
+    await CustomerBalanceService.refreshCustomerBalance(customerId);
     res.status(201).json({
       success: true,
       bill,

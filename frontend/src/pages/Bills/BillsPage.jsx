@@ -83,7 +83,7 @@ function BillsPage() {
                     <td>{new Date(bill.createdAt).toLocaleDateString()}</td>
 
                     <td>
-                      <Button as={Link} to={`/invoice/${bill._id}`} size="sm">
+                      <Button as={Link} to={`/bills/${bill._id}`}>
                         View
                       </Button>
                     </td>

@@ -1,0 +1,28 @@
+.restore-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.restore-stage {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #9ca3af;
+}
+
+.restore-stage-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #d1d5db;
+}
+
+.restore-stage.active {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.restore-stage.active .restore-stage-dot {
+  background: var(--primary);
+}

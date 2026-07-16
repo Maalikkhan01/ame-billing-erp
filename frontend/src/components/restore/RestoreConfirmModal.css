@@ -1,0 +1,50 @@
+.restore-warning {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.restore-warning h3 {
+  margin: 0 0 10px;
+  color: #b91c1c;
+}
+
+.restore-warning p {
+  margin: 4px 0;
+}
+
+.restore-info {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px 16px;
+  margin-bottom: 20px;
+}
+
+.restore-info strong {
+  color: var(--text-primary);
+}
+
+.restore-instruction {
+  margin-bottom: 12px;
+}
+
+.restore-error {
+  margin-top: 10px;
+  color: var(--danger);
+  font-size: 14px;
+}
+
+.restore-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+  .restore-actions {
+    flex-direction: column;
+  }
+}

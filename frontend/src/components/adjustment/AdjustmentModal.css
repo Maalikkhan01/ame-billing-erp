@@ -1,0 +1,58 @@
+.adjustment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.adjustment-due {
+  font-size: 15px;
+  color: var(--text-secondary);
+}
+
+.adjustment-due strong {
+  margin-left: 8px;
+  color: var(--danger);
+}
+
+.adjustment-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.adjustment-select {
+  width: 100%;
+  padding: 10px 12px;
+
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+
+  background: var(--surface);
+  color: var(--text-primary);
+
+  font-size: 14px;
+}
+
+.adjustment-select:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.adjustment-error {
+  color: var(--danger);
+  font-size: 14px;
+}
+
+.adjustment-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+
+  margin-top: 8px;
+}
+
+@media (max-width: 768px) {
+  .adjustment-actions {
+    flex-direction: column;
+  }
+}

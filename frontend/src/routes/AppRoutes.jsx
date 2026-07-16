@@ -17,6 +17,7 @@ import MonthlyReportPage from "../pages/Reports/MonthlyReportPage";
 import RangeReportPage from "../pages/Reports/RangeReportPage";
 import SettingsPage from "../pages/Settings/SettingsPage";
 import SecurityPage from "../pages/Security/SecurityPage";
+import BillDetailsPage from "../pages/BillDetails/BillDetailsPage";
 
 function AppRoutes() {
   return (
@@ -101,6 +102,15 @@ function AppRoutes() {
           element={
             <ProtectedRoute>
               <BillsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/bills/:id"
+          element={
+            <ProtectedRoute>
+              <BillDetailsPage />
             </ProtectedRoute>
           }
         />
