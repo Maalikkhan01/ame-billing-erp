@@ -113,19 +113,32 @@ function ProductsPage() {
           mrp: Number(unit.mrp || 0),
           costPrice: Number(unit.costPrice || 0),
           price: Number(unit.price),
-
           openingStock: Number(unit.openingStock || 0),
           lowStockAlert: Number(unit.lowStockAlert || 5),
         })),
     };
 
-    await addProduct(productData);
+    const enabledUnits = productData.units;
 
-    setName("");
-    setDescription("");
-    setUnits(createDefaultUnits());
+    for (const unit of enabledUnits) {
+      if (unit.costPrice > unit.price) {
+        alert(`${unit.type}: Cost Price cannot be greater than Selling Price`);
+        return;
+      }
+    }
 
-    nameRef.current?.focus();
+    try {
+      await addProduct(productData);
+
+      setName("");
+      setDescription("");
+      setUnits(createDefaultUnits());
+
+      nameRef.current?.focus();
+    } catch {
+      // Error already handled by addProduct/useProducts
+      // Form clear nahi hoga
+    }
   };
 
   return (

@@ -55,13 +55,6 @@ const createProduct = async (req, res) => {
           message: `${unit.type} cost price cannot be greater than selling price`,
         });
       }
-
-      if (unit.mrp && Number(unit.price) > Number(unit.mrp)) {
-        return res.status(400).json({
-          success: false,
-          message: `${unit.type} selling price cannot exceed MRP`,
-        });
-      }
     }
 
     const existing = await Product.findOne({
@@ -272,13 +265,6 @@ const updateProduct = async (req, res) => {
           return res.status(400).json({
             success: false,
             message: `${unit.type} cost price cannot be greater than selling price`,
-          });
-        }
-
-        if (unit.mrp && Number(unit.price) > Number(unit.mrp)) {
-          return res.status(400).json({
-            success: false,
-            message: `${unit.type} selling price cannot exceed MRP`,
           });
         }
       }
