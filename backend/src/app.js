@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const allowedOrigins = [process.env.FRONTEND_URL];
+const allowedOrigins = [process.env.FRONTEND_URL].filter(Boolean);
 const helmet = require("helmet");
 const morgan = require("morgan");
 
@@ -25,6 +25,7 @@ const activityRoutes = require("./routes/activityRoutes");
 const securityRoutes = require("./routes/securityRoutes");
 
 const app = express();
+app.set("trust proxy", 1);
 
 // Middlewares
 app.use(
