@@ -4,8 +4,6 @@ import { Link } from "react-router-dom";
 import MainLayout from "../../components/layout/MainLayout";
 import "./CustomerProfile.css";
 import useCustomerProfile from "../../hooks/useCustomerProfile";
-import useAdjustment from "../../hooks/useAdjustment";
-import AdjustmentModal from "../../components/adjustment/AdjustmentModal";
 import { useReceivePayment } from "../../hooks/useReceivePayment";
 import {
   getLedgerLabel,
@@ -24,8 +22,6 @@ function CustomerProfilePage() {
 
   const [amount, setAmount] = useState("");
 
-  const [adjustmentOpen, setAdjustmentOpen] = useState(false);
-
   const [note, setNote] = useState("");
 
   const [paymentMode, setPaymentMode] = useState("CASH");
@@ -41,7 +37,6 @@ function CustomerProfilePage() {
   const paymentModeRef = useRef(null);
 
   const { submitPayment, loading: paymentLoading } = useReceivePayment();
-  const { submitAdjustment, loading: adjustmentLoading } = useAdjustment();
 
   if (loading) {
     return (
@@ -176,12 +171,6 @@ function CustomerProfilePage() {
         </Card>
 
         <Card className="profile-summary-card">
-          <h3>Total Adjustment</h3>
-
-          <h2>₹{(summary.totalAdjustment || 0).toLocaleString("en-IN")}</h2>
-        </Card>
-
-        <Card className="profile-summary-card">
           <h3>Last Purchase</h3>
 
           <h2>
@@ -204,14 +193,6 @@ function CustomerProfilePage() {
               flexWrap: "wrap",
             }}
           >
-            <Button
-              variant="secondary"
-              onClick={() => setAdjustmentOpen(true)}
-              disabled={summary.currentDue <= 0}
-            >
-              Adjustment
-            </Button>
-
             <Button variant="secondary" onClick={() => window.print()}>
               Print Statement
             </Button>
@@ -273,17 +254,15 @@ function CustomerProfilePage() {
           </Button>
         </div>
       </Card>
-      <Card title="Invoices" className="no-print">
+      <Card title="Invoice History" className="no-print">
         <TableWrapper>
           <table className="invoice-table">
             <thead>
               <tr>
                 <th>Bill No</th>
-
+                <th>Date</th>
                 <th>Amount</th>
-
                 <th>Paid</th>
-
                 <th>Due</th>
               </tr>
             </thead>
@@ -292,7 +271,7 @@ function CustomerProfilePage() {
               {bills.length === 0 ? (
                 <tr>
                   <td
-                    colSpan="4"
+                    colSpan="5"
                     style={{
                       textAlign: "center",
                       padding: "20px",
@@ -308,7 +287,16 @@ function CustomerProfilePage() {
                       <Link to={`/invoice/${bill._id}`}>{bill.billNumber}</Link>
                     </td>
 
-                    <td>₹{bill.totalAmount.toLocaleString("en-IN")}</td>
+                    <td>
+                      {new Date(bill.createdAt).toLocaleDateString("en-IN")}
+                    </td>
+
+                    <td>
+                      ₹
+                      {Number(
+                        bill.grandTotal ?? bill.totalAmount,
+                      ).toLocaleString("en-IN")}
+                    </td>
 
                     <td className={bill.paidAmount > 0 ? "invoice-paid" : ""}>
                       ₹{bill.paidAmount.toLocaleString("en-IN")}
@@ -350,21 +338,6 @@ function CustomerProfilePage() {
             onClick={() => setLedgerFilter("PAYMENT")}
           >
             Payments
-          </Button>
-          <Button
-            variant={ledgerFilter === "SALE_RETURN" ? "primary" : "secondary"}
-            size="sm"
-            onClick={() => setLedgerFilter("SALE_RETURN")}
-          >
-            Returns
-          </Button>
-
-          <Button
-            variant={ledgerFilter === "ADJUSTMENT" ? "primary" : "secondary"}
-            size="sm"
-            onClick={() => setLedgerFilter("ADJUSTMENT")}
-          >
-            Adjustments
           </Button>
 
           <Button
@@ -427,13 +400,7 @@ function CustomerProfilePage() {
                 <th>Remark</th>
                 <th>Mode</th>
                 <th>Sale</th>
-
                 <th>Payment</th>
-
-                <th>Return</th>
-
-                <th>Adjustment</th>
-
                 <th>Balance</th>
               </tr>
             </thead>
@@ -487,18 +454,6 @@ function CustomerProfilePage() {
                         : "-"}
                     </td>
 
-                    <td>
-                      {entry.type === "SALE_RETURN"
-                        ? `₹${entry.amount.toLocaleString("en-IN")}`
-                        : "-"}
-                    </td>
-
-                    <td>
-                      {entry.type === "ADJUSTMENT"
-                        ? `₹${entry.amount.toLocaleString("en-IN")}`
-                        : "-"}
-                    </td>
-
                     <td>₹{entry.balanceAfter.toLocaleString("en-IN")}</td>
                   </tr>
                 ))
@@ -513,16 +468,6 @@ function CustomerProfilePage() {
             Total Payment: ₹
             {(summary.totalPayment || 0).toLocaleString("en-IN")}
           </div>
-
-          <div>
-            Total Return: ₹{(summary.totalReturn || 0).toLocaleString("en-IN")}
-          </div>
-
-          <div>
-            Total Adjustment: ₹
-            {(summary.totalAdjustment || 0).toLocaleString("en-IN")}
-          </div>
-
           <div>
             <strong>
               Current Due: ₹{(summary.currentDue || 0).toLocaleString("en-IN")}
@@ -530,25 +475,6 @@ function CustomerProfilePage() {
           </div>
         </div>
       </Card>
-      <AdjustmentModal
-        open={adjustmentOpen}
-        customer={{
-          _id: customer._id,
-          currentDue: summary.currentDue,
-        }}
-        loading={adjustmentLoading}
-        onClose={() => setAdjustmentOpen(false)}
-        onSubmit={async (data) => {
-          await submitAdjustment({
-            customerId: customer._id,
-            ...data,
-          });
-
-          await refreshProfile();
-
-          setAdjustmentOpen(false);
-        }}
-      />
     </MainLayout>
   );
 }

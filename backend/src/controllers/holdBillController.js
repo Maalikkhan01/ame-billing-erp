@@ -1,9 +1,18 @@
 const HoldBill = require("../models/HoldBill");
 const Customer = require("../models/Customer");
 
+const {
+  validateRate,
+  validateQuantity,
+  calculateLineAmount,
+  calculateSubtotal,
+  calculateGrandTotal,
+  calculateRoundOff,
+} = require("../utils/accounting");
+
 const createHoldBill = async (req, res) => {
   try {
-    const { customerId, items, grandTotal } = req.body;
+    const { customerId, items } = req.body;
     if (!customerId) {
       return res.status(400).json({
         success: false,
@@ -18,16 +27,6 @@ const createHoldBill = async (req, res) => {
       });
     }
 
-    if (
-  typeof grandTotal !== "number" ||
-  grandTotal <= 0
-) {
-  return res.status(400).json({
-    success: false,
-    message: "Invalid total amount",
-  });
-}
-
     const customer = await Customer.findById(customerId);
 
     if (!customer) {
@@ -37,18 +36,38 @@ const createHoldBill = async (req, res) => {
       });
     }
 
-    if (!items || items.length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: "At least one item is required",
+    const processedItems = [];
+
+    for (const item of items) {
+      const qty = validateQuantity(item.qty);
+
+      const rate = validateRate(item.rate);
+
+      const amount = calculateLineAmount(rate, qty);
+
+      processedItems.push({
+        ...item,
+        qty,
+        rate,
+        amount,
       });
     }
+
+    const subtotal = calculateSubtotal(processedItems);
+
+    const grandTotal = calculateGrandTotal(subtotal);
+
+    const roundOff = calculateRoundOff(subtotal, grandTotal);
 
     const holdBill = await HoldBill.create({
       customerId,
       customerName: customer.name,
-      items,
+      items: processedItems,
+
+      subtotal,
+      roundOff,
       grandTotal,
+      totalAmount: grandTotal,
     });
 
     res.status(201).json({
@@ -67,7 +86,7 @@ const updateHoldBill = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const { customerId, items, grandTotal } = req.body;
+    const { customerId, items } = req.body;
 
     const customer = await Customer.findById(customerId);
 
@@ -77,6 +96,29 @@ const updateHoldBill = async (req, res) => {
         message: "Customer not found",
       });
     }
+
+    const processedItems = [];
+
+    for (const item of items) {
+      const qty = validateQuantity(item.qty);
+
+      const rate = validateRate(item.rate);
+
+      const amount = calculateLineAmount(rate, qty);
+
+      processedItems.push({
+        ...item,
+        qty,
+        rate,
+        amount,
+      });
+    }
+
+    const subtotal = calculateSubtotal(processedItems);
+
+    const grandTotal = calculateGrandTotal(subtotal);
+
+    const roundOff = calculateRoundOff(subtotal, grandTotal);
 
     const holdBill = await HoldBill.findById(id);
 
@@ -89,8 +131,15 @@ const updateHoldBill = async (req, res) => {
 
     holdBill.customerId = customerId;
     holdBill.customerName = customer.name;
-    holdBill.items = items;
+    holdBill.items = processedItems;
+
+    holdBill.subtotal = subtotal;
+
+    holdBill.roundOff = roundOff;
+
     holdBill.grandTotal = grandTotal;
+
+    holdBill.totalAmount = grandTotal;
 
     await holdBill.save();
 

@@ -15,10 +15,12 @@ import FormField from "../../components/ui/FormField";
 
 const ALL_UNITS = [
   "PIECE",
+  "Ladi",
   "PACKET",
   "GRAM",
   "KG",
   "SET",
+  "Jar",
   "OUTER",
   "BOX",
   "BAG",
@@ -49,6 +51,11 @@ function ProductProfilePage() {
 
   const startEdit = () => {
     setFormData({
+      measurementType: product.measurementType,
+
+      category: product.category,
+
+      brand: product.brand || "",
       name: product.name,
       description: product.description || "",
 
@@ -58,6 +65,14 @@ function ProductProfilePage() {
         return {
           type,
           enabled: !!existingUnit,
+
+          parentUnit: existingUnit?.parentUnit || "",
+
+          quantity: existingUnit?.quantity || 1,
+
+          openingStock: existingUnit?.openingStock || "",
+
+          lowStockAlert: existingUnit?.lowStockAlert || 5,
 
           mrp: existingUnit?.mrp || "",
 
@@ -74,12 +89,28 @@ function ProductProfilePage() {
   const handleSave = async () => {
     try {
       await updateProduct(id, {
-        ...formData,
+        measurementType: formData.measurementType,
+
+        category: formData.category,
+
+        brand: formData.brand,
+
+        name: formData.name,
+
+        description: formData.description,
 
         units: formData.units
           .filter((unit) => unit.enabled)
           .map((unit) => ({
             type: unit.type,
+
+            parentUnit: unit.parentUnit || null,
+
+            quantity: Number(unit.quantity || 1),
+
+            openingStock: Number(unit.openingStock || 0),
+
+            lowStockAlert: Number(unit.lowStockAlert || 5),
 
             mrp: Number(unit.mrp || 0),
 
@@ -139,6 +170,18 @@ function ProductProfilePage() {
               <h3>General Information</h3>
 
               <p className="product-info">
+                <strong>Measurement Type:</strong> {product.measurementType}
+              </p>
+
+              <p className="product-info">
+                <strong>Category:</strong> {product.category}
+              </p>
+
+              <p className="product-info">
+                <strong>Brand:</strong> {product.brand || "-"}
+              </p>
+
+              <p className="product-info">
                 <strong>Description:</strong>
                 {product.description || "-"}
               </p>
@@ -150,6 +193,13 @@ function ProductProfilePage() {
               {product.units?.map((unit) => (
                 <p key={unit.type} className="product-info">
                   <strong>{unit.type}</strong>
+                  Parent :{unit.parentUnit || "Base Unit"}
+                  <br />
+                  Quantity :{unit.quantity}
+                  <br />
+                  Opening Stock :{unit.openingStock}
+                  <br />
+                  Low Stock Alert :{unit.lowStockAlert}
                   <br />
                   MRP : ₹{unit.mrp}
                   <br />
@@ -188,6 +238,43 @@ function ProductProfilePage() {
         ) : (
           <div className="product-edit-form">
             <FormField
+              as="select"
+              value={formData.measurementType}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  measurementType: e.target.value,
+                })
+              }
+            >
+              <option value="COUNT">COUNT</option>
+              <option value="WEIGHT">WEIGHT</option>
+              <option value="VOLUME">VOLUME</option>
+              <option value="PACKED">PACKED</option>
+            </FormField>
+
+            <FormField
+              placeholder="Category"
+              value={formData.category}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  category: e.target.value,
+                })
+              }
+            />
+
+            <FormField
+              placeholder="Brand"
+              value={formData.brand}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  brand: e.target.value,
+                })
+              }
+            />
+            <FormField
               placeholder="Product Name"
               value={formData.name}
               onChange={(e) =>
@@ -224,6 +311,14 @@ function ProductProfilePage() {
                         updated[index].enabled = e.target.checked;
 
                         if (!e.target.checked) {
+                          updated[index].parentUnit = "";
+
+                          updated[index].quantity = 1;
+
+                          updated[index].openingStock = "";
+
+                          updated[index].lowStockAlert = 5;
+
                           updated[index].mrp = "";
 
                           updated[index].costPrice = "";
@@ -243,6 +338,83 @@ function ProductProfilePage() {
 
                   {unit.enabled && (
                     <div className="unit-fields">
+                      <FormField
+                        as="select"
+                        value={unit.parentUnit}
+                        onChange={(e) => {
+                          const updated = [...formData.units];
+
+                          updated[index].parentUnit = e.target.value;
+
+                          if (!e.target.value) {
+                            updated[index].quantity = 1;
+                          }
+
+                          setFormData({
+                            ...formData,
+                            units: updated,
+                          });
+                        }}
+                      >
+                        <option value="">No Parent (Base Unit)</option>
+
+                        {formData.units
+                          .filter((u) => u.enabled && u.type !== unit.type)
+                          .map((u) => (
+                            <option key={u.type} value={u.type}>
+                              {u.type}
+                            </option>
+                          ))}
+                      </FormField>
+
+                      <FormField
+                        type="number"
+                        placeholder="Quantity"
+                        value={unit.quantity}
+                        disabled={!unit.parentUnit}
+                        onChange={(e) => {
+                          const updated = [...formData.units];
+
+                          updated[index].quantity = e.target.value;
+
+                          setFormData({
+                            ...formData,
+                            units: updated,
+                          });
+                        }}
+                      />
+
+                      <FormField
+                        type="number"
+                        placeholder="Opening Stock"
+                        value={unit.openingStock}
+                        onChange={(e) => {
+                          const updated = [...formData.units];
+
+                          updated[index].openingStock = e.target.value;
+
+                          setFormData({
+                            ...formData,
+                            units: updated,
+                          });
+                        }}
+                      />
+
+                      <FormField
+                        type="number"
+                        placeholder="Low Stock Alert"
+                        value={unit.lowStockAlert}
+                        onChange={(e) => {
+                          const updated = [...formData.units];
+
+                          updated[index].lowStockAlert = e.target.value;
+
+                          setFormData({
+                            ...formData,
+                            units: updated,
+                          });
+                        }}
+                      />
                       <FormField
                         type="number"
                         placeholder="MRP"

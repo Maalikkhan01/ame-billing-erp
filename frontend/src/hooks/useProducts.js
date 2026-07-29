@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
 
-import {
-  getProducts,
-  createProduct,
-  searchProducts,
-} from "../services/productService";
+import { getProducts, createProduct } from "../services/productService";
 
 function useProducts() {
   const [products, setProducts] = useState([]);
@@ -17,9 +13,22 @@ function useProducts() {
 
   const [totalProducts, setTotalProducts] = useState(0);
 
-  const loadProducts = async (pageNo = 1) => {
+  const [filters, setFilters] = useState({
+    keyword: "",
+    category: "",
+    brand: "",
+    measurementType: "",
+    active: "",
+  });
+
+  const loadProducts = async (pageNo = 1, currentFilters = filters) => {
     try {
-      const data = await getProducts(pageNo);
+      setLoading(true);
+
+      const data = await getProducts({
+        page: pageNo,
+        ...currentFilters,
+      });
 
       setProducts(data.products);
       setTotalProducts(data.totalProducts ?? 0);
@@ -33,31 +42,30 @@ function useProducts() {
   };
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    loadProducts();
+    const init = async () => {
+      await loadProducts(1, filters);
+    };
+
+    init();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const addProduct = async (productData) => {
     await createProduct(productData);
 
-    await loadProducts(page);
+    await loadProducts(page, filters);
   };
-  const searchProductList = async (keyword) => {
-    try {
-      if (!keyword.trim()) {
-        await loadProducts();
-        return;
-      }
 
-      const data = await searchProducts(keyword);
+  const searchProductList = async (newFilters) => {
+    const updatedFilters = {
+      ...filters,
+      ...newFilters,
+    };
 
-      setProducts(data.products || []);
-      setTotalProducts(data.products?.length || 0);
-      setTotalPages(1);
-      setPage(1);
-    } catch (error) {
-      console.log(error);
-    }
+    setFilters(updatedFilters);
+
+    await loadProducts(1, updatedFilters);
   };
 
   return {
@@ -65,6 +73,9 @@ function useProducts() {
     loading,
     addProduct,
     searchProductList,
+
+    filters,
+    setFilters,
 
     page,
     totalPages,

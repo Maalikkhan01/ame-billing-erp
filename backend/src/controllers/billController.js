@@ -6,6 +6,16 @@ const CustomerBalanceService = require("../services/customerBalanceService");
 
 const generateBillNumber = require("../utils/generateBillNumber");
 
+const {
+  validateRate,
+  validateQuantity,
+  calculateLineAmount,
+  calculateSubtotal,
+  calculateGrandTotal,
+  calculateRoundOff,
+  calculateDue,
+} = require("../utils/accounting");
+
 const createBill = async (req, res) => {
   try {
     const { customerId, items, paidAmount = 0 } = req.body;
@@ -38,8 +48,7 @@ const createBill = async (req, res) => {
         message: "Customer not found",
       });
     }
-
-    let totalAmount = 0;
+    
     let totalProfit = 0;
 
     const processedItems = [];
@@ -63,6 +72,8 @@ const createBill = async (req, res) => {
           message: "Invalid quantity",
         });
       }
+      
+      const qty = validateQuantity(item.qty);
 
       if (!item.unitType) {
         return res.status(400).json({
@@ -99,15 +110,15 @@ const createBill = async (req, res) => {
         rate = selectedUnit.price;
       }
 
+      rate = validateRate(rate);
+
       costPrice = Number(selectedUnit.costPrice || 0);
 
       profitPerUnit = Math.max(rate - costPrice, 0);
 
-      itemProfit = Math.max(profitPerUnit * item.qty, 0);
+      itemProfit = Math.max(profitPerUnit * qty, 0);
 
-      const amount = Number((item.qty * rate).toFixed(2));
-
-      totalAmount += amount;
+      const amount = calculateLineAmount(rate, qty);      
 
       totalProfit += itemProfit;
 
@@ -118,7 +129,7 @@ const createBill = async (req, res) => {
 
         unitType: item.unitType,
 
-        qty: item.qty,
+        qty,
 
         mrp: Number(selectedUnit.mrp || 0),
 
@@ -133,8 +144,13 @@ const createBill = async (req, res) => {
         totalProfit: itemProfit,
       });
     }
+    const subtotalCalculated = calculateSubtotal(processedItems);
 
-    const dueAmount = totalAmount - paidAmount;
+    const grandTotal = calculateGrandTotal(subtotalCalculated);
+
+    const roundOff = calculateRoundOff(subtotalCalculated, grandTotal);
+
+    const dueAmount = calculateDue(grandTotal, paidAmount);
 
     let paymentType = "FULL";
 
@@ -144,7 +160,7 @@ const createBill = async (req, res) => {
       paymentType = "PARTIAL";
     }
 
-    if (paidAmount > totalAmount) {
+    if (paidAmount > grandTotal) {
       return res.status(400).json({
         success: false,
         message: "Paid amount cannot exceed bill amount",
@@ -152,7 +168,7 @@ const createBill = async (req, res) => {
     }
     const previousDue = customer.currentDue;
     const billNumber = await generateBillNumber();
-    if (totalAmount <= 0) {
+    if (grandTotal <= 0) {
       return res.status(400).json({
         success: false,
         message: "Invalid bill amount",
@@ -163,7 +179,10 @@ const createBill = async (req, res) => {
       customerId,
       items: processedItems,
 
-      totalAmount,
+      totalAmount: grandTotal,
+      subtotal: subtotalCalculated,
+      roundOff,
+      grandTotal,
       totalProfit,
       paidAmount,
       dueAmount,
@@ -176,7 +195,7 @@ const createBill = async (req, res) => {
     await LedgerService.createSaleEntry({
       customerId: bill.customerId,
       billId: bill._id,
-      amount: bill.totalAmount,
+      amount: bill.grandTotal,
       balanceAfter: undefined,
       createdBy: req.user._id,
     });

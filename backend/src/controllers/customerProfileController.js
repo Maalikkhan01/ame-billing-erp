@@ -27,7 +27,10 @@ const getCustomerProfile = async (req, res) => {
       createdAt: 1,
     });
 
-    const totalSale = bills.reduce((sum, bill) => sum + bill.totalAmount, 0);
+    const totalSale = bills.reduce(
+      (sum, bill) => sum + (bill.grandTotal ?? bill.totalAmount),
+      0,
+    );
 
     const totalPayment = ledger
       .filter((entry) => entry.type === "PAYMENT")
@@ -44,7 +47,9 @@ const getCustomerProfile = async (req, res) => {
     const totalBills = bills.length;
 
     const highestBill =
-      bills.length > 0 ? Math.max(...bills.map((bill) => bill.totalAmount)) : 0;
+      bills.length > 0
+        ? Math.max(...bills.map((bill) => bill.grandTotal ?? bill.totalAmount))
+        : 0;
 
     const lastPurchase = bills.length > 0 ? bills[0].createdAt : null;
 

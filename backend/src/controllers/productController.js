@@ -4,12 +4,27 @@ const Product = require("../models/Product");
 
 const createProduct = async (req, res) => {
   try {
-    const { name, description, units } = req.body;
+    const { measurementType, category, brand, name, description, units } =
+      req.body;
 
     if (!name?.trim()) {
       return res.status(400).json({
         success: false,
         message: "Product name is required",
+      });
+    }
+
+    if (!measurementType) {
+      return res.status(400).json({
+        success: false,
+        message: "Measurement Type is required",
+      });
+    }
+
+    if (!category?.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "Category is required",
       });
     }
 
@@ -20,11 +35,36 @@ const createProduct = async (req, res) => {
       });
     }
 
-    for (const unit of req.body.units) {
+    const usedUnits = new Set();
+
+    for (const unit of units) {
       if (!unit.type) {
         return res.status(400).json({
           success: false,
           message: "Unit type required",
+        });
+      }
+
+      if (usedUnits.has(unit.type)) {
+        return res.status(400).json({
+          success: false,
+          message: `Duplicate unit ${unit.type}`,
+        });
+      }
+
+      usedUnits.add(unit.type);
+
+      if (unit.parentUnit && unit.parentUnit === unit.type) {
+        return res.status(400).json({
+          success: false,
+          message: `${unit.type} cannot be its own parent unit`,
+        });
+      }
+
+      if (unit.parentUnit && (!unit.quantity || unit.quantity <= 0)) {
+        return res.status(400).json({
+          success: false,
+          message: `Invalid conversion quantity for ${unit.type}`,
         });
       }
 
@@ -58,6 +98,9 @@ const createProduct = async (req, res) => {
     }
 
     const existing = await Product.findOne({
+      measurementType,
+      category: category.trim(),
+      brand: (brand || "").trim(),
       name: {
         $regex: `^${name.trim()}$`,
         $options: "i",
@@ -73,12 +116,22 @@ const createProduct = async (req, res) => {
     }
 
     const product = await Product.create({
+      measurementType,
+
+      category: category.trim(),
+
+      brand: (brand || "").trim(),
+
       name: name.trim(),
 
-      description,
+      description: description?.trim() || "",
 
       units: units.map((unit) => ({
         ...unit,
+
+        quantity: Number(unit.parentUnit ? unit.quantity : 1),
+
+        parentUnit: unit.parentUnit || null,
 
         openingStock: Number(unit.openingStock || 0),
 
@@ -112,18 +165,43 @@ const getProducts = async (req, res) => {
 
     const skip = (page - 1) * limit;
 
-    const products = await Product.find({
-      active: true,
-    })
+    const { keyword, category, brand, measurementType, active } = req.query;
+
+    const filters = {};
+
+    if (active !== undefined) {
+      filters.active = active === "true";
+    } else {
+      filters.active = true;
+    }
+
+    if (keyword?.trim()) {
+      filters.name = {
+        $regex: keyword.trim(),
+        $options: "i",
+      };
+    }
+
+    if (category?.trim()) {
+      filters.category = category.trim();
+    }
+
+    if (brand?.trim()) {
+      filters.brand = brand.trim();
+    }
+
+    if (measurementType?.trim()) {
+      filters.measurementType = measurementType.trim();
+    }
+
+    const products = await Product.find(filters)
       .sort({
         createdAt: -1,
       })
       .skip(skip)
       .limit(limit);
 
-    const total = await Product.countDocuments({
-      active: true,
-    });
+    const total = await Product.countDocuments(filters);
 
     res.json({
       success: true,
@@ -268,6 +346,18 @@ const updateProduct = async (req, res) => {
           });
         }
       }
+    }
+
+    if (req.body.measurementType) {
+      product.measurementType = req.body.measurementType;
+    }
+
+    if (req.body.category !== undefined) {
+      product.category = req.body.category.trim();
+    }
+
+    if (req.body.brand !== undefined) {
+      product.brand = req.body.brand.trim();
     }
 
     if (req.body.name) {

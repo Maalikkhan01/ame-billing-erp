@@ -17,7 +17,10 @@ const dashboardSummary = async (req, res) => {
 
     const totalBills = bills.length;
 
-    const totalSales = bills.reduce((sum, bill) => sum + bill.totalAmount, 0);
+    const totalSales = bills.reduce(
+      (sum, bill) => sum + (bill.grandTotal ?? bill.totalAmount),
+      0,
+    );
 
     const payments = await Ledger.find({
       type: "PAYMENT",
@@ -110,7 +113,10 @@ const monthlyReport = async (req, res) => {
       },
     });
 
-    const totalSales = bills.reduce((sum, bill) => sum + bill.totalAmount, 0);
+    const totalSales = bills.reduce(
+      (sum, bill) => sum + (bill.grandTotal ?? bill.totalAmount),
+      0,
+    );
 
     const payments = await Ledger.find({
       type: "PAYMENT",
@@ -211,7 +217,10 @@ const getRangeReport = async (req, res) => {
       },
     });
 
-    const totalSales = bills.reduce((sum, bill) => sum + bill.totalAmount, 0);
+    const totalSales = bills.reduce(
+      (sum, bill) => sum + (bill.grandTotal ?? bill.totalAmount),
+      0,
+    );
 
     const payments = await Ledger.find({
       type: "PAYMENT",

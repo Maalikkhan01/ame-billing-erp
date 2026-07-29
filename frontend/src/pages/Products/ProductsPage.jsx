@@ -23,7 +23,7 @@ function ProductsPage() {
     loading,
     addProduct,
     searchProductList,
-
+    filters,
     page,
     totalPages,
     totalProducts,
@@ -34,60 +34,129 @@ function ProductsPage() {
     {
       type: "PIECE",
       enabled: true,
+      parentUnit: "",
+      quantity: 1,
+      openingStock: "",
+      lowStockAlert: 5,
       mrp: "",
       costPrice: "",
       price: "",
     },
+
+    {
+      type: "Ladi",
+      enabled: false,
+      parentUnit: "",
+      quantity: 1,
+      openingStock: "",
+      lowStockAlert: 5,
+      mrp: "",
+      costPrice: "",
+      price: "",
+    },
+
     {
       type: "PACKET",
       enabled: false,
+      parentUnit: "",
+      quantity: 1,
+      openingStock: "",
+      lowStockAlert: 5,
       mrp: "",
       costPrice: "",
       price: "",
     },
+
     {
       type: "GRAM",
       enabled: false,
+      parentUnit: "",
+      quantity: 1,
+      openingStock: "",
+      lowStockAlert: 5,
       mrp: "",
       costPrice: "",
       price: "",
     },
+
     {
       type: "KG",
       enabled: false,
+      parentUnit: "",
+      quantity: 1,
+      openingStock: "",
+      lowStockAlert: 5,
       mrp: "",
       costPrice: "",
       price: "",
     },
+
     {
       type: "SET",
       enabled: false,
+      parentUnit: "",
+      quantity: 1,
+      openingStock: "",
+      lowStockAlert: 5,
       mrp: "",
       costPrice: "",
       price: "",
     },
+
+    {
+      type: "Jar",
+      enabled: false,
+      parentUnit: "",
+      quantity: 1,
+      openingStock: "",
+      lowStockAlert: 5,
+      mrp: "",
+      costPrice: "",
+      price: "",
+    },
+
     {
       type: "OUTER",
       enabled: false,
+      parentUnit: "",
+      quantity: 1,
+      openingStock: "",
+      lowStockAlert: 5,
       mrp: "",
       costPrice: "",
       price: "",
     },
+
     {
       type: "BOX",
       enabled: false,
+      parentUnit: "",
+      quantity: 1,
+      openingStock: "",
+      lowStockAlert: 5,
       mrp: "",
       costPrice: "",
       price: "",
     },
+
     {
       type: "BAG",
       enabled: false,
+      parentUnit: "",
+      quantity: 1,
+      openingStock: "",
+      lowStockAlert: 5,
       mrp: "",
       costPrice: "",
       price: "",
     },
   ];
+
+  const [measurementType, setMeasurementType] = useState("");
+
+  const [category, setCategory] = useState("");
+
+  const [brand, setBrand] = useState("");
 
   const [name, setName] = useState("");
 
@@ -95,26 +164,55 @@ function ProductsPage() {
 
   const [units, setUnits] = useState(createDefaultUnits());
 
-  const [search, setSearch] = useState("");
-
   const nameRef = useRef(null);
   const descriptionRef = useRef(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!measurementType) {
+      alert("Please select Measurement Type");
+      return;
+    }
+
+    if (!category.trim()) {
+      alert("Category is required");
+      return;
+    }
+
+    if (!name.trim()) {
+      alert("Product Name is required");
+      return;
+    }
+
     const productData = {
+      measurementType,
+
+      category,
+
+      brand,
+
       name,
+
       description,
       units: units
         .filter((unit) => unit.enabled)
         .map((unit) => ({
           type: unit.type,
-          mrp: Number(unit.mrp || 0),
-          costPrice: Number(unit.costPrice || 0),
-          price: Number(unit.price),
+
+          parentUnit: unit.parentUnit || null,
+
+          quantity: Number(unit.quantity || 1),
+
           openingStock: Number(unit.openingStock || 0),
+
           lowStockAlert: Number(unit.lowStockAlert || 5),
+
+          mrp: Number(unit.mrp || 0),
+
+          costPrice: Number(unit.costPrice || 0),
+
+          price: Number(unit.price),
         })),
     };
 
@@ -130,10 +228,17 @@ function ProductsPage() {
     try {
       await addProduct(productData);
 
-      setName("");
-      setDescription("");
-      setUnits(createDefaultUnits());
+      setMeasurementType("");
 
+      setCategory("");
+
+      setBrand("");
+
+      setName("");
+
+      setDescription("");
+
+      setUnits(createDefaultUnits());
       nameRef.current?.focus();
     } catch {
       // Error already handled by addProduct/useProducts
@@ -148,6 +253,29 @@ function ProductsPage() {
       <Card title="Add Product">
         <form onSubmit={handleSubmit}>
           <div className="product-form-grid">
+            <FormField
+              as="select"
+              value={measurementType}
+              onChange={(e) => setMeasurementType(e.target.value)}
+            >
+              <option value="">Select Measurement Type</option>
+              <option value="COUNT">COUNT</option>
+              <option value="WEIGHT">WEIGHT</option>
+              <option value="VOLUME">VOLUME</option>
+              <option value="PACKED">PACKED</option>
+            </FormField>
+
+            <FormField
+              placeholder="Category"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+            />
+
+            <FormField
+              placeholder="Brand (Optional)"
+              value={brand}
+              onChange={(e) => setBrand(e.target.value)}
+            />
             <FormField
               ref={nameRef}
               placeholder="Product Name"
@@ -193,6 +321,10 @@ function ProductsPage() {
                           updated[index].mrp = "";
                           updated[index].costPrice = "";
                           updated[index].price = "";
+                          updated[index].parentUnit = "";
+                          updated[index].quantity = 1;
+                          updated[index].openingStock = "";
+                          updated[index].lowStockAlert = 5;
                         }
 
                         setUnits(updated);
@@ -204,6 +336,71 @@ function ProductsPage() {
 
                   {unit.enabled && (
                     <div className="unit-fields">
+                      <FormField
+                        as="select"
+                        value={unit.parentUnit}
+                        onChange={(e) => {
+                          const updated = [...units];
+
+                          updated[index].parentUnit = e.target.value;
+
+                          if (!e.target.value) {
+                            updated[index].quantity = 1;
+                          }
+
+                          setUnits(updated);
+                        }}
+                      >
+                        <option value="">No Parent (Base Unit)</option>
+
+                        {units
+                          .filter((u) => u.enabled && u.type !== unit.type)
+                          .map((u) => (
+                            <option key={u.type} value={u.type}>
+                              {u.type}
+                            </option>
+                          ))}
+                      </FormField>
+
+                      <FormField
+                        type="number"
+                        placeholder="Quantity"
+                        value={unit.quantity}
+                        disabled={!unit.parentUnit}
+                        onChange={(e) => {
+                          const updated = [...units];
+
+                          updated[index].quantity = e.target.value;
+
+                          setUnits(updated);
+                        }}
+                      />
+
+                      <FormField
+                        type="number"
+                        placeholder="Opening Stock"
+                        value={unit.openingStock}
+                        onChange={(e) => {
+                          const updated = [...units];
+
+                          updated[index].openingStock = e.target.value;
+
+                          setUnits(updated);
+                        }}
+                      />
+
+                      <FormField
+                        type="number"
+                        placeholder="Low Stock Alert"
+                        value={unit.lowStockAlert}
+                        onChange={(e) => {
+                          const updated = [...units];
+
+                          updated[index].lowStockAlert = e.target.value;
+
+                          setUnits(updated);
+                        }}
+                      />
                       <FormField
                         type="number"
                         placeholder="MRP"
@@ -285,15 +482,66 @@ function ProductsPage() {
       </Card>
       <div className="products-toolbar">
         <SearchInput
-          value={search}
-          placeholder="Search product..."
-          onChange={(value) => {
-            setSearch(value);
-
-            searchProductList(value);
-          }}
+          value={filters.keyword}
+          placeholder="Search Product..."
+          onChange={(value) =>
+            searchProductList({
+              keyword: value,
+            })
+          }
         />
-        <div className="product-count">Showing {totalProducts} Products</div>
+
+        <FormField
+          as="input"
+          placeholder="Category"
+          value={filters.category}
+          onChange={(e) =>
+            searchProductList({
+              category: e.target.value,
+            })
+          }
+        />
+
+        <FormField
+          as="input"
+          placeholder="Brand"
+          value={filters.brand}
+          onChange={(e) =>
+            searchProductList({
+              brand: e.target.value,
+            })
+          }
+        />
+
+        <FormField
+          as="select"
+          value={filters.measurementType}
+          onChange={(e) =>
+            searchProductList({
+              measurementType: e.target.value,
+            })
+          }
+        >
+          <option value="">All Measurements</option>
+          <option value="COUNT">COUNT</option>
+          <option value="WEIGHT">WEIGHT</option>
+          <option value="VOLUME">VOLUME</option>
+          <option value="PACKED">PACKED</option>
+        </FormField>
+
+        <FormField
+          as="select"
+          value={filters.active}
+          onChange={(e) =>
+            searchProductList({
+              active: e.target.value,
+            })
+          }
+        >
+          <option value="">All Status</option>
+          <option value="true">Active</option>
+          <option value="false">Inactive</option>
+        </FormField>
       </div>
       {loading ? (
         <Card title="Products">
@@ -310,37 +558,56 @@ function ProductsPage() {
               <thead>
                 <tr>
                   <th>Product</th>
-                  <th>Units</th>
+                  <th>Category</th>
+                  <th>Brand</th>
+                  <th>Measurement</th>
+                  <th>Total Units</th>
+                  <th>Base Unit</th>
+                  <th>Status</th>
                   <th>Action</th>
                 </tr>
               </thead>
 
               <tbody>
-                {products.map((product) => (
-                  <tr key={product._id}>
-                    <td>{product.name}</td>
+                {products.map((product) => {
+                  const baseUnit =
+                    product.units?.find((u) => !u.parentUnit)?.type || "-";
 
-                    <td>
-                      {product.units
-                        ?.map(
-                          (unit) =>
-                            `${unit.type} | Cost ₹${unit.costPrice} | Sell ₹${unit.price}`,
-                        )
-                        .join(", ")}
-                    </td>
+                  return (
+                    <tr key={product._id}>
+                      <td>{product.name}</td>
 
-                    <td>
-                      <Button
-                        as={Link}
-                        to={`/products/${product._id}`}
-                        variant="secondary"
-                        size="sm"
-                      >
-                        View
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
+                      <td>{product.category || "-"}</td>
+
+                      <td>{product.brand || "-"}</td>
+
+                      <td>{product.measurementType || "-"}</td>
+
+                      <td>{product.units?.length || 0}</td>
+
+                      <td>{baseUnit}</td>
+
+                      <td>
+                        {product.active ? (
+                          <span className="status-active">Active</span>
+                        ) : (
+                          <span className="status-inactive">Inactive</span>
+                        )}
+                      </td>
+
+                      <td>
+                        <Button
+                          as={Link}
+                          to={`/products/${product._id}`}
+                          variant="secondary"
+                          size="sm"
+                        >
+                          View
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </TableWrapper>
@@ -350,8 +617,8 @@ function ProductsPage() {
       <Pagination
         page={page}
         totalPages={totalPages}
-        onPrevious={() => loadProducts(page - 1)}
-        onNext={() => loadProducts(page + 1)}
+        onPrevious={() => loadProducts(page - 1, filters)}
+        onNext={() => loadProducts(page + 1, filters)}
       />
     </MainLayout>
   );

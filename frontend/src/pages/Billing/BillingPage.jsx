@@ -245,7 +245,6 @@ function BillingPage() {
         customerId,
         customerName: customer?.name || customerSearch,
         items,
-        grandTotal,
       };
 
       if (holdBillId) {
@@ -286,8 +285,14 @@ function BillingPage() {
     );
   };
 
-  const subtotal = Number(rate || 0) * Number(qty || 0);
-  const grandTotal = items.reduce((sum, item) => sum + item.amount, 0);
+  const lineSubtotal = Number(rate || 0) * Number(qty || 0);
+
+  const subtotal = items.reduce((sum, item) => sum + item.amount, 0);
+
+  const grandTotal = Math.ceil(subtotal);
+
+  const roundOff = Number((grandTotal - subtotal).toFixed(2));
+
   const totalProfit = items.reduce(
     (sum, item) => sum + (item.totalProfit || 0),
     0,
@@ -374,6 +379,8 @@ function BillingPage() {
 
         <BillSummaryCard
           totalItems={items.length}
+          subtotal={subtotal}
+          roundOff={roundOff}
           grandTotal={grandTotal}
           totalProfit={totalProfit}
         />
@@ -397,7 +404,7 @@ function BillingPage() {
         setQty={setQty}
         rate={rate}
         setRate={setRate}
-        subtotal={subtotal}
+        subtotal={lineSubtotal}
         addItem={addItem}
       />
 

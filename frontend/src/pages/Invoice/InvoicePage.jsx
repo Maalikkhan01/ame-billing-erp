@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import MainLayout from "../../components/layout/MainLayout";
 import useInvoice from "../../hooks/useInvoice";
@@ -14,11 +14,13 @@ const formatCurrency = (amount) =>
   new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency: "INR",
-    maximumFractionDigits: 0,
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 0,
   }).format(amount || 0);
 
 function InvoicePage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { invoice, loading } = useInvoice(id);
 
   const invoiceRef = useRef(null);
@@ -69,13 +71,15 @@ function InvoicePage() {
   // Unit Sorting
   const unitOrder = {
     PIECE: 1,
-    PACKET: 2,
-    GRAM: 3,
-    KG: 4,
-    SET: 5,
-    OUTER: 6,
-    BOX: 7,
-    BAG: 8,
+    Ladi: 2,
+    PACKET: 3,
+    GRAM: 4,
+    KG: 5,
+    SET: 6,
+    Jar: 7,
+    OUTER: 8,
+    BOX: 9,
+    BAG: 10,
   };
 
   const sortedItems = [...invoice.items].sort((a, b) => {
@@ -86,6 +90,9 @@ function InvoicePage() {
     switch (unit) {
       case "PIECE":
         return "Pcs";
+
+      case "Ladi":
+        return "Ladi";
 
       case "PACKET":
         return "Pkt";
@@ -98,6 +105,9 @@ function InvoicePage() {
 
       case "SET":
         return "Set";
+
+      case "Jar":
+        return "Jar";
 
       case "OUTER":
         return "Outer";
@@ -140,16 +150,28 @@ function InvoicePage() {
       <div className="invoice-container">
         <div className="no-print invoice-toolbar">
           <h1>Invoice Details</h1>
-          <Button variant="secondary" onClick={handlePrint}>
-            🖨 Print
-          </Button>
-          <Button
-            variant="success"
-            loading={downloadingPdf}
-            onClick={handleDownloadPdf}
-          >
-            {downloadingPdf ? "Generating PDF..." : "📥 Download PDF"}
-          </Button>
+
+          <div className="invoice-actions">
+            <Button variant="secondary" onClick={handlePrint}>
+              Print
+            </Button>
+            <Button
+              variant="secondary"
+              loading={downloadingPdf}
+              onClick={handleDownloadPdf}
+            >
+              {downloadingPdf ? "Generating PDF..." : "PDF"}
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => navigate(`/customers/${invoice.customerId?._id}`)}
+            >
+              Profile
+            </Button>
+            <Button variant="secondary" onClick={() => navigate(-1)}>
+              Back
+            </Button>
+          </div>
         </div>
         <div ref={invoiceRef}>
           {pages.map((pageItems, pageIndex) => {
@@ -250,8 +272,21 @@ function InvoicePage() {
                 {isLastPage ? (
                   <div className="invoice-total-box">
                     <div>Total Items : {invoice.items.length}</div>
+
+                    <div>
+                      Subtotal :{" "}
+                      {formatCurrency(invoice.subtotal ?? invoice.totalAmount)}
+                    </div>
+
+                    <div>
+                      Round Off : {formatCurrency(invoice.roundOff ?? 0)}
+                    </div>
+
                     <div className="grand-total">
-                      TOTAL AMOUNT : {formatCurrency(invoice.totalAmount)}
+                      Grand Total :{" "}
+                      {formatCurrency(
+                        invoice.grandTotal ?? invoice.totalAmount,
+                      )}
                     </div>
                   </div>
                 ) : (

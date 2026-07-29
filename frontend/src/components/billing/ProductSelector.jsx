@@ -170,16 +170,17 @@ function ProductSelector({
           <label>Rate</label>
 
           <FormField
+            ref={rateRef}
+            type="number"
+            step="0.1"
+            value={rate}
+            onChange={(e) => setRate(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
                 qtyRef.current?.focus();
               }
             }}
-            ref={rateRef}
-            type="number"
-            value={rate}
-            onChange={(e) => setRate(e.target.value)}
           />
         </div>
 
@@ -189,6 +190,8 @@ function ProductSelector({
           <FormField
             ref={qtyRef}
             type="number"
+            step="0.001"
+            min="0.001"
             value={qty}
             onChange={(e) => setQty(e.target.value)}
             onKeyDown={(e) => {

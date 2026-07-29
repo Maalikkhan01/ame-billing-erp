@@ -2,6 +2,25 @@ const mongoose = require("mongoose");
 
 const productSchema = new mongoose.Schema(
   {
+    measurementType: {
+      type: String,
+      enum: ["COUNT", "WEIGHT", "VOLUME", "PACKED"],
+      required: false,
+      default: null,
+    },
+
+    category: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    brand: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
     name: {
       type: String,
       required: true,
@@ -18,8 +37,42 @@ const productSchema = new mongoose.Schema(
       {
         type: {
           type: String,
-          enum: ["PIECE", "PACKET", "GRAM", "KG", "SET", "OUTER", "BOX", "BAG"],
+          enum: [
+            "PIECE",
+            "Ladi",
+            "PACKET",
+            "GRAM",
+            "KG",
+            "SET",
+            "Jar",
+            "OUTER",
+            "BOX",
+            "BAG",
+          ],
           required: true,
+        },
+
+        parentUnit: {
+          type: String,
+          enum: [
+            "PIECE",
+            "Ladi",
+            "PACKET",
+            "GRAM",
+            "KG",
+            "SET",
+            "Jar",
+            "OUTER",
+            "BOX",
+            "BAG",
+          ],
+          default: null,
+        },
+
+        quantity: {
+          type: Number,
+          default: 1,
+          min: 1,
         },
 
         price: {
@@ -86,6 +139,17 @@ productSchema.index({
 
 productSchema.index({
   name: "text",
+});
+
+productSchema.index({
+  measurementType: 1,
+  category: 1,
+  brand: 1,
+});
+
+productSchema.index({
+  category: 1,
+  name: 1,
 });
 
 const Product =

@@ -52,6 +52,18 @@ const holdBillSchema = new mongoose.Schema(
 
     items: [holdBillItemSchema],
 
+    subtotal: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+
+    roundOff: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
+
     grandTotal: {
       type: Number,
       required: true,

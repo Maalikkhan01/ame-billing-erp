@@ -96,7 +96,10 @@ function RangeReportPage() {
                       <td>{bill.billNumber}</td>
 
                       <td>
-                        ₹{Number(bill.totalAmount).toLocaleString("en-IN")}
+                        ₹
+                        {Number(
+                          bill.grandTotal ?? bill.totalAmount,
+                        ).toLocaleString("en-IN")}
                       </td>
                     </tr>
                   ))}

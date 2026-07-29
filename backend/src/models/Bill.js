@@ -16,7 +16,7 @@ const billItemSchema = new mongoose.Schema(
     qty: {
       type: Number,
       required: true,
-      min: 1,
+      min: 0.001,
     },
 
     unitType: {
@@ -82,6 +82,28 @@ const billSchema = new mongoose.Schema(
     totalAmount: {
       type: Number,
       required: true,
+
+      // Temporary field
+      // Will be removed after Accounting Refactor completes.
+    },
+
+    subtotal: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+
+    roundOff: {
+      type: Number,
+      required: true,
+      default: 0,
+      min: 0,
+    },
+
+    grandTotal: {
+      type: Number,
+      required: true,
+      min: 0,
     },
 
     totalProfit: {

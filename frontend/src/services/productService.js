@@ -1,7 +1,31 @@
 import api from "./api";
 
-export const getProducts = async (page = 1) => {
-  const response = await api.get(`/products?page=${page}`);
+export const getProducts = async (params = {}) => {
+  const query = new URLSearchParams();
+
+  if (params.page) query.append("page", params.page);
+
+  if (params.keyword?.trim()) {
+    query.append("keyword", params.keyword.trim());
+  }
+
+  if (params.category?.trim()) {
+    query.append("category", params.category.trim());
+  }
+
+  if (params.brand?.trim()) {
+    query.append("brand", params.brand.trim());
+  }
+
+  if (params.measurementType?.trim()) {
+    query.append("measurementType", params.measurementType.trim());
+  }
+
+  if (params.active !== "" && params.active !== undefined) {
+    query.append("active", params.active);
+  }
+
+  const response = await api.get(`/products?${query.toString()}`);
 
   return response.data;
 };

@@ -78,13 +78,18 @@ function BillsPage() {
 
                     <td>{bill.customerId?.mobile || "-"}</td>
 
-                    <td>₹{Number(bill.totalAmount).toLocaleString("en-IN")}</td>
+                    <td>
+                      ₹
+                      {Number(
+                        bill.grandTotal ?? bill.totalAmount,
+                      ).toLocaleString("en-IN")}
+                    </td>
 
                     <td>{new Date(bill.createdAt).toLocaleDateString()}</td>
 
                     <td>
-                      <Button as={Link} to={`/bills/${bill._id}`}>
-                        View
+                      <Button as={Link} to={`/invoice/${bill._id}`}>
+                        Invoice
                       </Button>
                     </td>
                   </tr>

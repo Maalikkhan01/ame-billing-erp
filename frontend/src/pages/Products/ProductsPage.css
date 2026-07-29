@@ -211,3 +211,14 @@
     gap: 6px;
   }
 }
+
+
+.status-active {
+  color: green;
+  font-weight: 600;
+}
+
+.status-inactive {
+  color: red;
+  font-weight: 600;
+}

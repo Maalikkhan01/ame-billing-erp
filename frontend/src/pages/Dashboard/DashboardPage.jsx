@@ -85,7 +85,12 @@ function DashboardPage() {
 
                     <td>{bill.customerId?.name}</td>
 
-                    <td>₹{Number(bill.totalAmount).toLocaleString("en-IN")}</td>
+                    <td>
+                      ₹
+                      {Number(
+                        bill.grandTotal ?? bill.totalAmount,
+                      ).toLocaleString("en-IN")}
+                    </td>
 
                     <td>₹{Number(bill.paidAmount).toLocaleString("en-IN")}</td>
 
