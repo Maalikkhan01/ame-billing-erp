@@ -23,6 +23,7 @@ const statementRoutes = require("./routes/statementRoutes");
 const userRoutes = require("./routes/userRoutes");
 const activityRoutes = require("./routes/activityRoutes");
 const securityRoutes = require("./routes/securityRoutes");
+const categoryRoutes = require("./routes/categoryRoutes");
 
 const app = express();
 app.set("trust proxy", 1);
@@ -62,7 +63,7 @@ app.use("/api/statements", statementRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/admin", activityRoutes);
 app.use("/api/security", securityRoutes);
-
+app.use("/api/categories", categoryRoutes);
 // Error Middlewares (Always Last)
 app.use(notFound);
 app.use(errorHandler);

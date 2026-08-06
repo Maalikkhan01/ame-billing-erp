@@ -3,6 +3,8 @@ import { useEffect, useState, useRef } from "react";
 import { searchCustomers } from "../services/customerService";
 import { searchProducts } from "../services/productService";
 
+import { sortBillingItems } from "../utils/billingSort";
+
 import {
   createHoldBill,
   updateHoldBill,
@@ -55,7 +57,7 @@ function useBilling({ resumeData, navigate }) {
 
     setCustomerSearch(resumeData.customerName || "");
 
-    setItems(resumeData.items || []);
+    setItems(sortBillingItems(resumeData.items || []));
 
     setHoldBillId(resumeData._id || null);
   }, [resumeData]);
@@ -157,52 +159,57 @@ function useBilling({ resumeData, navigate }) {
     );
 
     if (existing) {
-      setItems(
-        items.map((item) => {
-          if (item.productId === product._id && item.unitType === unitType) {
-            const newQty = item.qty + currentQty;
+      const updatedItems = items.map((item) => {
+        if (item.productId === product._id && item.unitType === unitType) {
+          const newQty = item.qty + currentQty;
 
-            return {
-              ...item,
-              qty: newQty,
-              amount: newQty * item.rate,
-              totalProfit: item.profitPerUnit * newQty,
-            };
-          }
+          return {
+            ...item,
+            qty: newQty,
+            amount: newQty * item.rate,
+            totalProfit: item.profitPerUnit * newQty,
+          };
+        }
 
-          return item;
-        }),
-      );
+        return item;
+      });
+
+      setItems(sortBillingItems(updatedItems));
     } else {
-      setItems([
-        ...items,
-        {
-          productId: product._id,
+      const newItem = {
+        productId: product._id,
 
-          productName: product.name,
+        productName: product.name,
 
-          unitType,
+        category: product.category,
 
-          mrp: Number(selectedUnit.mrp || 0),
+        categorySortOrder: product.categorySortOrder ?? 9999,
 
-          costPrice: Number(selectedUnit.costPrice || 0),
+        unitType,
 
-          qty: currentQty,
+        mrp: Number(selectedUnit.mrp || 0),
 
-          rate: currentRate,
+        costPrice: Number(selectedUnit.costPrice || 0),
 
-          amount: currentRate * currentQty,
+        qty: currentQty,
 
-          profitPerUnit: Math.max(
-            currentRate - Number(selectedUnit.costPrice || 0),
-            0,
-          ),
+        rate: currentRate,
 
-          totalProfit:
-            Math.max(currentRate - Number(selectedUnit.costPrice || 0), 0) *
-            currentQty,
-        },
-      ]);
+        amount: currentRate * currentQty,
+
+        profitPerUnit: Math.max(
+          currentRate - Number(selectedUnit.costPrice || 0),
+          0,
+        ),
+
+        totalProfit:
+          Math.max(currentRate - Number(selectedUnit.costPrice || 0), 0) *
+          currentQty,
+      };
+
+      const updatedItems = [...items, newItem];
+
+      setItems(sortBillingItems(updatedItems));
     }
 
     setQty(1);
@@ -266,6 +273,10 @@ function useBilling({ resumeData, navigate }) {
 
         items: items.map((item) => ({
           productId: item.productId,
+
+          category: item.category,
+
+          categorySortOrder: item.categorySortOrder,
 
           unitType: item.unitType,
 

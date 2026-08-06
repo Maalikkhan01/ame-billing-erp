@@ -7,6 +7,7 @@ import useInvoice from "../../hooks/useInvoice";
 import Button from "../../components/ui/Button";
 
 import { downloadPdf } from "../../utils/pdf";
+import { sortBillingItems } from "../../utils/billingSort";
 
 import "./InvoicePrint.css";
 
@@ -69,22 +70,7 @@ function InvoicePage() {
   const ITEMS_PER_PAGE = 28;
 
   // Unit Sorting
-  const unitOrder = {
-    PIECE: 1,
-    Ladi: 2,
-    PACKET: 3,
-    GRAM: 4,
-    KG: 5,
-    SET: 6,
-    Jar: 7,
-    OUTER: 8,
-    BOX: 9,
-    BAG: 10,
-  };
-
-  const sortedItems = [...invoice.items].sort((a, b) => {
-    return (unitOrder[a.unitType] || 999) - (unitOrder[b.unitType] || 999);
-  });
+  const sortedItems = sortBillingItems(invoice.items);
 
   const formatUnit = (unit) => {
     switch (unit) {
@@ -272,15 +258,6 @@ function InvoicePage() {
                 {isLastPage ? (
                   <div className="invoice-total-box">
                     <div>Total Items : {invoice.items.length}</div>
-
-                    <div>
-                      Subtotal :{" "}
-                      {formatCurrency(invoice.subtotal ?? invoice.totalAmount)}
-                    </div>
-
-                    <div>
-                      Round Off : {formatCurrency(invoice.roundOff ?? 0)}
-                    </div>
 
                     <div className="grand-total">
                       Grand Total :{" "}

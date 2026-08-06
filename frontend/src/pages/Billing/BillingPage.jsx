@@ -16,6 +16,9 @@ import "./BillingPage.css";
 import { searchCustomers } from "../../services/customerService";
 
 import { searchProducts } from "../../services/productService";
+
+import { sortBillingItems } from "../../utils/billingSort";
+
 import PageHeader from "../../components/ui/PageHeader";
 
 import {
@@ -70,7 +73,7 @@ function BillingPage() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setCustomerId(customerIdValue);
     setCustomerSearch(resumeData.customerName || "");
-    setItems(resumeData.items || []);
+    setItems(sortBillingItems(resumeData.items || []));
     setHoldBillId(resumeData._id || null);
   }, [resumeData]);
 
@@ -195,19 +198,29 @@ function BillingPage() {
         return item;
       });
 
-      setItems(updatedItems);
+      setItems(sortBillingItems(updatedItems));
     } else {
-      setItems([
+      const updatedItems = [
         ...items,
         {
           productId: product._id,
+
           productName: product.name,
+
+          category: product.category,
+
+          categorySortOrder: product.categorySortOrder ?? 9999,
+
           unitType,
+
           rate: currentRate,
+
           qty: Number(qty),
+
           amount: currentRate * Number(qty),
         },
-      ]);
+      ];
+      setItems(sortBillingItems(updatedItems));
     }
 
     setQty(1);
@@ -219,7 +232,11 @@ function BillingPage() {
     setSelectedProduct(null);
     setProductResults([]);
 
-    productSearchRef.current?.focus();
+    requestAnimationFrame(() => {
+      productSearchRef.current?.focus();
+
+      productSearchRef.current?.select();
+    });
   };
 
   // Hold Bill Create / Update

@@ -56,7 +56,7 @@
 }
 
 .invoice-table th {
-  border: 1px solid #000;
+  border: 1px #000;
   text-align: center !important;
   background: transparent;
   padding: 1px 3px;

@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const UNIT_TYPES = require("../constants/unitTypes");
 
 const holdBillItemSchema = new mongoose.Schema(
   {
@@ -15,7 +16,7 @@ const holdBillItemSchema = new mongoose.Schema(
 
     unitType: {
       type: String,
-      enum: ["PIECE", "PACKET", "GRAM", "KG", "SET", "OUTER", "BOX", "BAG"],
+      enum: UNIT_TYPES,
       required: true,
     },
 

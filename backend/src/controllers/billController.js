@@ -48,7 +48,7 @@ const createBill = async (req, res) => {
         message: "Customer not found",
       });
     }
-    
+
     let totalProfit = 0;
 
     const processedItems = [];
@@ -72,7 +72,7 @@ const createBill = async (req, res) => {
           message: "Invalid quantity",
         });
       }
-      
+
       const qty = validateQuantity(item.qty);
 
       if (!item.unitType) {
@@ -118,7 +118,7 @@ const createBill = async (req, res) => {
 
       itemProfit = Math.max(profitPerUnit * qty, 0);
 
-      const amount = calculateLineAmount(rate, qty);      
+      const amount = calculateLineAmount(rate, qty);
 
       totalProfit += itemProfit;
 
@@ -126,6 +126,10 @@ const createBill = async (req, res) => {
         productId: product._id,
 
         productName: product.name,
+
+        category: product.category,
+
+        categorySortOrder: item.categorySortOrder ?? 9999,
 
         unitType: item.unitType,
 

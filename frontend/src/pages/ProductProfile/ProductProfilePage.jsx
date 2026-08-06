@@ -5,6 +5,7 @@ import MainLayout from "../../components/layout/MainLayout";
 import "./ProductProfilePage.css";
 
 import useProductProfile from "../../hooks/useProductProfile";
+import useCategories from "../../hooks/useCategories";
 
 import { updateProduct, deleteProduct } from "../../services/productService";
 import { useNavigate } from "react-router-dom";
@@ -34,6 +35,7 @@ function ProductProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
 
   const navigate = useNavigate();
+  const { categories } = useCategories();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -254,7 +256,7 @@ function ProductProfilePage() {
             </FormField>
 
             <FormField
-              placeholder="Category"
+              as="select"
               value={formData.category}
               onChange={(e) =>
                 setFormData({
@@ -262,7 +264,15 @@ function ProductProfilePage() {
                   category: e.target.value,
                 })
               }
-            />
+            >
+              <option value="">Select Category</option>
+
+              {categories.map((item) => (
+                <option key={item._id} value={item.name}>
+                  {item.name}
+                </option>
+              ))}
+            </FormField>
 
             <FormField
               placeholder="Brand"

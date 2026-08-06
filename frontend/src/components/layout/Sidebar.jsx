@@ -68,6 +68,16 @@ function Sidebar({ mobileOpen, closeSidebar }) {
 
         <NavLink
           onClick={closeSidebar}
+          to="/categories"
+          className={({ isActive }) =>
+            isActive ? "sidebar-link active" : "sidebar-link"
+          }
+        >
+          Category
+        </NavLink>
+
+        <NavLink
+          onClick={closeSidebar}
           to="/due-report"
           className={({ isActive }) =>
             isActive ? "sidebar-link active" : "sidebar-link"

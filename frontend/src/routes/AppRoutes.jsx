@@ -11,6 +11,7 @@ import InvoicePage from "../pages/Invoice/InvoicePage";
 import DueReportPage from "../pages/DueReport/DueReportPage";
 import BillsPage from "../pages/Bills/BillsPage";
 import HoldBillsPage from "../pages/HoldBills/HoldBillsPage";
+import CategoriesPage from "../pages/Categories/CategoriesPage";
 import DailyReportPage from "../pages/Reports/DailyReportPage";
 import ProtectedRoute from "./ProtectedRoute";
 import MonthlyReportPage from "../pages/Reports/MonthlyReportPage";
@@ -101,6 +102,15 @@ function AppRoutes() {
           element={
             <ProtectedRoute>
               <BillsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/categories"
+          element={
+            <ProtectedRoute>
+              <CategoriesPage />
             </ProtectedRoute>
           }
         />

@@ -60,7 +60,7 @@ function ProductSelector({
           setSelectedProduct(null);
         }}
         onKeyDown={(e) => {
-          if (e.key === "ArrowDown") {
+          if (e.key === "ArrowDown" && productResults.length > 0) {
             e.preventDefault();
 
             setSelectedProductIndex((prev) =>
@@ -68,7 +68,7 @@ function ProductSelector({
             );
           }
 
-          if (e.key === "ArrowUp") {
+          if (e.key === "ArrowUp" && productResults.length > 0) {
             e.preventDefault();
 
             setSelectedProductIndex((prev) => Math.max(prev - 1, 0));
@@ -77,20 +77,29 @@ function ProductSelector({
           if (e.key === "Enter") {
             e.preventDefault();
 
-            const product = productResults[selectedProductIndex];
+            const product =
+              productResults[selectedProductIndex] || productResults[0];
 
             if (product) {
               setProductId(product._id);
+
               setSelectedProduct(product);
+
               setProductSearch(product.name);
+
+              setSelectedProductIndex(0);
 
               if (product.units?.length > 0) {
                 setUnitType(product.units[0].type);
+
                 setRate(product.units[0].price);
               }
 
-              rateRef.current?.focus();
-              rateRef.current?.select();
+              requestAnimationFrame(() => {
+                rateRef.current?.focus();
+
+                rateRef.current?.select();
+              });
             }
           }
 
@@ -116,13 +125,19 @@ function ProductSelector({
 
                 setProductSearch(product.name);
 
+                setSelectedProductIndex(0);
+
                 if (product.units?.length > 0) {
                   setUnitType(product.units[0].type);
+
                   setRate(product.units[0].price);
                 }
 
-                rateRef.current?.focus();
-                rateRef.current?.select();
+                requestAnimationFrame(() => {
+                  rateRef.current?.focus();
+
+                  rateRef.current?.select();
+                });
               }}
             >
               {product.name}

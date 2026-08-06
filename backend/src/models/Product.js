@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const UNIT_TYPES = require("../constants/unitTypes");
 
 const productSchema = new mongoose.Schema(
   {
@@ -37,35 +38,13 @@ const productSchema = new mongoose.Schema(
       {
         type: {
           type: String,
-          enum: [
-            "PIECE",
-            "Ladi",
-            "PACKET",
-            "GRAM",
-            "KG",
-            "SET",
-            "Jar",
-            "OUTER",
-            "BOX",
-            "BAG",
-          ],
+          enum: UNIT_TYPES,
           required: true,
         },
 
         parentUnit: {
           type: String,
-          enum: [
-            "PIECE",
-            "Ladi",
-            "PACKET",
-            "GRAM",
-            "KG",
-            "SET",
-            "Jar",
-            "OUTER",
-            "BOX",
-            "BAG",
-          ],
+          enum: UNIT_TYPES,
           default: null,
         },
 

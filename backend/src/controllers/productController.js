@@ -1,4 +1,7 @@
 const Product = require("../models/Product");
+const Category = require("../models/Category");
+
+const { sortBillingItems } = require("../utils/billingSort");
 
 // Create Product
 
@@ -25,6 +28,18 @@ const createProduct = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Category is required",
+      });
+    }
+
+    const categoryExists = await Category.findOne({
+      name: category.trim(),
+      active: true,
+    });
+
+    if (!categoryExists) {
+      return res.status(400).json({
+        success: false,
+        message: "Selected category does not exist.",
       });
     }
 
@@ -219,31 +234,73 @@ const getProducts = async (req, res) => {
 };
 
 // Search Product
-
 const searchProducts = async (req, res) => {
   try {
-    const keyword = req.query.keyword || "";
+    const keyword = req.query.keyword?.trim() || "";
 
+    // Load active categories
+    const categories = await Category.find(
+      { active: true },
+      {
+        name: 1,
+        sortOrder: 1,
+      },
+    ).lean();
+
+    // Create lookup map
+    const categoryMap = {};
+
+    categories.forEach((category) => {
+      categoryMap[category.name] = category.sortOrder;
+    });
+
+    // Search products
     const products = await Product.find({
       active: true,
-      name: {
-        $regex: keyword,
-        $options: "i",
-      },
-    })
-      .sort({
-        name: 1,
-      })
-      .limit(50);
 
-    res.json({
+      $or: [
+        {
+          name: {
+            $regex: keyword,
+            $options: "i",
+          },
+        },
+
+        {
+          category: {
+            $regex: keyword,
+            $options: "i",
+          },
+        },
+
+        {
+          brand: {
+            $regex: keyword,
+            $options: "i",
+          },
+        },
+      ],
+    }).lean();
+
+    // Attach category sort order
+    const result = products
+      .map((product) => ({
+        ...product,
+
+        categorySortOrder: categoryMap[product.category] ?? 9999,
+      }))
+      .slice(0, 100);
+
+    return res.json({
       success: true,
-      products,
+      products: sortBillingItems(result),
     });
   } catch (error) {
-    res.status(500).json({
+    console.error("Search Product Error:", error);
+
+    return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Failed to search products.",
     });
   }
 };
@@ -350,6 +407,20 @@ const updateProduct = async (req, res) => {
 
     if (req.body.measurementType) {
       product.measurementType = req.body.measurementType;
+    }
+
+    if (req.body.category !== undefined) {
+      const categoryExists = await Category.findOne({
+        name: req.body.category.trim(),
+        active: true,
+      });
+
+      if (!categoryExists) {
+        return res.status(400).json({
+          success: false,
+          message: "Selected category does not exist.",
+        });
+      }
     }
 
     if (req.body.category !== undefined) {

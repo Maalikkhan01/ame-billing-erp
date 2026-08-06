@@ -3,6 +3,8 @@ import TableWrapper from "../ui/TableWrapper";
 import EmptyState from "../ui/EmptyState";
 import Button from "../ui/Button";
 
+import { sortBillingItems } from "../../utils/billingSort";
+
 function BillingItemsTable({ items, setItems, removeItem }) {
   return (
     <Card title="Billing Items">
@@ -40,18 +42,20 @@ function BillingItemsTable({ items, setItems, removeItem }) {
                         const newQty = Number(e.target.value);
 
                         setItems((prev) =>
-                          prev.map((row, rowIndex) =>
-                            rowIndex === index
-                              ? {
-                                  ...row,
+                          sortBillingItems(
+                            prev.map((row, rowIndex) =>
+                              rowIndex === index
+                                ? {
+                                    ...row,
 
-                                  qty: newQty,
+                                    qty: newQty,
 
-                                  amount: row.rate * newQty,
+                                    amount: row.rate * newQty,
 
-                                  totalProfit: row.profitPerUnit * newQty,
-                                }
-                              : row,
+                                    totalProfit: row.profitPerUnit * newQty,
+                                  }
+                                : row,
+                            ),
                           ),
                         );
                       }}
@@ -69,25 +73,23 @@ function BillingItemsTable({ items, setItems, removeItem }) {
                         const newRate = Number(e.target.value);
 
                         setItems((prev) =>
-                          prev.map((row, rowIndex) =>
-                            rowIndex === index
-                              ? {
-                                  ...row,
-
-                                  rate: newRate,
-
-                                  amount: newRate * row.qty,
-
-                                  profitPerUnit: Math.max(
-                                    newRate - row.costPrice,
-                                    0,
-                                  ),
-
-                                  totalProfit:
-                                    Math.max(newRate - row.costPrice, 0) *
-                                    row.qty,
-                                }
-                              : row,
+                          sortBillingItems(
+                            prev.map((row, rowIndex) =>
+                              rowIndex === index
+                                ? {
+                                    ...row,
+                                    rate: newRate,
+                                    amount: newRate * row.qty,
+                                    profitPerUnit: Math.max(
+                                      newRate - row.costPrice,
+                                      0,
+                                    ),
+                                    totalProfit:
+                                      Math.max(newRate - row.costPrice, 0) *
+                                      row.qty,
+                                  }
+                                : row,
+                            ),
                           ),
                         );
                       }}

@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const UNIT_TYPES = require("../constants/unitTypes");
 
 const billItemSchema = new mongoose.Schema(
   {
@@ -13,6 +14,17 @@ const billItemSchema = new mongoose.Schema(
       required: true,
     },
 
+    category: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    categorySortOrder: {
+      type: Number,
+      default: 9999,
+    },
+
     qty: {
       type: Number,
       required: true,
@@ -21,7 +33,7 @@ const billItemSchema = new mongoose.Schema(
 
     unitType: {
       type: String,
-      enum: ["PIECE", "PACKET", "GRAM", "KG", "SET", "OUTER", "BOX", "BAG"],
+      enum: UNIT_TYPES,
       required: true,
     },
 

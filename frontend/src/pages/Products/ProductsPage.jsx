@@ -5,8 +5,9 @@ import MainLayout from "../../components/layout/MainLayout";
 import "./ProductsPage.css";
 
 import useProducts from "../../hooks/useProducts";
+import useCategories from "../../hooks/useCategories";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import PageHeader from "../../components/ui/PageHeader";
 import Card from "../../components/ui/Card";
@@ -29,6 +30,9 @@ function ProductsPage() {
     totalProducts,
     loadProducts,
   } = useProducts();
+
+  const { categories } = useCategories();
+  const navigate = useNavigate();
 
   const createDefaultUnits = () => [
     {
@@ -265,11 +269,27 @@ function ProductsPage() {
               <option value="PACKED">PACKED</option>
             </FormField>
 
+            <Button
+              variant="secondary"
+              type="button"
+              onClick={() => navigate("/categories")}
+            >
+              + Add Category
+            </Button>
+
             <FormField
-              placeholder="Category"
+              as="select"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-            />
+            >
+              <option value="">Select Category</option>
+
+              {categories?.map((item) => (
+                <option key={item._id} value={item.name}>
+                  {item.name}
+                </option>
+              ))}
+            </FormField>
 
             <FormField
               placeholder="Brand (Optional)"
@@ -492,15 +512,22 @@ function ProductsPage() {
         />
 
         <FormField
-          as="input"
-          placeholder="Category"
+          as="select"
           value={filters.category}
           onChange={(e) =>
             searchProductList({
               category: e.target.value,
             })
           }
-        />
+        >
+          <option value="">All Categories</option>
+
+          {categories?.map((item) => (
+            <option key={item._id} value={item.name}>
+              {item.name}
+            </option>
+          ))}
+        </FormField>
 
         <FormField
           as="input"
