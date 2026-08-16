@@ -20,3 +20,24 @@ export const getMonthlyReport = async () => {
 
   return response.data;
 };
+
+// Payment Report
+export const getPaymentReport = async (date) => {
+  const response = await api.get("/reports/payments", {
+    params: date ? { date } : {},
+  });
+
+  return response.data;
+};
+
+// Profit Report
+export const getProfitReport = async (fromDate, toDate) => {
+  const response = await api.get("/reports/profit", {
+    params: {
+      fromDate,
+      toDate,
+    },
+  });
+
+  return response.data;
+};

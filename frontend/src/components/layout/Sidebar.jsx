@@ -107,6 +107,27 @@ function Sidebar({ mobileOpen, closeSidebar }) {
         >
           Range Report
         </NavLink>
+
+        <NavLink
+          onClick={closeSidebar}
+          to="/profit-report"
+          className={({ isActive }) =>
+            isActive ? "sidebar-link active" : "sidebar-link"
+          }
+        >
+          Profit Report
+        </NavLink>
+
+        <NavLink
+          onClick={closeSidebar}
+          to="/payment-report"
+          className={({ isActive }) =>
+            isActive ? "sidebar-link active" : "sidebar-link"
+          }
+        >
+          Payment Report
+        </NavLink>
+
         <NavLink
           to="/settings"
           className={({ isActive }) =>

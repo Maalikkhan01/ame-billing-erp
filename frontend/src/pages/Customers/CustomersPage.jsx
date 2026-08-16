@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 import MainLayout from "../../components/layout/MainLayout";
@@ -22,16 +22,11 @@ function CustomersPage() {
     customers,
     loading,
     addCustomer,
-
     page,
     totalPages,
-
     loadCustomers,
-
     searchCustomer,
-
     editCustomer,
-
     removeCustomer,
   } = useCustomers();
 
@@ -39,17 +34,34 @@ function CustomersPage() {
   const [mobile, setMobile] = useState("");
   const [address, setAddress] = useState("");
   const [search, setSearch] = useState("");
-
+  const [addCustomerModalOpen, setAddCustomerModalOpen] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState(null);
   const [deleteCustomerId, setDeleteCustomerId] = useState(null);
-
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   const nameRef = useRef(null);
   const mobileRef = useRef(null);
   const addressRef = useRef(null);
+
+  // Modal open hone par name field par auto-focus karne ke liye
+  useEffect(() => {
+    if (addCustomerModalOpen) {
+      requestAnimationFrame(() => {
+        nameRef.current?.focus();
+      });
+    }
+  }, [addCustomerModalOpen]);
+
+  const closeAddCustomerModal = () => {
+    setAddCustomerModalOpen(false);
+    setName("");
+    setMobile("");
+    setAddress("");
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!name.trim()) return;
 
     await addCustomer({
       name,
@@ -57,24 +69,35 @@ function CustomersPage() {
       address,
     });
 
-    setName("");
-    setMobile("");
-    setAddress("");
-
-    nameRef.current?.focus();
+    closeAddCustomerModal();
   };
 
   return (
     <MainLayout>
-      <PageHeader title="Customers" subtitle="Manage your customers and dues" />
+      <PageHeader
+        title="Customers"
+        subtitle="Manage your customers and dues"
+        right={
+          <Button onClick={() => setAddCustomerModalOpen(true)}>
+            + Add Customer
+          </Button>
+        }
+      />
 
       <div className="customers-page">
-        <Card title="Add Customer">
+        {/* ADD CUSTOMER MODAL */}
+        <Modal
+          open={addCustomerModalOpen}
+          title="Add Customer"
+          className="app-modal-form"
+          onClose={closeAddCustomerModal}
+        >
           <form onSubmit={handleSubmit}>
-            <div className="customer-form-grid">
+            <div className="customer-modal-form">
               <FormField
                 ref={nameRef}
                 placeholder="Customer Name"
+                className="modal-input"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 onKeyDown={(e) => {
@@ -88,6 +111,7 @@ function CustomersPage() {
               <FormField
                 ref={mobileRef}
                 placeholder="Mobile"
+                className="modal-input"
                 value={mobile}
                 onChange={(e) => setMobile(e.target.value)}
                 onKeyDown={(e) => {
@@ -101,33 +125,32 @@ function CustomersPage() {
               <FormField
                 ref={addressRef}
                 placeholder="Address"
+                className="modal-input"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 onKeyDown={async (e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
-
-                    await addCustomer({
-                      name,
-                      mobile,
-                      address,
-                    });
-
-                    setName("");
-                    setMobile("");
-                    setAddress("");
-
-                    nameRef.current?.focus();
+                    await handleSubmit(e);
                   }
                 }}
               />
-              <Button type="submit" className="add-customer-btn">
-                Add Customer
-              </Button>
+
+              <div className="modal-actions">
+                <Button type="submit">Add Customer</Button>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={closeAddCustomerModal}
+                >
+                  Cancel
+                </Button>
+              </div>
             </div>
           </form>
-        </Card>
+        </Modal>
 
+        {/* SEARCH BAR */}
         <SearchInput
           value={search}
           placeholder="Search customer..."
@@ -142,6 +165,7 @@ function CustomersPage() {
           }}
         />
 
+        {/* CUSTOMER LIST TABLE */}
         {loading ? (
           <Card title="Customer List">
             <EmptyState text="Loading customers..." />
@@ -163,11 +187,8 @@ function CustomersPage() {
                   {customers.map((customer) => (
                     <tr key={customer._id}>
                       <td>{customer.name}</td>
-
                       <td>{customer.mobile}</td>
-
                       <td>{customer.address}</td>
-
                       <td>
                         <div className="action-group">
                           <Button
@@ -214,13 +235,15 @@ function CustomersPage() {
           onNext={() => loadCustomers(page + 1)}
         />
 
+        {/* EDIT CUSTOMER MODAL */}
         <Modal
           open={!!editingCustomer}
           title="Edit Customer"
+          className="app-modal-form"
           onClose={() => setEditingCustomer(null)}
         >
           {editingCustomer && (
-            <>
+            <div className="customer-modal-form">
               <FormField
                 className="modal-input"
                 value={editingCustomer.name}
@@ -276,10 +299,11 @@ function CustomersPage() {
                   Cancel
                 </Button>
               </div>
-            </>
+            </div>
           )}
         </Modal>
 
+        {/* DELETE CONFIRMATION MODAL */}
         <ConfirmModal
           open={deleteModalOpen}
           title="Delete Customer"
@@ -290,14 +314,11 @@ function CustomersPage() {
             if (!deleteCustomerId) return;
 
             await removeCustomer(deleteCustomerId);
-
             setDeleteCustomerId(null);
-
             setDeleteModalOpen(false);
           }}
           onCancel={() => {
             setDeleteCustomerId(null);
-
             setDeleteModalOpen(false);
           }}
         />

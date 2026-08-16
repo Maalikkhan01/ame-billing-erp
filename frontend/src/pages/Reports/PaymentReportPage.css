@@ -1,0 +1,121 @@
+.payment-report-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.payment-report-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.payment-report-date-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.payment-report-date-filter label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.payment-report-date-filter input {
+  min-width: 180px;
+
+  padding: 10px 12px;
+
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+
+  background: white;
+
+  font-size: 14px;
+}
+
+.payment-report-load-button {
+  padding: 10px 18px;
+
+  border: none;
+  border-radius: var(--radius-md);
+
+  background: var(--primary);
+  color: white;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.payment-report-load-button:hover {
+  opacity: 0.9;
+}
+
+.payment-report-load-button:active {
+  transform: translateY(1px);
+}
+
+.payment-report-load-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.payment-report-error {
+  padding: 12px 14px;
+
+  background: rgba(220, 38, 38, 0.08);
+
+  border-radius: var(--radius-md);
+
+  color: var(--danger);
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.payment-report-summary {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 16px;
+}
+
+.payment-report-empty {
+  padding: 30px !important;
+
+  text-align: center;
+
+  color: var(--text-secondary);
+}
+
+@media (max-width: 768px) {
+  .payment-report-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .payment-report-actions {
+    justify-content: stretch;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .payment-report-date-filter input {
+    width: 100%;
+  }
+
+  .payment-report-load-button {
+    width: 100%;
+  }
+
+  .payment-report-load-button {
+    width: 100%;
+  }
+}

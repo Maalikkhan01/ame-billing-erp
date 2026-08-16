@@ -1,11 +1,14 @@
 import "./Modal.css";
 
-function Modal({ open, title, children, onClose }) {
+function Modal({ open, title, children, onClose, className = "" }) {
   if (!open) return null;
 
   return (
     <div className="app-modal-overlay" onClick={onClose}>
-      <div className="app-modal" onClick={(e) => e.stopPropagation()}>
+      <div
+        className={`app-modal ${className}`}
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="app-modal-header">
           <h2>{title}</h2>
 

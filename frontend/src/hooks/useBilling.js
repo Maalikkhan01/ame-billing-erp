@@ -3,8 +3,6 @@ import { useEffect, useState, useRef } from "react";
 import { searchCustomers } from "../services/customerService";
 import { searchProducts } from "../services/productService";
 
-import { sortBillingItems } from "../utils/billingSort";
-
 import {
   createHoldBill,
   updateHoldBill,
@@ -57,7 +55,7 @@ function useBilling({ resumeData, navigate }) {
 
     setCustomerSearch(resumeData.customerName || "");
 
-    setItems(sortBillingItems(resumeData.items || []));
+    setItems(resumeData.items || []);
 
     setHoldBillId(resumeData._id || null);
   }, [resumeData]);
@@ -174,7 +172,7 @@ function useBilling({ resumeData, navigate }) {
         return item;
       });
 
-      setItems(sortBillingItems(updatedItems));
+      setItems(updatedItems);
     } else {
       const newItem = {
         productId: product._id,
@@ -209,7 +207,7 @@ function useBilling({ resumeData, navigate }) {
 
       const updatedItems = [...items, newItem];
 
-      setItems(sortBillingItems(updatedItems));
+      setItems(updatedItems);
     }
 
     setQty(1);

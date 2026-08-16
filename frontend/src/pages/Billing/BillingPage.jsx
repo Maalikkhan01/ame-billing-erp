@@ -17,9 +17,9 @@ import { searchCustomers } from "../../services/customerService";
 
 import { searchProducts } from "../../services/productService";
 
-import { sortBillingItems } from "../../utils/billingSort";
-
 import PageHeader from "../../components/ui/PageHeader";
+import Modal from "../../components/ui/Modal";
+import Button from "../../components/ui/Button";
 
 import {
   createHoldBill,
@@ -27,6 +27,13 @@ import {
   deleteHoldBill,
 } from "../../services/holdBillService";
 import { createBill } from "../../services/billingService";
+
+import InvoicePrintSizeModal from "../../components/billing/InvoicePrintSizeModal";
+
+import {
+  getInvoicePrintRecommendation,
+  INVOICE_PRINT_SIZES,
+} from "../../utils/invoicePrintSize";
 
 function BillingPage() {
   const navigate = useNavigate();
@@ -46,6 +53,14 @@ function BillingPage() {
   const [items, setItems] = useState([]);
   const [holdBillId, setHoldBillId] = useState(null);
   const [savingBill, setSavingBill] = useState(false);
+  const [confirmBillModalOpen, setConfirmBillModalOpen] = useState(false);
+
+  const [printSizeModalOpen, setPrintSizeModalOpen] = useState(false);
+  const [printRecommendation, setPrintRecommendation] = useState(null);
+  const [selectedPrintSize, setSelectedPrintSize] = useState(
+    INVOICE_PRINT_SIZES.A6,
+  );
+  const [createdBillId, setCreatedBillId] = useState(null);
 
   const [holdingBill, setHoldingBill] = useState(false);
   const resumeData = location.state?.holdBill;
@@ -73,7 +88,7 @@ function BillingPage() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setCustomerId(customerIdValue);
     setCustomerSearch(resumeData.customerName || "");
-    setItems(sortBillingItems(resumeData.items || []));
+    setItems(resumeData.items || []);
     setHoldBillId(resumeData._id || null);
   }, [resumeData]);
 
@@ -198,7 +213,7 @@ function BillingPage() {
         return item;
       });
 
-      setItems(sortBillingItems(updatedItems));
+      setItems(updatedItems);
     } else {
       const updatedItems = [
         ...items,
@@ -220,7 +235,7 @@ function BillingPage() {
           amount: currentRate * Number(qty),
         },
       ];
-      setItems(sortBillingItems(updatedItems));
+      setItems(updatedItems);
     }
 
     setQty(1);
@@ -314,8 +329,7 @@ function BillingPage() {
     (sum, item) => sum + (item.totalProfit || 0),
     0,
   );
-  // Create New Hold Bill OR Update Existing Hold Bill
-  async function handleSave() {
+  function handleSave() {
     if (savingBill) return;
 
     if (!customerId) {
@@ -327,6 +341,14 @@ function BillingPage() {
       alert("Add at least one product");
       return;
     }
+
+    setConfirmBillModalOpen(true);
+  }
+
+  async function confirmAndCreateBill() {
+    if (savingBill) return;
+
+    setConfirmBillModalOpen(false);
 
     setSavingBill(true);
 
@@ -347,8 +369,15 @@ function BillingPage() {
         await deleteHoldBill(holdBillId);
       }
 
-      alert("Bill Created");
+      const recommendation = getInvoicePrintRecommendation(response.bill);
 
+      setPrintRecommendation(recommendation);
+
+      setSelectedPrintSize(recommendation.recommendedSize);
+
+      setCreatedBillId(response.bill._id);
+
+      // Billing form reset
       setItems([]);
       setCustomerId("");
       setCustomerSearch("");
@@ -359,7 +388,10 @@ function BillingPage() {
       setUnitType("PIECE");
       setHoldBillId(null);
 
-      navigate(`/invoice/${response.bill._id}`);
+      alert("Bill Created");
+
+      // Pehle A5/A6 selection modal open hoga
+      setPrintSizeModalOpen(true);
     } catch (error) {
       console.error(error);
 
@@ -368,6 +400,36 @@ function BillingPage() {
       setSavingBill(false);
     }
   }
+
+  const handlePrintSizeConfirm = () => {
+    if (!createdBillId) {
+      return;
+    }
+
+    setPrintSizeModalOpen(false);
+
+    navigate(`/invoice/${createdBillId}`, {
+      state: {
+        printSize: selectedPrintSize,
+        printRecommendation,
+      },
+    });
+  };
+
+  const handlePrintSizeClose = () => {
+    if (!createdBillId) {
+      return;
+    }
+
+    setPrintSizeModalOpen(false);
+
+    navigate(`/invoice/${createdBillId}`, {
+      state: {
+        printSize: printRecommendation?.recommendedSize,
+        printRecommendation,
+      },
+    });
+  };
 
   return (
     <MainLayout>
@@ -437,6 +499,38 @@ function BillingPage() {
         savingBill={savingBill}
         handleHoldBill={handleHoldBill}
         handleSave={handleSave}
+      />
+
+      <Modal
+        open={confirmBillModalOpen}
+        title="Confirm Bill Creation"
+        className="app-modal-confirm"
+        onClose={() => setConfirmBillModalOpen(false)}
+      >
+        <p>Are you sure you want to create this bill?</p>
+
+        <div className="modal-actions">
+          <Button
+            variant="secondary"
+            onClick={() => setConfirmBillModalOpen(false)}
+          >
+            No
+          </Button>
+
+          <Button onClick={confirmAndCreateBill} disabled={savingBill}>
+            {savingBill ? "Creating..." : "Yes, Create Bill"}
+          </Button>
+        </div>
+      </Modal>
+
+      <InvoicePrintSizeModal
+        open={printSizeModalOpen}
+        recommendation={printRecommendation}
+        selectedSize={selectedPrintSize}
+        onSelectSize={setSelectedPrintSize}
+        onConfirm={handlePrintSizeConfirm}
+        onClose={handlePrintSizeClose}
+        confirmLabel="Open Invoice"
       />
     </MainLayout>
   );

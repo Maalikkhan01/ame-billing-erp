@@ -16,6 +16,8 @@ import DailyReportPage from "../pages/Reports/DailyReportPage";
 import ProtectedRoute from "./ProtectedRoute";
 import MonthlyReportPage from "../pages/Reports/MonthlyReportPage";
 import RangeReportPage from "../pages/Reports/RangeReportPage";
+import PaymentReportPage from "../pages/Reports/PaymentReportPage";
+import ProfitReportPage from "../pages/Reports/ProfitReportPage";
 import SettingsPage from "../pages/Settings/SettingsPage";
 import SecurityPage from "../pages/Security/SecurityPage";
 
@@ -138,6 +140,24 @@ function AppRoutes() {
           element={
             <ProtectedRoute>
               <RangeReportPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/payment-report"
+          element={
+            <ProtectedRoute>
+              <PaymentReportPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/profit-report"
+          element={
+            <ProtectedRoute>
+              <ProfitReportPage />
             </ProtectedRoute>
           }
         />

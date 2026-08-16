@@ -17,6 +17,7 @@ import TableWrapper from "../../components/ui/TableWrapper";
 import Pagination from "../../components/ui/Pagination";
 import Button from "../../components/ui/Button";
 import FormField from "../../components/ui/FormField";
+import Modal from "../../components/ui/Modal";
 
 function ProductsPage() {
   const {
@@ -156,6 +157,8 @@ function ProductsPage() {
     },
   ];
 
+  const [addProductModalOpen, setAddProductModalOpen] = useState(false);
+
   const [measurementType, setMeasurementType] = useState("");
 
   const [category, setCategory] = useState("");
@@ -243,6 +246,8 @@ function ProductsPage() {
       setDescription("");
 
       setUnits(createDefaultUnits());
+
+      setAddProductModalOpen(false);
       nameRef.current?.focus();
     } catch {
       // Error already handled by addProduct/useProducts
@@ -252,9 +257,21 @@ function ProductsPage() {
 
   return (
     <MainLayout>
-      <PageHeader title="Products" subtitle={`${totalProducts} Items`} />
+      <PageHeader
+        title="Products"
+        subtitle={`${totalProducts} Items`}
+        right={
+          <Button onClick={() => setAddProductModalOpen(true)}>
+            + Add Product
+          </Button>
+        }
+      />
 
-      <Card title="Add Product">
+      <Modal
+        open={addProductModalOpen}
+        title="Add Product"
+        onClose={() => setAddProductModalOpen(false)}
+      >
         <form onSubmit={handleSubmit}>
           <div className="product-form-grid">
             <FormField
@@ -499,7 +516,7 @@ function ProductsPage() {
             Add Product
           </Button>
         </form>
-      </Card>
+      </Modal>
       <div className="products-toolbar">
         <SearchInput
           value={filters.keyword}

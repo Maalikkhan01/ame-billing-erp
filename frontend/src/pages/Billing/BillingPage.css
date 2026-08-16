@@ -122,6 +122,19 @@
   border-color: var(--primary);
 }
 
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+@media (max-width: 768px) {
+  .modal-actions {
+    flex-direction: column-reverse;
+  }
+}
+
 @media (max-width: 768px) {
   .billing-top-section,
   .billing-grid {

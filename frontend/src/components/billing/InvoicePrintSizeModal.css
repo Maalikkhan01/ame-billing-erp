@@ -1,0 +1,246 @@
+.invoice-print-size-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.invoice-print-size-modal {
+  width: min(460px, 100%);
+
+  background: #ffffff;
+  border-radius: 12px;
+
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+
+  overflow: hidden;
+}
+
+/* =========================================================
+HEADER
+========================================================= */
+
+.invoice-print-size-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 18px 20px;
+
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.invoice-print-size-header h2 {
+  margin: 0;
+
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.invoice-print-size-close {
+  border: none;
+  background: transparent;
+
+  font-size: 26px;
+  line-height: 1;
+
+  cursor: pointer;
+
+  padding: 2px 6px;
+}
+
+/* =========================================================
+BODY
+========================================================= */
+
+.invoice-print-size-body {
+  padding: 20px;
+}
+
+/* =========================================================
+RECOMMENDATION
+========================================================= */
+
+.invoice-print-size-status {
+  padding: 14px;
+
+  border-radius: 8px;
+
+  margin-bottom: 16px;
+
+  border: 1px solid #ddd;
+}
+
+.invoice-print-size-status.is-a6 {
+  border-color: #b7dfc2;
+  background: #f4fbf6;
+}
+
+.invoice-print-size-status.is-a5 {
+  border-color: #c7d5e8;
+  background: #f5f8fc;
+}
+
+.invoice-print-size-status-title {
+  font-size: 17px;
+  font-weight: 700;
+
+  margin-bottom: 6px;
+}
+
+.invoice-print-size-status-text {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* =========================================================
+ITEM COUNT
+========================================================= */
+
+.invoice-print-size-items {
+  margin-bottom: 16px;
+
+  font-size: 14px;
+}
+
+/* =========================================================
+SIZE OPTIONS
+========================================================= */
+
+.invoice-print-size-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  gap: 12px;
+}
+
+.invoice-print-size-option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  text-align: left;
+
+  padding: 15px;
+
+  border: 2px solid #ddd;
+  border-radius: 8px;
+
+  background: #fff;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.invoice-print-size-option:hover:not(:disabled) {
+  border-color: #999;
+}
+
+.invoice-print-size-option.selected {
+  border-color: #111;
+}
+
+.invoice-print-size-option.disabled {
+  cursor: not-allowed;
+
+  opacity: 0.55;
+
+  background: #f7f7f7;
+
+  border-color: #d6d6d6;
+}
+
+.invoice-print-size-option.disabled:hover {
+  border-color: #d6d6d6;
+}
+
+.invoice-print-size-option-title {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.invoice-print-size-option-description {
+  margin-top: 4px;
+
+  font-size: 13px;
+}
+
+.invoice-print-size-option-info {
+  margin-top: 8px;
+
+  font-size: 12px;
+  line-height: 1.4;
+
+  opacity: 0.7;
+}
+
+.invoice-print-size-option-warning {
+  margin-top: 8px;
+
+  font-size: 12px;
+  line-height: 1.4;
+
+  font-weight: 600;
+}
+
+/* =========================================================
+WARNING
+========================================================= */
+
+.invoice-print-size-warning {
+  margin-top: 14px;
+
+  padding: 10px 12px;
+
+  border: 1px solid #d6a600;
+  border-radius: 6px;
+
+  font-size: 13px;
+  line-height: 1.5;
+
+  background: #fffaf0;
+}
+
+/* =========================================================
+FOOTER
+========================================================= */
+
+.invoice-print-size-footer {
+  display: flex;
+  justify-content: flex-end;
+
+  gap: 10px;
+
+  padding: 16px 20px;
+
+  border-top: 1px solid #e5e5e5;
+}
+
+/* =========================================================
+MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+  .invoice-print-size-overlay {
+    padding: 12px;
+  }
+
+  .invoice-print-size-options {
+    grid-template-columns: 1fr;
+  }
+
+  .invoice-print-size-footer {
+    flex-direction: column-reverse;
+  }
+}

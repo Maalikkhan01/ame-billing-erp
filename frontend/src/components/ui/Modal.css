@@ -1,79 +1,199 @@
 .app-modal-overlay {
   position: fixed;
-
   inset: 0;
-
   background: rgba(0, 0, 0, 0.45);
-
   display: flex;
-
   justify-content: center;
-
   align-items: center;
-
   z-index: 2000;
-
-  padding: 16px;
+  padding: 24px;
+  overflow-y: auto;
 }
+
+/* =========================
+   MODAL
+========================= */
 
 .app-modal {
   width: 100%;
-
-  max-width: 500px;
-
+  max-width: 900px;
+  max-height: calc(100vh - 48px);
   background: white;
-
   border-radius: var(--radius-md);
-
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
-
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
+/* =========================
+   HEADER
+========================= */
+
 .app-modal-header {
+  flex-shrink: 0;
   display: flex;
-
   justify-content: space-between;
-
   align-items: center;
-
-  padding: 18px 20px;
-
+  padding: 18px 24px;
   border-bottom: 1px solid var(--border-color);
 }
 
 .app-modal-header h2 {
   margin: 0;
-
   font-size: 20px;
+  font-weight: 600;
 }
+
+/* =========================
+   CLOSE BUTTON
+========================= */
 
 .app-modal-close {
   border: none;
-
   background: transparent;
-
   font-size: 28px;
-
+  line-height: 1;
   cursor: pointer;
-
   color: #64748b;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
 }
+
+.app-modal-close:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+/* =========================
+   BODY
+========================= */
 
 .app-modal-body {
-  padding: 20px;
+  padding: 24px;
+  overflow-y: auto;
+  min-height: 0;
 }
 
-@media (max-width: 768px) {
+/* =========================
+   DESKTOP
+========================= */
+
+@media (min-width: 1200px) {
+  .app-modal {
+    max-width: 1000px;
+  }
+}
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 900px) {
   .app-modal {
     max-width: 100%;
+
+    max-height: calc(100vh - 32px);
+  }
+
+  .app-modal-body {
+    padding: 20px;
+  }
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 768px) {
+  .app-modal-overlay {
+    padding: 12px;
+
+    align-items: center;
+  }
+
+  .app-modal {
+    width: 100%;
+
+    max-width: 100%;
+
+    max-height: calc(100vh - 24px);
+
+    border-radius: var(--radius-md);
+  }
+
+  .app-modal-header {
+    padding: 16px 18px;
   }
 
   .app-modal-header h2 {
     font-size: 18px;
   }
 
+  .app-modal-close {
+    font-size: 26px;
+  }
+
   .app-modal-body {
     padding: 16px;
+  }
+}
+
+/* =========================
+   SMALL MOBILE
+========================= */
+
+@media (max-width: 480px) {
+  .app-modal-overlay {
+    padding: 8px;
+  }
+
+  .app-modal {
+    max-height: calc(100vh - 16px);
+  }
+
+  .app-modal-header {
+    padding: 14px 16px;
+  }
+
+  .app-modal-body {
+    padding: 14px;
+  }
+}
+
+/* =========================
+   SMALL CONFIRMATION MODAL
+========================= */
+
+.app-modal-confirm {
+  max-width: 480px;
+  max-height: none;
+}
+
+.app-modal-confirm .app-modal-body {
+  padding: 20px;
+}
+
+.app-modal-confirm .modal-actions {
+  margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+  .app-modal-confirm {
+    max-width: 100%;
+  }
+}
+
+/* =========================
+   MEDIUM FORM MODAL
+========================= */
+
+.app-modal-form {
+  max-width: 600px;
+}
+
+@media (max-width: 768px) {
+  .app-modal-form {
+    max-width: 100%;
   }
 }

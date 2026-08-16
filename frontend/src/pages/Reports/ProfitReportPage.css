@@ -1,0 +1,325 @@
+.profit-report-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ================================
+   REPORT PERIOD
+================================ */
+
+.profit-report-period {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.profit-period-button {
+  padding: 10px 16px;
+
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+
+  background: white;
+  color: var(--text-primary);
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.profit-period-button:hover {
+  border-color: var(--primary);
+}
+
+.profit-period-button:active {
+  transform: translateY(1px);
+}
+
+.profit-period-button.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+/* ================================
+   CUSTOM DATE FILTER
+================================ */
+
+.profit-custom-filter {
+  display: grid;
+
+  grid-template-columns:
+    minmax(180px, 1fr)
+    minmax(180px, 1fr)
+    auto;
+
+  align-items: end;
+
+  gap: 14px;
+
+  margin-top: 18px;
+  padding-top: 18px;
+
+  border-top: 1px solid var(--border-color);
+}
+
+.profit-date-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.profit-date-field label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.profit-date-field input {
+  width: 100%;
+
+  min-height: 42px;
+
+  padding: 10px 12px;
+
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+
+  background: white;
+
+  color: var(--text-primary);
+
+  font-size: 14px;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.profit-date-field input:focus {
+  border-color: var(--primary);
+
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.profit-search-button {
+  min-height: 42px;
+
+  padding: 10px 20px;
+
+  border: none;
+  border-radius: var(--radius-md);
+
+  background: var(--primary);
+  color: white;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.profit-search-button:hover {
+  opacity: 0.9;
+}
+
+.profit-search-button:active {
+  transform: translateY(1px);
+}
+
+.profit-search-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ================================
+   SUMMARY
+================================ */
+
+.profit-summary-grid {
+  display: grid;
+
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  gap: 16px;
+}
+
+.profit-summary-secondary {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 16px;
+}
+
+/* ================================
+   ERROR / LOADING
+================================ */
+
+.profit-report-error {
+  padding: 12px 14px;
+
+  border-radius: var(--radius-md);
+
+  background: rgba(220, 38, 38, 0.08);
+
+  color: var(--danger);
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.profit-report-loading {
+  padding: 30px;
+
+  text-align: center;
+
+  color: var(--text-secondary);
+
+  font-size: 15px;
+}
+
+.profit-report-empty {
+  padding: 30px !important;
+
+  text-align: center;
+
+  color: var(--text-secondary);
+}
+
+/* ================================
+   TABLE
+================================ */
+
+.profit-report-page .app-table th,
+.profit-report-page .app-table td {
+  white-space: nowrap;
+}
+
+.profit-report-page .app-table th:nth-child(1),
+.profit-report-page .app-table td:nth-child(1) {
+  min-width: 180px;
+}
+
+.profit-report-page .app-table th:nth-child(2),
+.profit-report-page .app-table td:nth-child(2) {
+  text-align: right;
+}
+
+.profit-report-page .app-table th:nth-child(3),
+.profit-report-page .app-table td:nth-child(3),
+.profit-report-page .app-table th:nth-child(4),
+.profit-report-page .app-table td:nth-child(4),
+.profit-report-page .app-table th:nth-child(5),
+.profit-report-page .app-table td:nth-child(5),
+.profit-report-page .app-table th:nth-child(6),
+.profit-report-page .app-table td:nth-child(6) {
+  text-align: right;
+}
+
+/* ================================
+   TABLET
+================================ */
+
+@media (max-width: 1024px) {
+  .profit-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .profit-custom-filter {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .profit-search-button {
+    width: 100%;
+  }
+}
+
+/* ================================
+   MOBILE
+================================ */
+
+@media (max-width: 768px) {
+  .profit-report-page {
+    gap: 16px;
+  }
+
+  .profit-report-period {
+    display: grid;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 8px;
+  }
+
+  .profit-period-button {
+    width: 100%;
+
+    padding: 10px 8px;
+
+    font-size: 13px;
+  }
+
+  .profit-period-button:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .profit-custom-filter {
+    grid-template-columns: 1fr;
+
+    gap: 12px;
+  }
+
+  .profit-summary-grid {
+    grid-template-columns: 1fr;
+
+    gap: 12px;
+  }
+
+  .profit-summary-secondary {
+    grid-template-columns: 1fr;
+
+    gap: 12px;
+  }
+
+  .profit-report-page .app-table {
+    min-width: 700px;
+  }
+}
+
+/* ================================
+   SMALL MOBILE
+================================ */
+
+@media (max-width: 480px) {
+  .profit-report-period {
+    grid-template-columns: 1fr;
+  }
+
+  .profit-period-button:last-child {
+    grid-column: auto;
+  }
+
+  .profit-period-button {
+    padding: 11px 10px;
+  }
+
+  .profit-date-field input,
+  .profit-search-button {
+    min-height: 44px;
+  }
+}
