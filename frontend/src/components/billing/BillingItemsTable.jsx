@@ -61,8 +61,8 @@ function BillingItemsTable({ items, setItems, removeItem }) {
                   <td>
                     <input
                       type="number"
-                      min="0.1"
-                      step="0.1"
+                      min="0.01"
+                      step="0.01"
                       className="rate-input"
                       value={item.rate}
                       onChange={(e) => {

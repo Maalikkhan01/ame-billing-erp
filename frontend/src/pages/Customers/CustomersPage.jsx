@@ -150,28 +150,47 @@ function CustomersPage() {
           </form>
         </Modal>
 
-        {/* SEARCH BAR */}
-        <SearchInput
-          value={search}
-          placeholder="Search customer..."
-          onChange={(value) => {
-            setSearch(value);
-
-            if (value.trim()) {
-              searchCustomer(value);
-            } else {
-              loadCustomers(1);
-            }
-          }}
-        />
-
         {/* CUSTOMER LIST TABLE */}
         {loading ? (
-          <Card title="Customer List">
+          <Card
+            title="Customer List"
+            actions={
+              <SearchInput
+                value={search}
+                placeholder="Search customer..."
+                onChange={(value) => {
+                  setSearch(value);
+
+                  if (value.trim()) {
+                    searchCustomer(value);
+                  } else {
+                    loadCustomers(1);
+                  }
+                }}
+              />
+            }
+          >
             <EmptyState text="Loading customers..." />
           </Card>
         ) : (
-          <Card title="Customer List">
+          <Card
+            title="Customer List"
+            actions={
+              <SearchInput
+                value={search}
+                placeholder="Search customer..."
+                onChange={(value) => {
+                  setSearch(value);
+
+                  if (value.trim()) {
+                    searchCustomer(value);
+                  } else {
+                    loadCustomers(1);
+                  }
+                }}
+              />
+            }
+          >
             <TableWrapper>
               <table className="customer-table">
                 <thead>

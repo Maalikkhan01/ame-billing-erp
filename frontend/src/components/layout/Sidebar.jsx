@@ -76,6 +76,8 @@ function Sidebar({ mobileOpen, closeSidebar }) {
           Category
         </NavLink>
 
+        <div className="sidebar-section">Reports</div>
+
         <NavLink
           onClick={closeSidebar}
           to="/due-report"
@@ -85,8 +87,6 @@ function Sidebar({ mobileOpen, closeSidebar }) {
         >
           Due Report
         </NavLink>
-
-        <div className="sidebar-section">Reports</div>
 
         <NavLink
           onClick={closeSidebar}
@@ -129,6 +129,7 @@ function Sidebar({ mobileOpen, closeSidebar }) {
         </NavLink>
 
         <NavLink
+          onClick={closeSidebar}
           to="/settings"
           className={({ isActive }) =>
             isActive ? "sidebar-link active" : "sidebar-link"

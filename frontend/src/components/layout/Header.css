@@ -46,22 +46,26 @@
 }
 
 .logout-btn {
-  background: #ef4444;
-
-  color: white;
-
-  border: none;
-
-  padding: 10px 18px;
-
+  background: transparent;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+  padding: 8px 14px;
   border-radius: 8px;
-
-  cursor: pointer;
-
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
 
-  transition: 0.2s;
+.logout-btn:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  color: #1e293b;
+}
+
+.logout-btn:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
 }
 
 .logout-btn:hover {

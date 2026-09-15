@@ -225,6 +225,15 @@
 ========================= */
 
 @media (max-width: 768px) {
+  .ledger-header {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .ledger-header button {
+    flex: 1 1 calc(50% - 10px);
+  }
+
   .payment-header {
     flex-direction: column;
     align-items: flex-start;
@@ -245,8 +254,17 @@
   .ledger-summary {
     flex-direction: column;
     align-items: flex-start;
-
     gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .statement-header h3 {
+    font-size: 26px;
+  }
+
+  .statement-header h4 {
+    font-size: 15px;
   }
 }
 

@@ -16,8 +16,6 @@ function Header({ openSidebar }) {
         <button className="menu-btn" onClick={openSidebar}>
           ☰
         </button>
-        <h2>A M</h2>
-
         <span className="owner-badge">OWNER</span>
       </div>
 

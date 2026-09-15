@@ -453,6 +453,7 @@ function ProductsPage() {
 
                       <FormField
                         type="number"
+                        step="0.01"
                         placeholder="Cost Price"
                         value={unit.costPrice}
                         onChange={(e) => {
@@ -466,6 +467,7 @@ function ProductsPage() {
 
                       <FormField
                         type="number"
+                        step="0.01"
                         placeholder="Selling Price"
                         value={unit.price}
                         onChange={(e) => {

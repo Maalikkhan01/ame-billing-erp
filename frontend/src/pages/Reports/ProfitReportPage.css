@@ -39,6 +39,11 @@
   border-color: var(--primary);
 }
 
+.profit-period-button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
 .profit-period-button:active {
   transform: translateY(1px);
 }

@@ -60,12 +60,13 @@
 /* DANGER */
 
 .app-btn.danger {
-  background: var(--danger);
-  color: white;
+  background: #f1f5f9;
+  color: #475569;
 }
 
 .app-btn.danger:hover {
-  background: var(--danger-hover);
+  background: #fee2e2;
+  color: var(--danger);
 }
 
 /* WARNING */

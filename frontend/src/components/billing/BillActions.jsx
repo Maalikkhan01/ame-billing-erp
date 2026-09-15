@@ -20,6 +20,7 @@ function BillActions({
         </Button>
 
         <Button
+          variant="primary"
           disabled={items.length === 0 || savingBill}
           onClick={handleSave}
         >

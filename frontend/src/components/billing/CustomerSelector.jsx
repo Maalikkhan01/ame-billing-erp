@@ -32,7 +32,7 @@ function CustomerSelector({
   }, [selectedCustomerIndex]);
 
   return (
-    <Card title="Customer">
+    <Card title="Customer" className="billing-customer-card">
       <FormField
         ref={customerSearchRef}
         placeholder="Search customer..."

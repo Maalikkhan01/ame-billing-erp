@@ -11,6 +11,14 @@
 .invoice-document {
   width: auto !important;
   margin: 0 !important;
+  transform-origin: top center;
+}
+
+.invoice-preview-wrapper {
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
 }
 
 .invoice-document-a5 {
@@ -403,6 +411,19 @@
   text-align: center;
 }
 
+@media (max-width: 768px) {
+  .invoice-preview-wrapper {
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+  }
+
+  .invoice-document {
+    flex-shrink: 0;
+  }
+}
+
 /* =========================================================
    PRINT MEDIA RULES
 ========================================================= */
@@ -447,6 +468,14 @@
 
   .invoice-document {
     width: 100% !important;
+    transform: none !important;
+  }
+
+  .invoice-preview-wrapper {
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+    display: block !important;
   }
 
   .invoice-document-a5 {

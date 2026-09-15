@@ -13,7 +13,7 @@
 
 /**
  * Validate Rate
- * Max 1 decimal place
+ * Max 2 decimal places
  */
 const validateRate = (rate) => {
   const value = Number(rate);
@@ -22,8 +22,8 @@ const validateRate = (rate) => {
     throw new Error("Invalid rate");
   }
 
-  if (!/^\d+(\.\d{1})?$/.test(String(rate))) {
-    throw new Error("Rate can have maximum 1 decimal place");
+  if (!/^\d+(\.\d{1,2})?$/.test(String(rate))) {
+    throw new Error("Rate can have maximum 2 decimal places");
   }
 
   return value;

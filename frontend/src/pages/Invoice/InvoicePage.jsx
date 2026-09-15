@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 
 import MainLayout from "../../components/layout/MainLayout";
@@ -35,6 +35,7 @@ function InvoicePage() {
   const { invoice, loading } = useInvoice(id);
 
   const invoiceRef = useRef(null);
+  const invoicePreviewRef = useRef(null);
 
   const [downloadingPdf, setDownloadingPdf] = useState(false);
 
@@ -50,6 +51,47 @@ function InvoicePage() {
   const [selectedPrintSize, setSelectedPrintSize] = useState(initialPrintSize);
   const [printSizeModalOpen, setPrintSizeModalOpen] = useState(false);
   const [printAction, setPrintAction] = useState("print");
+
+  useEffect(() => {
+    const updateInvoiceScale = () => {
+      const preview = invoicePreviewRef.current;
+      const invoiceElement = invoiceRef.current;
+
+      if (!preview || !invoiceElement) {
+        return;
+      }
+
+      // Desktop: keep invoice at its original size.
+      if (window.innerWidth > 768) {
+        invoiceElement.style.transform = "scale(1)";
+        preview.style.height = `${invoiceElement.offsetHeight}px`;
+        return;
+      }
+
+      const availableWidth = preview.clientWidth;
+      const invoiceWidth = invoiceElement.scrollWidth;
+
+      if (!availableWidth || !invoiceWidth) {
+        return;
+      }
+
+      const scale = Math.min(1, availableWidth / invoiceWidth);
+
+      invoiceElement.style.transform = `scale(${scale})`;
+
+      // Transform does not affect normal document flow,
+      // so adjust wrapper height accordingly.
+      preview.style.height = `${invoiceElement.offsetHeight * scale}px`;
+    };
+
+    updateInvoiceScale();
+
+    window.addEventListener("resize", updateInvoiceScale);
+
+    return () => {
+      window.removeEventListener("resize", updateInvoiceScale);
+    };
+  }, [selectedPrintSize, invoice?.items?.length]);
 
   if (loading) {
     return (
@@ -284,129 +326,135 @@ function InvoicePage() {
         </div>
 
         {/* INVOICE DOCUMENT */}
-        <div
-          ref={invoiceRef}
-          className={`invoice-document ${
-            isA6 ? "invoice-document-a6" : "invoice-document-a5"
-          }`}
-          data-paper-size={selectedPrintSize}
-        >
-          {pages.map((pageItems, pageIndex) => {
-            const isLastPage = pageIndex === pages.length - 1;
+        <div ref={invoicePreviewRef} className="invoice-preview-wrapper">
+          <div
+            ref={invoiceRef}
+            className={`invoice-document ${
+              isA6 ? "invoice-document-a6" : "invoice-document-a5"
+            }`}
+            data-paper-size={selectedPrintSize}
+          >
+            {pages.map((pageItems, pageIndex) => {
+              const isLastPage = pageIndex === pages.length - 1;
 
-            return (
-              <div
-                key={pageIndex}
-                className={`invoice-page ${
-                  isA6 ? "invoice-page-a6" : "invoice-page-a5"
-                }`}
-              >
-                {/* HEADER */}
-                <div className="invoice-header">
-                  <div className="invoice-header-grid">
-                    <div className="invoice-shop-info">
-                      <h2>A M</h2>
-                      <p>Pandhurna</p>
-                      <p>Mobile: 9074001099</p>
-                      <p className="invoice-meta">Date: {invoiceDate}</p>
-                      <p className="invoice-meta">
-                        Invoice No: {invoice.billNumber}
-                      </p>
-                    </div>
+              return (
+                <div
+                  key={pageIndex}
+                  className={`invoice-page ${
+                    isA6 ? "invoice-page-a6" : "invoice-page-a5"
+                  }`}
+                >
+                  {/* HEADER */}
+                  <div className="invoice-header">
+                    <div className="invoice-header-grid">
+                      <div className="invoice-shop-info">
+                        <h2>A M</h2>
+                        <p>Pandhurna</p>
+                        <p>Mobile: 9074001099</p>
+                        <p className="invoice-meta">Date: {invoiceDate}</p>
+                        <p className="invoice-meta">
+                          Invoice No: {invoice.billNumber}
+                        </p>
+                      </div>
 
-                    <div className="invoice-customer-info">
-                      <p>
-                        Customer:{" "}
-                        <strong className="customer-name">
-                          {customerName}
-                        </strong>
-                      </p>
+                      <div className="invoice-customer-info">
+                        <p>
+                          Customer:{" "}
+                          <strong className="customer-name">
+                            {customerName}
+                          </strong>
+                        </p>
 
-                      {!isWalkIn && (
-                        <>
-                          <p>Mobile: {invoice.customerId?.mobile || ""}</p>
-                          <p>Address: {invoice.customerId?.address || ""}</p>
-                          <p>Previous Due: ₹{invoice.previousDue || 0}</p>
-                        </>
-                      )}
+                        {!isWalkIn && (
+                          <>
+                            <p>Mobile: {invoice.customerId?.mobile || ""}</p>
+                            <p>Address: {invoice.customerId?.address || ""}</p>
+                            <p>Previous Due: ₹{invoice.previousDue || 0}</p>
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* PRODUCT TABLE */}
-                <div className="invoice-table-wrapper">
-                  <table className="invoice-table">
-                    <thead>
-                      <tr>
-                        <th className="col-sno">S.No</th>
-                        <th className="col-product">Product</th>
-                        <th className="col-qty">Qty</th>
-                        <th className="col-unit">Unit</th>
-                        <th className="col-rate">Rate</th>
-                        <th className="col-amount">Amount</th>
-                      </tr>
-                    </thead>
-
-                    <tbody>
-                      {pageItems.map((item, index) => (
-                        <tr
-                          key={`${pageIndex}-${index}`}
-                          className={!item.productName ? "empty-row" : ""}
-                        >
-                          <td className="cell-sno">
-                            {item.productName
-                              ? pageIndex * ITEMS_PER_PAGE + index + 1
-                              : ""}
-                          </td>
-                          <td className="invoice-product-name">
-                            {item.productName}
-                          </td>
-                          <td className="cell-qty">
-                            {item.productName ? item.qty : ""}
-                          </td>
-                          <td className="cell-unit">
-                            {item.productName ? formatUnit(item.unitType) : ""}
-                          </td>
-                          <td className="cell-rate">
-                            {item.productName
-                              ? new Intl.NumberFormat("en-IN").format(item.rate)
-                              : ""}
-                          </td>
-                          <td className="cell-amount">
-                            {item.productName
-                              ? new Intl.NumberFormat("en-IN").format(
-                                  item.amount,
-                                )
-                              : ""}
-                          </td>
+                  {/* PRODUCT TABLE */}
+                  <div className="invoice-table-wrapper">
+                    <table className="invoice-table">
+                      <thead>
+                        <tr>
+                          <th className="col-sno">S.No</th>
+                          <th className="col-product">Product</th>
+                          <th className="col-qty">Qty</th>
+                          <th className="col-unit">Unit</th>
+                          <th className="col-rate">Rate</th>
+                          <th className="col-amount">Amount</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
 
-                {/* TOTAL */}
-                {isLastPage ? (
-                  <div className="invoice-total-box">
-                    <div>Total Items: {invoice.items.length}</div>
-                    <div className="grand-total">
-                      Grand Total:{" "}
-                      {formatCurrency(
-                        invoice.grandTotal ?? invoice.totalAmount,
-                      )}
-                    </div>
+                      <tbody>
+                        {pageItems.map((item, index) => (
+                          <tr
+                            key={`${pageIndex}-${index}`}
+                            className={!item.productName ? "empty-row" : ""}
+                          >
+                            <td className="cell-sno">
+                              {item.productName
+                                ? pageIndex * ITEMS_PER_PAGE + index + 1
+                                : ""}
+                            </td>
+                            <td className="invoice-product-name">
+                              {item.productName}
+                            </td>
+                            <td className="cell-qty">
+                              {item.productName ? item.qty : ""}
+                            </td>
+                            <td className="cell-unit">
+                              {item.productName
+                                ? formatUnit(item.unitType)
+                                : ""}
+                            </td>
+                            <td className="cell-rate">
+                              {item.productName
+                                ? new Intl.NumberFormat("en-IN").format(
+                                    item.rate,
+                                  )
+                                : ""}
+                            </td>
+                            <td className="cell-amount">
+                              {item.productName
+                                ? new Intl.NumberFormat("en-IN").format(
+                                    item.amount,
+                                  )
+                                : ""}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
-                ) : (
-                  <div className="invoice-page-spacer" />
-                )}
 
-                {/* FOOTER */}
-                <div className="page-footer">
-                  Page {pageIndex + 1} of {pages.length}
+                  {/* TOTAL */}
+                  {isLastPage ? (
+                    <div className="invoice-total-box">
+                      <div>Total Items: {invoice.items.length}</div>
+                      <div className="grand-total">
+                        Grand Total:{" "}
+                        {formatCurrency(
+                          invoice.grandTotal ?? invoice.totalAmount,
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="invoice-page-spacer" />
+                  )}
+
+                  {/* FOOTER */}
+                  <div className="page-footer">
+                    Page {pageIndex + 1} of {pages.length}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
 
         {/* PRINT SIZE MODAL */}

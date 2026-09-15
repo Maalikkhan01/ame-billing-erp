@@ -83,6 +83,10 @@
   .unit-edit-row span {
     width: 100%;
   }
+
+  .unit-checkbox {
+    width: 100%;
+  }
 }
 
 .unit-checkbox {
