@@ -32,7 +32,8 @@
 ========================================= */
 
 .dashboard-page .card:first-of-type .app-table {
-  table-layout: fixed;
+  table-layout: auto;
+  min-width: 760px;
 }
 
 .dashboard-page .card:first-of-type .app-table th:last-child,
@@ -105,8 +106,18 @@
 
 @media (max-width: 768px) {
   .dashboard-stats {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
+  }
+
+  .dashboard-stats .stat-card {
+    grid-column: span 1;
+  }
+
+  .dashboard-stats .stat-card:nth-child(5),
+  .dashboard-stats .stat-card:nth-child(6),
+  .dashboard-stats .stat-card:nth-child(7) {
+    grid-column: auto;
   }
 
   .dashboard-report-grid {
