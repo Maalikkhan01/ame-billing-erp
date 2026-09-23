@@ -79,9 +79,8 @@ function InvoicePage() {
 
       invoiceElement.style.transform = `scale(${scale})`;
 
-      // Transform does not affect normal document flow,
-      // so adjust wrapper height accordingly.
-      preview.style.height = `${invoiceElement.offsetHeight * scale}px`;
+      // Use the actual transformed height.
+      preview.style.height = `${invoiceElement.scrollHeight * scale}px`;
     };
 
     updateInvoiceScale();
